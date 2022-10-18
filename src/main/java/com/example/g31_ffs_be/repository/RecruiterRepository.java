@@ -1,7 +1,7 @@
-package com.example.g31_ffs_fe.repository;
+package com.example.g31_ffs_be.repository;
 
 
-import com.example.g31_ffs_fe.model.Recruiter;
+import com.example.g31_ffs_be.model.Recruiter;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

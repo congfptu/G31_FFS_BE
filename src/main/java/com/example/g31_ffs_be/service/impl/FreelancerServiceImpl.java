@@ -1,8 +1,8 @@
-package com.example.g31_ffs_fe.service.impl;
+package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_fe.model.Freelancer;
-import com.example.g31_ffs_fe.repository.FreelancerRepository;
-import com.example.g31_ffs_fe.service.FreelancerService;
+import com.example.g31_ffs_be.model.Freelancer;
+import com.example.g31_ffs_be.repository.FreelancerRepository;
+import com.example.g31_ffs_be.service.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +12,13 @@ public class FreelancerServiceImpl implements FreelancerService {
     FreelancerRepository repo;
     @Override
     public void addFreelancer(Freelancer f) {
-     repo.save(f);
+        try {
+            repo.save(f);
+        }
+        catch(Exception e)
+        {
+
+        }
+
     }
 }

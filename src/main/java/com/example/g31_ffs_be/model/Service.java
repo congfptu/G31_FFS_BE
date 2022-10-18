@@ -1,4 +1,9 @@
-package com.example.g31_ffs_fe.model;
+package com.example.g31_ffs_be.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +12,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "service")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Service {
     @Id
     @Column(name = "id", nullable = false)
@@ -23,45 +32,5 @@ public class Service {
 
     @Column(name = "duration")
     private Integer duration;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
 
 }

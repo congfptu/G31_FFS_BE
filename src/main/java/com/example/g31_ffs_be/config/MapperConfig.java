@@ -1,4 +1,4 @@
-package com.example.g31_ffs_fe.config;
+package com.example.g31_ffs_be.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

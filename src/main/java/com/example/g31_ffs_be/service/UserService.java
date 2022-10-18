@@ -1,9 +1,6 @@
-package com.example.g31_ffs_fe.service;
+package com.example.g31_ffs_be.service;
 
-import com.example.g31_ffs_fe.model.User;
-import com.example.g31_ffs_fe.repository.FreelancerRepository;
-import com.example.g31_ffs_fe.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.g31_ffs_be.model.User;
 
 public interface UserService {
    

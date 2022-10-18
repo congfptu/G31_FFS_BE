@@ -1,4 +1,4 @@
-package com.example.g31_ffs_fe.model;
+package com.example.g31_ffs_be.model;
 
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;

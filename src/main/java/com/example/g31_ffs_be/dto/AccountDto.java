@@ -1,12 +1,11 @@
-package com.example.g31_ffs_fe.dto;
+package com.example.g31_ffs_be.dto;
 
-import com.example.g31_ffs_fe.model.Role;
+import com.example.g31_ffs_be.model.Role;
 import lombok.*;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor

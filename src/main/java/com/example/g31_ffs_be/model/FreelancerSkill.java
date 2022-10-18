@@ -1,9 +1,18 @@
-package com.example.g31_ffs_fe.model;
+package com.example.g31_ffs_be.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "freelancer_skill")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class FreelancerSkill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,28 +27,5 @@ public class FreelancerSkill {
     @JoinColumn(name = "skill_id")
     private Skill skill;
 
-    public Skill getSkill() {
-        return skill;
-    }
-
-    public void setSkill(Skill skill) {
-        this.skill = skill;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Freelancer getFreelancer() {
-        return freelancer;
-    }
-
-    public void setFreelancer(Freelancer freelancer) {
-        this.freelancer = freelancer;
-    }
 
 }

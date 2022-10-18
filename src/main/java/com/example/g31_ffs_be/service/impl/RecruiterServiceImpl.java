@@ -1,4 +1,4 @@
-package com.example.g31_ffs_fe.service.impl;
+package com.example.g31_ffs_be.service.impl;
 
 import org.springframework.stereotype.Service;
 

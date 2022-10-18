@@ -1,8 +1,7 @@
-package com.example.g31_ffs_fe.service;
+package com.example.g31_ffs_be.service;
 
-import com.example.g31_ffs_fe.dto.AccountDto;
-import com.example.g31_ffs_fe.model.Account;
-import com.example.g31_ffs_fe.model.Freelancer;
+import com.example.g31_ffs_be.dto.AccountDto;
+import com.example.g31_ffs_be.model.Account;
 
 import java.util.List;
 

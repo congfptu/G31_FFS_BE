@@ -1,13 +1,11 @@
-package com.example.g31_ffs_fe.service.impl;
+package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_fe.dto.AccountDto;
-import com.example.g31_ffs_fe.model.Account;
-import com.example.g31_ffs_fe.model.AccountRole;
-import com.example.g31_ffs_fe.model.AccountRoleId;
-import com.example.g31_ffs_fe.model.Role;
-import com.example.g31_ffs_fe.repository.AccountRepository;
-import com.example.g31_ffs_fe.repository.AccountRoleRepository;
-import com.example.g31_ffs_fe.service.AccountService;
+import com.example.g31_ffs_be.dto.AccountDto;
+import com.example.g31_ffs_be.model.Account;
+import com.example.g31_ffs_be.model.AccountRole;
+import com.example.g31_ffs_be.repository.AccountRepository;
+import com.example.g31_ffs_be.repository.AccountRoleRepository;
+import com.example.g31_ffs_be.service.AccountService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
-import java.util.ArrayList;
 import java.util.List;
 @Service
 @Component
@@ -44,7 +41,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void addAccount(Account f) {
-        repo.save(f);
+        try {
+            repo.save(f);
+        }
+        catch(Exception e)
+        {
+
+        }
 
     }
 
@@ -57,13 +60,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void addAccountRole(String account_id, int role_id) {
-        AccountRole acc=new AccountRole();
-        Account a=new Account();
-        a.setId(account_id);
-        Role b=new Role();
-        b.setId(role_id);
+        try {
+            AccountRole acc=new AccountRole(account_id,role_id);
+            acc_role_repo.save(acc);
+        }
+        catch(Exception e)
+        {
 
-        acc_role_repo.save(acc);
+        }
+
     }
 
 

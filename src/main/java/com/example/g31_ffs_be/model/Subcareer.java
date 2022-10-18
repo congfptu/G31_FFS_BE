@@ -1,7 +1,11 @@
-package com.example.g31_ffs_fe.model;
+package com.example.g31_ffs_be.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -10,6 +14,10 @@ import javax.persistence.*;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Subcareer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,20 +27,5 @@ public class Subcareer {
     @Column(name = "Name")
     private String name;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
 }
