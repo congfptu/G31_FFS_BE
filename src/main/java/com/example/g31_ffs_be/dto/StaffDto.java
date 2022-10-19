@@ -8,10 +8,7 @@ import javax.validation.constraints.Size;
 
 
 @Data
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class StaffDto {
     @Email(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message = "Email không hợp lệ.")
     private String email;
@@ -24,4 +21,5 @@ public class StaffDto {
     private int role;
     private String isActive;
     private String isActive1;
+
 }

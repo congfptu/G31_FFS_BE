@@ -24,7 +24,6 @@ public class User {
     @Id
     @Column(name = "user_id", nullable = false, length = 45)
     private String id;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Account account;
@@ -55,7 +54,6 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private Recruiter recruiter;
-
     @OneToOne(mappedBy = "user")
     private Freelancer freelancer;
 
@@ -65,5 +63,11 @@ public class User {
     @Column(name = "is_banned")
     private Boolean isBanned;
 
+
+    @OneToMany(mappedBy = "to")
+    private Set<Feedback> feedbackTos = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "from")
+    private Set<Feedback> feedbackFroms = new LinkedHashSet<>();
 
 }

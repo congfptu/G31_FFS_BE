@@ -19,4 +19,11 @@ public class UserServiceImpl implements UserService {
 
         }
     }
+
+    @Override
+    public void banUser(String id) {
+        User u=repo.findById(id).get();
+        u.setIsBanned(true);
+        repo.save(u);
+    }
 }

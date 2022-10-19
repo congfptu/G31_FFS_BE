@@ -19,13 +19,11 @@ public class FreelancerSkill {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "freelancer_id")
-    private Freelancer freelancer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "skill_id")
-    private Skill skill;
+    @Column(name = "freelancer_id")
+    private String freelancer;
 
+    @Column(name = "skill_id")
+    private Integer skill;
 
 }

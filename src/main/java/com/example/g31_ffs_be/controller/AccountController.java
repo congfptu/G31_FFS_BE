@@ -27,7 +27,7 @@ public class AccountController {
     @Autowired private UserServiceImpl userService;
     @Autowired private FreelancerService freelancerService;
 
-  @Autowired  PasswordEncoder passwordEncoder;
+/*  @Autowired  PasswordEncoder passwordEncoder;*/
 
 
    /* @GetMapping("/account")
@@ -55,7 +55,7 @@ public class AccountController {
             Freelancer f=new Freelancer();
             acc.setId(id);
             acc.setEmail(json.getString("email"));
-            acc.setPassword(passwordEncoder.encode(json.getString("password")));
+         /*   acc.setPassword(passwordEncoder.encode(json.getString("password")));*/
             acc.setCreatedDate(Instant.now());
             service.addAccount(acc);
             u.setId(id);

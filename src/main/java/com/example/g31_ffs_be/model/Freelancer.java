@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -46,9 +49,15 @@ public class Freelancer {
     private Subcareer subCareer;
 
     @OneToMany(mappedBy = "freelancer")
-    private Set<Education> educations = new LinkedHashSet<>();
+    private List<Education> educations = new ArrayList<>();
 
     @OneToMany(mappedBy = "freelancer")
-    private Set<Workexperience> workexperiences = new LinkedHashSet<>();
+    private List<Workexperience> workexperiences = new ArrayList<>();
+    @OneToMany
+    @JoinTable(name = "freelancer_skill",
+            joinColumns = @JoinColumn(name = "freelancer_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private List<Skill> skills;
+
 
 }
