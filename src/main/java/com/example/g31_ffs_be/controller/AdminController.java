@@ -1,6 +1,7 @@
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.StaffAdminDto;
+import com.example.g31_ffs_be.dto.StaffDto;
 import com.example.g31_ffs_be.model.Account;
 import com.example.g31_ffs_be.model.Report;
 import com.example.g31_ffs_be.model.Staff;
@@ -10,20 +11,25 @@ import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
 import com.example.g31_ffs_be.service.impl.ReportServiceImpl;
 import com.example.g31_ffs_be.service.impl.StaffServiceImpl;
 import net.bytebuddy.utility.RandomString;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 
 @RestController
-@RequestMapping("")
 @CrossOrigin("*")
+@RequestMapping("/api/admin")
 public class AdminController {
     @Autowired
     StaffServiceImpl staffService;
@@ -49,33 +55,40 @@ public class AdminController {
         if(offset>=0) return staffService.getStaffWithPaging(offset-1,6);
         return null;
     }
+    private static String decode(String encodedString) {
+        return new String(Base64.getUrlDecoder().decode(encodedString));
+    }
     @GetMapping("/admin/report/{offset}")
     public Page<Report> getReportPaging(@PathVariable int offset){
         if(offset>=0)
             return reportService.getReportByPaging(offset-1,6);
         return null;
     }
-    @PostMapping("/add/staff")
-    public void addStaff(@RequestBody String strJson){
-
+    @PostMapping("/addStaff")
+    public ResponseEntity<?> addStaff(@RequestHeader(name = "Authorization") String token, @Valid @RequestBody StaffDto staffDto){
+        String[] parts = token.split("\\.");
+        System.out.println(decode(parts[1]));
+        System.out.println();
             String id="LS"+RandomString.make(8);
-            JSONObject json=new JSONObject(strJson);
+        System.out.println();
+       /* JSONObject json=new JSONObject(strJson).getJSONObject("params").getJSONObject("staff");*/
             if (!accountService.checkIdExist(id)) {
                 Account acc = new Account();
                 acc.setId(id);
-                acc.setEmail(json.getString("email"));
-                acc.setPassword(passwordEncoder.encode(json.getString("password")));
+                acc.setEmail(staffDto.getEmail());
+                acc.setPassword(passwordEncoder.encode(staffDto.getPassword()));
                 accountService.addAccount(acc);
                 Staff s = new Staff();
                 s.setId(id);
-                s.setFullname(json.getString("fullname"));
-                s.setAddress(json.getString("address"));
-                s.setPhone(json.getString("phone"));
+                s.setFullname(staffDto.getFullname());
+                s.setAddress(staffDto.getAddress()  );
+                s.setPhone(staffDto.getPhone());
                 s.setIsActive(Boolean.TRUE);
                 staffService.addStaff(s);
             }
+           return new ResponseEntity<>("đăng ký thành công",HttpStatus.OK);
     }
-    @PostMapping("/admin/report/add")
+    @PostMapping("/addReport")
     public void addReport(@RequestBody String strJson){
         try {
             JSONObject json = new JSONObject(strJson);
@@ -92,7 +105,7 @@ public class AdminController {
 
         }
     }
-    @PutMapping("/staff/ban")
+    @PutMapping("/banStaff")
     public void banStaff(@RequestParam String id){
         staffService.banStaff(id);
 

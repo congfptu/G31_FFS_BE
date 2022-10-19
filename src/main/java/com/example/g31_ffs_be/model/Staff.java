@@ -10,6 +10,8 @@ import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "staff")
@@ -35,7 +37,6 @@ public class Staff {
 
     @Column(name = "address")
     private String address;
-
     @Column(name = "fullname")
     private String fullname;
 

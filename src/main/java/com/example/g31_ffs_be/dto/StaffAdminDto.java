@@ -13,4 +13,5 @@ public class StaffAdminDto {
     private String fullname;
     private String phone;
     private String address;
+    private Boolean isActive;
 }

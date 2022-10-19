@@ -54,6 +54,7 @@ public class StaffServiceImpl implements StaffService {
                 sad.setFullname(a.getFullname());
                 sad.setAddress(a.getAddress());
                 sad.setEmail(a.getAccount().getEmail());
+                sad.setIsActive(a.getIsActive());
                 lists.add(sad);
             }
         }}

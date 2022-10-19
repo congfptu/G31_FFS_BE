@@ -25,7 +25,7 @@ import java.io.IOException;
 
 @Configuration
 
-    public class SecurityConfig {
+    public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 

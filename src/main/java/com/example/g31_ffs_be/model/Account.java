@@ -30,8 +30,6 @@ public class Account {
     @Column(name = "email")
     private String email;
 
-
-
     @OneToOne(mappedBy = "account")
     private User user;
 
