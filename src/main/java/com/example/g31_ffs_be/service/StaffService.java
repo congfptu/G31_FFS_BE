@@ -11,7 +11,7 @@ import java.util.List;
 public interface StaffService {
 void addStaff(Staff s);
 List<StaffAdminDto> getAllStaffs();
-    List<StaffAdminDto> getStaffWithPaging(int offset, int pageSize);
+    List<StaffAdminDto> getStaffByName(String name,int pageNo,int pageSize);
     void banStaff(String id);
 
 }

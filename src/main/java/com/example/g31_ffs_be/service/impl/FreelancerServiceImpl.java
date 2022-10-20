@@ -1,7 +1,7 @@
 package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.FreelancerAdminDto;
-import com.example.g31_ffs_be.dto.FreelancerDetailDTO;
+import com.example.g31_ffs_be.dto.FreelancerDetailDto;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.FreelancerRepository;
 import com.example.g31_ffs_be.service.FreelancerService;
@@ -31,8 +31,8 @@ public class FreelancerServiceImpl implements FreelancerService {
       FreelancerAdminDto freelancerAdminDto=mapper.map(freelancer,FreelancerAdminDto.class);
       return freelancerAdminDto;
     }
-    private FreelancerDetailDTO mapToFreelancerDetailDTO(Freelancer freelancer){
-        FreelancerDetailDTO freelancerDetailDTO=mapper.map(freelancer,FreelancerDetailDTO.class);
+    private FreelancerDetailDto mapToFreelancerDetailDTO(Freelancer freelancer){
+        FreelancerDetailDto freelancerDetailDTO=mapper.map(freelancer, FreelancerDetailDto.class);
         return freelancerDetailDTO;
     }
     @Override
@@ -55,10 +55,10 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public FreelancerDetailDTO getDetailFreelancer(String id) {
+    public FreelancerDetailDto getDetailFreelancer(String id) {
         Optional<Freelancer> freelancer=freelancerRepository.findById(id);
        Freelancer f=freelancer.get();
-        FreelancerDetailDTO fd=mapToFreelancerDetailDTO(f);
+        FreelancerDetailDto fd=mapToFreelancerDetailDTO(f);
         double star=0;
         User u=f.getUser();
         for (Feedback feedback:u.getFeedbackTos())
@@ -69,6 +69,7 @@ public class FreelancerServiceImpl implements FreelancerService {
         fd.setFullName(u.getFullname());
         fd.setAddress(u.getAddress());
         fd.setPhone(u.getPhone());
+
         return fd;
     }
 }

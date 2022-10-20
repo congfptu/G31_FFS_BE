@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "recruiter")
@@ -32,5 +33,12 @@ public class Recruiter {
     private String taxNumber;
 
 
+    @ManyToOne()
+    @JoinColumn(name = "career_id")
+    private Career career;
+
+    @Size(max = 255)
+    @Column(name = "company_name")
+    private String companyName;
 
 }

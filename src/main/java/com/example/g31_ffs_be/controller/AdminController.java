@@ -1,18 +1,18 @@
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.FreelancerAdminDto;
+import com.example.g31_ffs_be.dto.RecruiterAdminDto;
 import com.example.g31_ffs_be.dto.StaffAdminDto;
 import com.example.g31_ffs_be.dto.StaffDto;
 import com.example.g31_ffs_be.model.*;
-import com.example.g31_ffs_be.repository.BanRepository;
-import com.example.g31_ffs_be.repository.FreelancerRepository;
-import com.example.g31_ffs_be.repository.StaffRepository;
-import com.example.g31_ffs_be.repository.TypeBanRepository;
+import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.service.impl.*;
 import net.bytebuddy.utility.RandomString;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,28 +36,50 @@ public class AdminController {
     @Autowired
     FreelancerServiceImpl freelancerService;
     @Autowired
+    RecruiterServiceImpl recruiterService;
+    @Autowired
     UserServiceImpl userService;
 @Autowired FreelancerRepository freelancerRepository;
+@Autowired
+    RecruiterRepository recruiterRepository;
+@Autowired StaffRepository staffRepository;
 @Autowired
     TypeBanRepository typeBanRepository;
 @Autowired
     BanRepository banRepository;
     @Autowired private AccountServiceImpl accountService;
     //staffController
-    @GetMapping("/admin/staff")
+    @GetMapping("/staff111")
     public List<StaffAdminDto> getAllStaff(){
         return staffService.getAllStaffs();
     }
 
-    @GetMapping("/all")
-    public List<FreelancerAdminDto> getAllStaffs(){
+    @GetMapping("/staff")
+    public ResponseEntity<?>getStaffByname( @RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "name", defaultValue = "") String name,
+                                                @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
+    ) {
+        int pageIndex=0;
+        try{
+            pageIndex = Integer.parseInt(pageNo);}
+        catch (Exception e){
 
-        return freelancerService.getFreelancerByName("",0,10);
-    }
-    @GetMapping("/admin/staff/{offset}")
-    public List<StaffAdminDto> getStaffPaging(@PathVariable int offset){
-        if(offset>=0) return staffService.getStaffWithPaging(offset-1,6);
-        return null;
+        }
+        int pageSize = 5;
+        Pageable p=PageRequest.of(pageIndex,pageSize);
+        int totalPage= staffRepository.getStaffByName(name,p).getTotalPages();
+        if(totalPage>=pageIndex-1)
+        {
+            List<StaffAdminDto> sads=staffService.getStaffByName(name,pageIndex,pageSize);
+            Map<String, Object> map = new HashMap<>();
+            map.put("staffs", sads);
+            map.put("pageIndex", pageIndex+1);
+            map.put("totalPages", totalPage);
+            return new ResponseEntity<>(map, HttpStatus.OK);}
+        else{
+            return new ResponseEntity<>("không có dữ liệu trang này!",HttpStatus.NO_CONTENT);
+        }
+
     }
     private static String decode(String encodedString) {
         return new String(Base64.getUrlDecoder().decode(encodedString));
@@ -97,28 +119,41 @@ public class AdminController {
                                                 @RequestParam(name = "name", defaultValue = "") String name,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
                                                 ) {
+        int pageIndex=0;
+        try{
+        pageIndex = Integer.parseInt(pageNo);}
+        catch (Exception e){
 
-        int pageIndex = Integer.parseInt(pageNo);
-        int pageSize = 5;
-        List<FreelancerAdminDto> fas=freelancerService.getFreelancerByName(name,pageIndex,pageSize);
-        int totalPage = 0;
-        if(fas.size() % pageSize == 0){
-            totalPage = fas.size() / pageSize;
-        }else{
-            totalPage = (fas.size() / pageSize) + 1;
         }
+        int pageSize = 5;
+        Pageable p=PageRequest.of(pageIndex,pageSize);
+        int totalPage= freelancerRepository.getFreelancerByName(name,p).getTotalPages();
+        if(totalPage>=pageIndex-1)
+        {
+        List<FreelancerAdminDto> fas=freelancerService.getFreelancerByName(name,pageIndex,pageSize);
+
+
         Map<String, Object> map = new HashMap<>();
         map.put("freelancers", fas);
         map.put("pageIndex", pageIndex+1);
         map.put("totalPages", totalPage);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return new ResponseEntity<>(map, HttpStatus.OK);}
+        else{
+            return new ResponseEntity<>("không có dữ liệu trang này!",HttpStatus.NO_CONTENT);
+        }
 
     }
     @GetMapping("/detail-freelancer")
-    public ResponseEntity<?>getFreelancerFilter(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<?>getDetailFreelancer(@RequestHeader(name = "Authorization") String token,
                                                @RequestParam(name = "id", defaultValue = "") String id){
         System.out.println(id);
         return new ResponseEntity<>(freelancerService.getDetailFreelancer(id), HttpStatus.OK);
+    }
+    @GetMapping("/detail-recruiter")
+    public ResponseEntity<?>getDetailRecruiter(@RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "id", defaultValue = "") String id){
+        System.out.println(id);
+        return new ResponseEntity<>(recruiterService.getDetailRecruiter(id), HttpStatus.OK);
     }
     @GetMapping("/type-ban")
     public ResponseEntity<?>getAllTypeBan(@RequestHeader(name = "Authorization") String token,
@@ -140,7 +175,37 @@ public class AdminController {
         userService.banUser(userId);
         return new ResponseEntity<>("", HttpStatus.OK);
     }
+//recruiter
+@GetMapping("/recruiter")
+public ResponseEntity<?>getRecruiterFilter( @RequestHeader(name = "Authorization") String token,
+                                            @RequestParam(name = "name", defaultValue = "") String name,
+                                            @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
+) {
+    int pageIndex=0;
 
+    try{
+        pageIndex = Integer.parseInt(pageNo);}
+    catch (Exception e){
+
+    }
+    int pageSize = 5;
+    Pageable p=PageRequest.of(pageIndex,pageSize);
+    int totalPage= recruiterRepository.getRecruiterByName(name,p).getTotalPages();
+    if(totalPage>=pageIndex-1){
+    List<RecruiterAdminDto> ras=recruiterService.getRecruiterByName(name,pageIndex,pageSize);
+
+
+
+    Map<String, Object> map = new HashMap<>();
+    map.put("recruiters", ras);
+    map.put("pageIndex", pageIndex+1);
+    map.put("totalPages", totalPage);
+    return new ResponseEntity<>(map, HttpStatus.OK);}
+    else{
+        return new ResponseEntity<>("Không có nội dung trong trang này", HttpStatus.BAD_REQUEST);
+    }
+
+}
     @GetMapping("/admin/report/{offset}")
     public Page<Report> getReportPaging(@PathVariable int offset){
         if(offset>=0)

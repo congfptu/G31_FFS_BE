@@ -16,7 +16,8 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
   @Query(value = "select a.* from `freelancer` a" +
             " inner join `user` b on b.user_id=a.freelancer_id" +
             " inner join `account` c on a.freelancer_id=c.id" +
-            " where b.fullname like CONCAT('%',:name,'%') or c.email like CONCAT('%',:name,'%')", nativeQuery = true)
+            " where b.fullname like CONCAT('%',:name,'%') or c.email like CONCAT('%',:name,'%') "+
+          "Order by b.fullname asc,c.email asc ", nativeQuery = true)
   Page<Freelancer> getFreelancerByName(String name,Pageable pageable);
 
 }
