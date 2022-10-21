@@ -1,9 +1,6 @@
 package com.example.g31_ffs_be.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -11,6 +8,7 @@ import javax.validation.constraints.Size;
 public class Career {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Size(max = 255)

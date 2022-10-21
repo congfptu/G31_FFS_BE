@@ -1,6 +1,7 @@
 package com.example.g31_ffs_be.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,8 @@ public class Subcareer {
 
     @Column(name = "Name")
     private String name;
-
+    @JsonIgnore
+    @Column(name = "career_id")
+    private Integer career_id;
 
 }
