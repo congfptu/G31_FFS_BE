@@ -1,6 +1,7 @@
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.model.*;
+import com.example.g31_ffs_be.repository.RoleRepository;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
 import com.example.g31_ffs_be.service.impl.StaffServiceImpl;
@@ -26,6 +27,8 @@ public class AccountController {
     @Autowired private AccountServiceImpl service;
     @Autowired private UserServiceImpl userService;
     @Autowired private FreelancerService freelancerService;
+    @Autowired
+    RoleRepository roleRepository;
 
 /*  @Autowired  PasswordEncoder passwordEncoder;*/
 
@@ -52,17 +55,18 @@ public class AccountController {
         if (!service.checkIdExist(id)){
             Account acc=new Account();
             User u=new User();
-            Freelancer f=new Freelancer();
             acc.setId(id);
+            u.setId(id);
+            Freelancer f=new Freelancer();
+            f.setId(id);
+            u.setFreelancer(f);
+            Role role= roleRepository.findById(2).get();
+            acc.setRole(role);
             acc.setEmail(json.getString("email"));
          /*   acc.setPassword(passwordEncoder.encode(json.getString("password")));*/
             acc.setCreatedDate(Instant.now());
+            acc.setUser(u);
             service.addAccount(acc);
-            u.setId(id);
-            f.setId(id);
-            userService.addUser(u);
-            freelancerService.addFreelancer(f);
-            service.addAccountRole(id,json.getInt("role_id"));
         }
     }
 

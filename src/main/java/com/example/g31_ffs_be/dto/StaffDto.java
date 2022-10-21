@@ -14,12 +14,13 @@ public class StaffDto {
     private String email;
     @NotEmpty
     @Size(min = 2, message = "fullname tối thiểu 2 chữ")
-    private String fullname;
+    private String fullName;
     private String password;
     private String phone;
     private String address;
     private int role;
     private String isActive;
     private String isActive1;
+
 
 }

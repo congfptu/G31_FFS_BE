@@ -30,17 +30,15 @@ public class Account {
     @Column(name = "email")
     private String email;
 
-    @OneToOne(mappedBy = "account")
+    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
     private User user;
-
-    @OneToOne(mappedBy = "account")
+    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
     private Staff staff;
-
 
     @Column(name = "created_date")
     private Instant createdDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name = "account_role",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

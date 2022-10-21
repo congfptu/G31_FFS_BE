@@ -18,9 +18,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+
 public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

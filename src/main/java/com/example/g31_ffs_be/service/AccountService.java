@@ -10,4 +10,5 @@ public interface AccountService {
     void addAccount(Account f);
     public Boolean checkIdExist(String id);
     public void addAccountRole(String account_id,int role_id);
+    public Boolean checkEmailExist(String email);
 }

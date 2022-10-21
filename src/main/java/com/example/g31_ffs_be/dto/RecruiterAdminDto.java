@@ -7,6 +7,6 @@ public class RecruiterAdminDto {
     String id;
     String email;
     String fullName;
-    String accountBalance;
+    double accountBalance;
     Boolean isBanned;
 }

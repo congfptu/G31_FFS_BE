@@ -35,21 +35,26 @@ public class FreelancerServiceImpl implements FreelancerService {
         FreelancerDetailDto freelancerDetailDTO=mapper.map(freelancer, FreelancerDetailDto.class);
         return freelancerDetailDTO;
     }
+    private List<FreelancerAdminDto> convertListFreelancerDto(List<Freelancer> freelancers) {
+        List<FreelancerAdminDto> fas=new ArrayList<>();
+        for (Freelancer f:freelancers){
+            User u=f.getUser();
+            FreelancerAdminDto fa=new FreelancerAdminDto();
+            fa=mapToFreeDTO(f);
+            fa.setFullName(u.getFullname());
+            fa.setEmail(u.getAccount().getEmail());
+            fa.setIsBanned(u.getIsBanned());
+            fa.setAccountBalance(u.getAccountBalance()!=null?u.getAccountBalance():0);
+            fas.add(fa);
+        }
+        return fas;
+    }
     @Override
     public List<FreelancerAdminDto> getFreelancerByName(String name, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Freelancer> page = freelancerRepository.getFreelancerByName(name,pageable);
         List<Freelancer> freelancers=page.getContent();
-        List<FreelancerAdminDto> fas=new ArrayList<>();
-        for (Freelancer f: freelancers){
-            FreelancerAdminDto fa=new FreelancerAdminDto();
-            fa=mapToFreeDTO(f);
-            fa.setFullName(f.getUser().getFullname());
-            fa.setEmail(f.getUser().getAccount().getEmail());
-            fa.setIsBanned(f.getUser().getIsBanned());
-            fas.add(fa);
-        }
-        return fas;
+        return convertListFreelancerDto(freelancers);
 
 
     }
@@ -72,4 +77,12 @@ public class FreelancerServiceImpl implements FreelancerService {
 
         return fd;
     }
+
+    @Override
+    public List<FreelancerAdminDto> getTop5ByName(String name) {
+        List<Freelancer> freelancers=freelancerRepository.getTop5ByName(name);
+        return convertListFreelancerDto(freelancers);
+    }
+
+
 }

@@ -1,4 +1,6 @@
 package com.example.g31_ffs_be.service.impl;
+
+import com.example.g31_ffs_be.dto.FreelancerAdminDto;
 import com.example.g31_ffs_be.dto.FreelancerDetailDto;
 import com.example.g31_ffs_be.dto.RecruiterAdminDto;
 import com.example.g31_ffs_be.dto.RecruiterDetailDTO;
@@ -25,45 +27,60 @@ public class RecruiterServiceImpl implements RecruiterService {
     RecruiterRepository recruiterRepository;
     @Autowired
     private ModelMapper mapper;
-    private RecruiterAdminDto mapToFreeDTO(Recruiter recruiter){
-        RecruiterAdminDto recruiterAdminDto=mapper.map(recruiter,RecruiterAdminDto.class);
+
+    private RecruiterAdminDto mapToFreeDTO(Recruiter recruiter) {
+        RecruiterAdminDto recruiterAdminDto = mapper.map(recruiter, RecruiterAdminDto.class);
         return recruiterAdminDto;
     }
-    private RecruiterDetailDTO mapToRecruiterDetailDto(Recruiter recruiter){
-        RecruiterDetailDTO recruiterDetailDTO=mapper.map(recruiter,RecruiterDetailDTO.class);
+
+    private RecruiterDetailDTO mapToRecruiterDetailDto(Recruiter recruiter) {
+        RecruiterDetailDTO recruiterDetailDTO = mapper.map(recruiter, RecruiterDetailDTO.class);
         return recruiterDetailDTO;
     }
-    @Override
-    public List<RecruiterAdminDto> getRecruiterByName(String name, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Recruiter> page = recruiterRepository.getRecruiterByName(name,pageable);
-        List<Recruiter> freelancers=page.getContent();
-        List<RecruiterAdminDto> ras=new ArrayList<>();
-        for (Recruiter f: freelancers){
-            RecruiterAdminDto ra=new RecruiterAdminDto();
-            ra=mapToFreeDTO(f);
-            ra.setFullName(f.getUser().getFullname());
-            ra.setEmail(f.getUser().getAccount().getEmail());
-            ra.setIsBanned(f.getUser().getIsBanned());
+
+    private List<RecruiterAdminDto> convertListRecruiterAdminDto(List<Recruiter> recruiters) {
+        List<RecruiterAdminDto> ras = new ArrayList<>();
+        for (Recruiter r: recruiters) {
+            RecruiterAdminDto ra;
+            User u=r.getUser();
+            ra = mapToFreeDTO(r);
+            ra.setFullName(u.getFullname());
+            ra.setEmail(u.getAccount().getEmail());
+            ra.setIsBanned(u.getIsBanned());
+            ra.setAccountBalance(u.getAccountBalance());
             ras.add(ra);
         }
         return ras;
     }
 
     @Override
+    public List<RecruiterAdminDto> getRecruiterByName(String name, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Recruiter> page = recruiterRepository.getRecruiterByName(name, pageable);
+        List<Recruiter> recruiters = page.getContent();
+        return convertListRecruiterAdminDto(recruiters);
+    }
+
+    @Override
     public RecruiterDetailDTO getDetailRecruiter(String id) {
-        Optional<Recruiter> recruiter=recruiterRepository.findById(id);
-        Recruiter r=recruiter.get();
-        RecruiterDetailDTO rd=mapToRecruiterDetailDto(r);
-        double star=0;
-        User u=r.getUser();
-        for (Feedback feedback:u.getFeedbackTos())
-            star+=feedback.getStar();
-        star=star/u.getFeedbackTos().size();
+        Optional<Recruiter> recruiter = recruiterRepository.findById(id);
+        Recruiter r = recruiter.get();
+        RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
+        double star = 0;
+        User u = r.getUser();
+        for (Feedback feedback : u.getFeedbackTos())
+            star += feedback.getStar();
+        star = star / u.getFeedbackTos().size();
         rd.setStar(star);
         rd.setAddress(u.getAddress());
         rd.setPhone(u.getPhone());
         rd.setEmail(u.getAccount().getEmail());
         return rd;
+    }
+
+    @Override
+    public List<RecruiterAdminDto> getTop5RecruiterByName(String name) {
+        List<Recruiter> recruiters = recruiterRepository.getTop5Recruiter(name);
+        return convertListRecruiterAdminDto(recruiters);
     }
 }

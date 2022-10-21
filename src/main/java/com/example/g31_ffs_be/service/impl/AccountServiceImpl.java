@@ -2,9 +2,7 @@ package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.AccountDto;
 import com.example.g31_ffs_be.model.Account;
-import com.example.g31_ffs_be.model.AccountRole;
 import com.example.g31_ffs_be.repository.AccountRepository;
-import com.example.g31_ffs_be.repository.AccountRoleRepository;
 import com.example.g31_ffs_be.service.AccountService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +13,16 @@ import org.springframework.stereotype.Service;
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import java.util.List;
+
 @Service
 @Component
 public class AccountServiceImpl implements AccountService {
-    @Autowired AccountRepository repo;
-    @Autowired AccountRoleRepository acc_role_repo;
+    @Autowired
+    AccountRepository repo;
+
     @Autowired
     private ModelMapper modelMapper;
+
     @Override
     @Bean
     @ElementCollection(fetch = FetchType.LAZY)
@@ -33,9 +34,10 @@ public class AccountServiceImpl implements AccountService {
             lists.add(acc);
 
         }*/
-      return null;
+        return null;
     }
-    public List<Account> getAllAccount(){
+
+    public List<Account> getAllAccount() {
         return (List<Account>) repo.findAll();
     }
 
@@ -43,9 +45,7 @@ public class AccountServiceImpl implements AccountService {
     public void addAccount(Account f) {
         try {
             repo.save(f);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
 
         }
 
@@ -59,18 +59,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void addAccountRole(String account_id, int role_id) {
-        try {
-            AccountRole acc=new AccountRole(account_id,role_id);
-            acc_role_repo.save(acc);
-        }
-        catch(Exception e)
-        {
-
-        }
-
+    public Boolean checkEmailExist(String email) {
+        if (repo.findByEmail(email)!=null)
+            return true;
+        return false;
     }
 
+    @Override
+    public void addAccountRole(String account_id, int role_id) {
+
+    }
 
 
 }

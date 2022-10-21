@@ -11,6 +11,6 @@ public class FreelancerAdminDto {
     String id;
     String email;
     String fullName;
-    String accountBalance;
+    double accountBalance;
     Boolean isBanned;
 }

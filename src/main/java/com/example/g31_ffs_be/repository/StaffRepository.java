@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff,String> {
@@ -19,5 +20,4 @@ public interface StaffRepository extends JpaRepository<Staff,String> {
             " where a.fullname like CONCAT('%',:name,'%') and b.email like CONCAT('%',:name,'%') "+
             " Order by a.fullname asc,b.email asc ", nativeQuery = true)
     Page<Staff> getStaffByName(String name, Pageable pageable);
-
 }

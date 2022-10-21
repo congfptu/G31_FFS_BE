@@ -11,4 +11,5 @@ import java.util.List;
 public interface RecruiterService {
     List<RecruiterAdminDto> getRecruiterByName(String name, int pageNo, int pageSize);
     RecruiterDetailDTO getDetailRecruiter(String id);
+    List<RecruiterAdminDto> getTop5RecruiterByName(String name);
 }

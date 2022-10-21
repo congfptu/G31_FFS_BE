@@ -54,7 +54,7 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private Recruiter recruiter;
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Freelancer freelancer;
 
     @OneToMany(mappedBy = "from")

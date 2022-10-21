@@ -1,11 +1,9 @@
 package com.example.g31_ffs_be.controller;
 
-import com.example.g31_ffs_be.dto.FreelancerAdminDto;
-import com.example.g31_ffs_be.dto.RecruiterAdminDto;
-import com.example.g31_ffs_be.dto.StaffAdminDto;
-import com.example.g31_ffs_be.dto.StaffDto;
+import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
+import com.example.g31_ffs_be.service.ServiceService;
 import com.example.g31_ffs_be.service.impl.*;
 import net.bytebuddy.utility.RandomString;
 import org.json.JSONObject;
@@ -27,8 +25,8 @@ import java.util.*;
 public class AdminController {
     @Autowired
     StaffServiceImpl staffService;
-   /* @Autowired
-    PasswordEncoder passwordEncoder;*/
+    /* @Autowired
+     PasswordEncoder passwordEncoder;*/
     @Autowired
     ReportServiceImpl reportService;
     @Autowired
@@ -39,134 +37,144 @@ public class AdminController {
     RecruiterServiceImpl recruiterService;
     @Autowired
     UserServiceImpl userService;
-@Autowired FreelancerRepository freelancerRepository;
-@Autowired
+    @Autowired
+    FreelancerRepository freelancerRepository;
+    @Autowired
     RecruiterRepository recruiterRepository;
-@Autowired StaffRepository staffRepository;
-@Autowired
+    @Autowired
+    BenefitRepository benefitRepository;
+    @Autowired
+    StaffRepository staffRepository;
+    @Autowired
     TypeBanRepository typeBanRepository;
-@Autowired
+    @Autowired
     BanRepository banRepository;
-    @Autowired private AccountServiceImpl accountService;
+    @Autowired ServiceService serviceService;
+    @Autowired
+    private AccountServiceImpl accountService;
+    @Autowired
+    RoleRepository roleRepository;
+    @Autowired ServiceRepository serviceRepository;
+
     //staffController
     @GetMapping("/staff111")
-    public List<StaffAdminDto> getAllStaff(){
+    public List<StaffAdminDto> getAllStaff() {
         return staffService.getAllStaffs();
     }
 
     @GetMapping("/staff")
-    public ResponseEntity<?>getStaffByname( @RequestHeader(name = "Authorization") String token,
-                                                @RequestParam(name = "name", defaultValue = "") String name,
-                                                @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
+    public ResponseEntity<?> getStaffByname(@RequestHeader(name = "Authorization") String token,
+                                            @RequestParam(name = "name", defaultValue = "") String name,
+                                            @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
     ) {
-        int pageIndex=0;
-        try{
-            pageIndex = Integer.parseInt(pageNo);}
-        catch (Exception e){
+        int pageIndex = 0;
+        try {
+            pageIndex = Integer.parseInt(pageNo);
+        } catch (Exception e) {
 
         }
         int pageSize = 5;
-        Pageable p=PageRequest.of(pageIndex,pageSize);
-        int totalPage= staffRepository.getStaffByName(name,p).getTotalPages();
-        if(totalPage>=pageIndex-1)
-        {
-            List<StaffAdminDto> sads=staffService.getStaffByName(name,pageIndex,pageSize);
+        Pageable p = PageRequest.of(pageIndex, pageSize);
+        int totalPage = staffRepository.getStaffByName(name, p).getTotalPages();
+        if (totalPage >= pageIndex - 1) {
+            List<StaffAdminDto> sads = staffService.getStaffByName(name, pageIndex, pageSize);
             Map<String, Object> map = new HashMap<>();
             map.put("staffs", sads);
-            map.put("pageIndex", pageIndex+1);
+            map.put("pageIndex", pageIndex + 1);
             map.put("totalPages", totalPage);
-            return new ResponseEntity<>(map, HttpStatus.OK);}
-        else{
-            return new ResponseEntity<>("không có dữ liệu trang này!",HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }
 
     }
+
     private static String decode(String encodedString) {
         return new String(Base64.getUrlDecoder().decode(encodedString));
     }
-    @PostMapping("/addStaff")
-    public ResponseEntity<?> addStaff(@RequestHeader(name = "Authorization") String token, @Valid @RequestBody StaffDto staffDto){
-        String[] parts = token.split("\\.");
-        System.out.println(decode(parts[1]));
-        System.out.println();
-            String id="LS"+RandomString.make(8);
-        System.out.println();
-       /* JSONObject json=new JSONObject(strJson).getJSONObject("params").getJSONObject("staff");*/
+
+    @PostMapping("/add-staff")
+    public ResponseEntity<?> addStaff(@RequestHeader(name = "Authorization") String token, @Valid @RequestBody StaffDto staffDto) {
+        if (accountService.checkEmailExist(staffDto.getEmail())) {
+            return new ResponseEntity<>("Email đã tồn tại trên hệ thống, vui lòng thử email khác", HttpStatus.OK);
+        } else {
+            String id = "LS" + RandomString.make(8);
             if (!accountService.checkIdExist(id)) {
+
                 Account acc = new Account();
                 acc.setId(id);
                 acc.setEmail(staffDto.getEmail());
-               /* acc.setPassword(passwordEncoder.encode(staffDto.getPassword()));*/
-                accountService.addAccount(acc);
+                acc.setPassword(staffDto.getPassword());
                 Staff s = new Staff();
                 s.setId(id);
-                s.setFullname(staffDto.getFullname());
-                s.setAddress(staffDto.getAddress()  );
+                s.setFullname(staffDto.getFullName());
+                s.setAddress(staffDto.getAddress());
                 s.setPhone(staffDto.getPhone());
                 s.setIsActive(Boolean.TRUE);
-                staffService.addStaff(s);
+                acc.setStaff(s);
+                acc.setRole(roleRepository.findById(staffDto.getRole()).get());
+                accountService.addAccount(acc);
             }
-           return new ResponseEntity<>("đăng ký thành công",HttpStatus.OK);
+        }
+        return new ResponseEntity<>("đăng ký thành công", HttpStatus.OK);
     }
-    @PutMapping("/banStaff")
-    public void banStaff(@RequestParam String id){
+
+    @PutMapping("/ban-staff")
+    public void banStaff(@RequestParam String id) {
         staffService.banStaff(id);
 
     }
+
     //freelancerController
     @GetMapping("/freelancer")
-    public ResponseEntity<?>getFreelancerFiler( @RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<?> getFreelancerFiler(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "name", defaultValue = "") String name,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
-                                                ) {
-        int pageIndex=0;
-        try{
-        pageIndex = Integer.parseInt(pageNo);}
-        catch (Exception e){
+    ) {
+        int pageIndex = 0;
+        try {
+            pageIndex = Integer.parseInt(pageNo);
+        } catch (Exception e) {
 
         }
         int pageSize = 5;
-        Pageable p=PageRequest.of(pageIndex,pageSize);
-        int totalPage= freelancerRepository.getFreelancerByName(name,p).getTotalPages();
-        if(totalPage>=pageIndex-1)
-        {
-        List<FreelancerAdminDto> fas=freelancerService.getFreelancerByName(name,pageIndex,pageSize);
-
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("freelancers", fas);
-        map.put("pageIndex", pageIndex+1);
-        map.put("totalPages", totalPage);
-        return new ResponseEntity<>(map, HttpStatus.OK);}
-        else{
-            return new ResponseEntity<>("không có dữ liệu trang này!",HttpStatus.NO_CONTENT);
+        Pageable p = PageRequest.of(pageIndex, pageSize);
+        int totalPage = freelancerRepository.getFreelancerByName(name, p).getTotalPages();
+        if (totalPage >= pageIndex - 1) {
+            List<FreelancerAdminDto> fas = freelancerService.getFreelancerByName(name, pageIndex, pageSize);
+            Map<String, Object> map = new HashMap<>();
+            map.put("freelancers", fas);
+            map.put("pageIndex", pageIndex + 1);
+            map.put("totalPages", totalPage);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }
 
     }
+
     @GetMapping("/detail-freelancer")
-    public ResponseEntity<?>getDetailFreelancer(@RequestHeader(name = "Authorization") String token,
-                                               @RequestParam(name = "id", defaultValue = "") String id){
+    public ResponseEntity<?> getDetailFreelancer(@RequestHeader(name = "Authorization") String token,
+                                                 @RequestParam(name = "id", defaultValue = "") String id) {
         System.out.println(id);
         return new ResponseEntity<>(freelancerService.getDetailFreelancer(id), HttpStatus.OK);
     }
-    @GetMapping("/detail-recruiter")
-    public ResponseEntity<?>getDetailRecruiter(@RequestHeader(name = "Authorization") String token,
-                                                @RequestParam(name = "id", defaultValue = "") String id){
-        System.out.println(id);
-        return new ResponseEntity<>(recruiterService.getDetailRecruiter(id), HttpStatus.OK);
-    }
+
+
+
     @GetMapping("/type-ban")
-    public ResponseEntity<?>getAllTypeBan(@RequestHeader(name = "Authorization") String token,
-                                               @RequestParam(name = "id", defaultValue = "") String id){
+    public ResponseEntity<?> getAllTypeBan(@RequestHeader(name = "Authorization") String token,
+                                           @RequestParam(name = "id", defaultValue = "") String id) {
         System.out.println(id);
         return new ResponseEntity<>(typeBanRepository.findAll(), HttpStatus.OK);
     }
-    @PostMapping("/ban-freelancer")
-    public ResponseEntity<?>banFreelancer(@RequestHeader(name = "Authorization") String token,
-                                               @RequestParam(name = "userId", defaultValue = "") String userId,
-                                               @RequestParam(name = "typeBan", defaultValue = "") String typeBan,
-                                               @RequestParam(name = "bannedBy", defaultValue = "") String adminId){
-        Ban b=new Ban();
+
+    @PostMapping("/ban-user")
+    public ResponseEntity<?> banFreelancer(@RequestHeader(name = "Authorization") String token,
+                                           @RequestParam(name = "userId", defaultValue = "") String userId,
+                                           @RequestParam(name = "typeBan", defaultValue = "") String typeBan,
+                                           @RequestParam(name = "bannedBy", defaultValue = "") String adminId) {
+        Ban b = new Ban();
         b.setBannedBy(adminId);
         b.setUser(userId);
         b.setDate(Instant.now());
@@ -175,61 +183,151 @@ public class AdminController {
         userService.banUser(userId);
         return new ResponseEntity<>("", HttpStatus.OK);
     }
-//recruiter
-@GetMapping("/recruiter")
-public ResponseEntity<?>getRecruiterFilter( @RequestHeader(name = "Authorization") String token,
-                                            @RequestParam(name = "name", defaultValue = "") String name,
-                                            @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
-) {
-    int pageIndex=0;
 
-    try{
-        pageIndex = Integer.parseInt(pageNo);}
-    catch (Exception e){
+    @GetMapping("/top5-freelancer")
+    public ResponseEntity<?> getTop5Freelancer(@RequestHeader(name = "Authorization") String token,
+                                               @RequestParam(name = "name", defaultValue = "") String name) {
+        return new ResponseEntity<>(freelancerService.getTop5ByName(name), HttpStatus.OK);
+    }
+    //recruiter
+    @GetMapping("/recruiter")
+    public ResponseEntity<?> getRecruiterFilter(@RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "name", defaultValue = "") String name,
+                                                @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
+    ) {
+        int pageIndex = 0;
+
+        try {
+            pageIndex = Integer.parseInt(pageNo);
+        } catch (Exception e) {
+
+        }
+        int pageSize = 5;
+        Pageable p = PageRequest.of(pageIndex, pageSize);
+        int totalPage = recruiterRepository.getRecruiterByName(name, p).getTotalPages();
+        if (totalPage >= pageIndex - 1) {
+            List<RecruiterAdminDto> ras = recruiterService.getRecruiterByName(name, pageIndex, pageSize);
+
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("recruiters", ras);
+            map.put("pageIndex", pageIndex + 1);
+            map.put("totalPages", totalPage);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Không có nội dung trong trang này", HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/top5-recruiter")
+    public ResponseEntity<?> getTop5Recruiter(@RequestHeader(name = "Authorization") String token,
+                                               @RequestParam(name = "name", defaultValue = "") String name) {
+        return new ResponseEntity<>(recruiterService.getTop5RecruiterByName(name), HttpStatus.OK);
+    }
+    @GetMapping("/detail-recruiter")
+    public ResponseEntity<?> getDetailRecruiter(@RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "id", defaultValue = "") String id) {
+        System.out.println(id);
+        return new ResponseEntity<>(recruiterService.getDetailRecruiter(id), HttpStatus.OK);
+    }
+
+    //Service
+    @GetMapping("/service")
+    public ResponseEntity<?> getServiceByName(@RequestHeader(name = "Authorization") String token,
+                                              @RequestParam(name = "name", defaultValue = "") String name,
+                                              @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
+        int pageIndex = 0;
+
+        try {
+            pageIndex = Integer.parseInt(pageNo);
+        } catch (Exception e) {
+
+        }
+        int pageSize = 5;
+        Pageable p = PageRequest.of(pageIndex, pageSize);
+        ServiceResponse serviceResponse = serviceService.getServiceByName(name, pageIndex, pageSize);
+        return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/add-service")
+    public ResponseEntity<?> addService(@RequestHeader(name = "Authorization") String token
+            , @RequestBody ServiceDto serviceDto
+    ) {
+        if (serviceService.checkServiceNameUnique(serviceDto.getServiceName())) {
+            return new ResponseEntity<>("tên service đã tồn tại", HttpStatus.BAD_REQUEST);
+        } else {
+            serviceService.saveService(serviceDto);
+            return new ResponseEntity<>(serviceDto, HttpStatus.CREATED);
+        }
+    }
+    @GetMapping("/delete-service")
+    public ResponseEntity<?> deleteService(@RequestHeader(name = "Authorization") String token,
+                                        @RequestParam(name = "id", defaultValue = "") String id) {
+        try{
+            int serviceId=Integer.parseInt(id);
+            serviceRepository.deleteById(serviceId);
+            return new ResponseEntity<>("Bạn đã xóa thành công", HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>("Không tìm thấy service cần xóa", HttpStatus.CREATED);
+        }
+    }
+
+    @GetMapping("/benefits-service")
+    public ResponseEntity<?> addService(@RequestHeader(name = "Authorization") String token,
+                                        @RequestParam(name = "id", defaultValue = "") String id) {
+        try{
+            int serviceId=Integer.parseInt(id);
+            return new ResponseEntity<>(serviceService.getBenefitsOfServiceByID(serviceId), HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>("Không tìm thấy service cần xóa", HttpStatus.CREATED);
+        }
 
     }
-    int pageSize = 5;
-    Pageable p=PageRequest.of(pageIndex,pageSize);
-    int totalPage= recruiterRepository.getRecruiterByName(name,p).getTotalPages();
-    if(totalPage>=pageIndex-1){
-    List<RecruiterAdminDto> ras=recruiterService.getRecruiterByName(name,pageIndex,pageSize);
 
-
-
-    Map<String, Object> map = new HashMap<>();
-    map.put("recruiters", ras);
-    map.put("pageIndex", pageIndex+1);
-    map.put("totalPages", totalPage);
-    return new ResponseEntity<>(map, HttpStatus.OK);}
-    else{
-        return new ResponseEntity<>("Không có nội dung trong trang này", HttpStatus.BAD_REQUEST);
+    @PostMapping("update-service")
+    public ResponseEntity<?> updateService(@RequestHeader(name = "Authorization") String token
+            , @RequestBody ServiceDto serviceDto
+    ) {
+        if (serviceService.checkServiceNameUnique(serviceDto.getServiceName())) {
+            return new ResponseEntity<>("tên service đã tồn tại", HttpStatus.BAD_REQUEST);
+        } else {
+            serviceService.saveService(serviceDto);
+            return new ResponseEntity<>(serviceDto, HttpStatus.CREATED);
+        }
     }
 
-}
     @GetMapping("/admin/report/{offset}")
-    public Page<Report> getReportPaging(@PathVariable int offset){
-        if(offset>=0)
-            return reportService.getReportByPaging(offset-1,6);
+    public Page<Report> getReportPaging(@PathVariable int offset) {
+        if (offset >= 0)
+            return reportService.getReportByPaging(offset - 1, 6);
         return null;
     }
+    @GetMapping("/role")
+    public ResponseEntity<?> getAllRoles(@RequestHeader(name = "Authorization") String token) {
+        return new ResponseEntity<>(roleRepository.findAll(), HttpStatus.CREATED);
+    }
+    @GetMapping("/benefit")
+    public ResponseEntity<?> getAllBenefits(@RequestHeader(name = "Authorization") String token) {
+        return new ResponseEntity<>(benefitRepository.findAll(), HttpStatus.CREATED);
+    }
+
     @PostMapping("/addReport")
-    public void addReport(@RequestBody String strJson){
+    public void addReport(@RequestBody String strJson) {
         try {
             JSONObject json = new JSONObject(strJson);
-            Report report=new Report();
-            User u=new User();
+            Report report = new Report();
+            User u = new User();
             u.setId(json.getString("from_id"));
             report.setContent(json.getString("content"));
             report.setTitle(json.getString("title"));
             report.setFrom(u);
             report.setDateCreated(Instant.now());
             reportService.addReport(report);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
 
         }
     }
-
 
 
 }

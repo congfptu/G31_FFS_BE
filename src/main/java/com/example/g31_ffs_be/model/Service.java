@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 
 @Entity
 @Table(name = "service")
@@ -18,6 +21,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class Service {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -32,5 +36,15 @@ public class Service {
 
     @Column(name = "duration")
     private Integer duration;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    @ManyToMany
+    @JoinTable(name = "benefit_service",
+            joinColumns = @JoinColumn(name = "service_id"),
+            inverseJoinColumns = @JoinColumn(name = "benefit_id"))
+    private List<Benefit> benefits = new ArrayList<>();
 
 }

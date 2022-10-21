@@ -10,4 +10,5 @@ public interface FreelancerService {
     void addFreelancer(Freelancer f);
     List<FreelancerAdminDto> getFreelancerByName(String name,int pageNo,int pageSize);
     FreelancerDetailDto getDetailFreelancer(String id);
+    List<FreelancerAdminDto>getTop5ByName(String name);
 }
