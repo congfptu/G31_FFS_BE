@@ -63,19 +63,25 @@ public class RecruiterServiceImpl implements RecruiterService {
 
     @Override
     public RecruiterDetailDTO getDetailRecruiter(String id) {
-        Optional<Recruiter> recruiter = recruiterRepository.findById(id);
-        Recruiter r = recruiter.get();
-        RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
-        double star = 0;
-        User u = r.getUser();
-        for (Feedback feedback : u.getFeedbackTos())
-            star += feedback.getStar();
-        star = star / u.getFeedbackTos().size();
-        rd.setStar(star);
-        rd.setAddress(u.getAddress());
-        rd.setPhone(u.getPhone());
-        rd.setEmail(u.getAccount().getEmail());
-        return rd;
+        try {
+            Optional<Recruiter> recruiter = recruiterRepository.findById(id);
+            Recruiter r = recruiter.get();
+            RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
+            double star = 0;
+            User u = r.getUser();
+            for (Feedback feedback : u.getFeedbackTos())
+                star += feedback.getStar();
+            star = star / u.getFeedbackTos().size();
+            rd.setStar(star);
+            rd.setAddress(u.getAddress());
+            rd.setPhone(u.getPhone());
+            rd.setEmail(u.getAccount().getEmail());
+            rd.setIsBanned(u.getIsBanned());
+            return rd;
+        }
+        catch (Exception e){
+           return null;
+        }
     }
 
     @Override

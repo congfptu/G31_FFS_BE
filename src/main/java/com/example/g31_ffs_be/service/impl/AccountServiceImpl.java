@@ -60,9 +60,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Boolean checkEmailExist(String email) {
-        if (repo.findByEmail(email)!=null)
-            return true;
-        return false;
+
+      return repo.findByEmail(email)!=null?true:false;
     }
 
     @Override

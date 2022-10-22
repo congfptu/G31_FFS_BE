@@ -27,33 +27,37 @@ public class FreelancerServiceImpl implements FreelancerService {
     public void addFreelancer(Freelancer f) {
 
     }
-    private FreelancerAdminDto mapToFreeDTO(Freelancer freelancer){
-      FreelancerAdminDto freelancerAdminDto=mapper.map(freelancer,FreelancerAdminDto.class);
-      return freelancerAdminDto;
+
+    private FreelancerAdminDto mapToFreeDTO(Freelancer freelancer) {
+        FreelancerAdminDto freelancerAdminDto = mapper.map(freelancer, FreelancerAdminDto.class);
+        return freelancerAdminDto;
     }
-    private FreelancerDetailDto mapToFreelancerDetailDTO(Freelancer freelancer){
-        FreelancerDetailDto freelancerDetailDTO=mapper.map(freelancer, FreelancerDetailDto.class);
+
+    private FreelancerDetailDto mapToFreelancerDetailDTO(Freelancer freelancer) {
+        FreelancerDetailDto freelancerDetailDTO = mapper.map(freelancer, FreelancerDetailDto.class);
         return freelancerDetailDTO;
     }
+
     private List<FreelancerAdminDto> convertListFreelancerDto(List<Freelancer> freelancers) {
-        List<FreelancerAdminDto> fas=new ArrayList<>();
-        for (Freelancer f:freelancers){
-            User u=f.getUser();
-            FreelancerAdminDto fa=new FreelancerAdminDto();
-            fa=mapToFreeDTO(f);
+        List<FreelancerAdminDto> fas = new ArrayList<>();
+        for (Freelancer f : freelancers) {
+            User u = f.getUser();
+            FreelancerAdminDto fa = new FreelancerAdminDto();
+            fa = mapToFreeDTO(f);
             fa.setFullName(u.getFullname());
             fa.setEmail(u.getAccount().getEmail());
             fa.setIsBanned(u.getIsBanned());
-            fa.setAccountBalance(u.getAccountBalance()!=null?u.getAccountBalance():0);
+            fa.setAccountBalance(u.getAccountBalance() != null ? u.getAccountBalance() : 0);
             fas.add(fa);
         }
         return fas;
     }
+
     @Override
     public List<FreelancerAdminDto> getFreelancerByName(String name, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Freelancer> page = freelancerRepository.getFreelancerByName(name,pageable);
-        List<Freelancer> freelancers=page.getContent();
+        Page<Freelancer> page = freelancerRepository.getFreelancerByName(name, pageable);
+        List<Freelancer> freelancers = page.getContent();
         return convertListFreelancerDto(freelancers);
 
 
@@ -61,26 +65,33 @@ public class FreelancerServiceImpl implements FreelancerService {
 
     @Override
     public FreelancerDetailDto getDetailFreelancer(String id) {
-        Optional<Freelancer> freelancer=freelancerRepository.findById(id);
-       Freelancer f=freelancer.get();
-        FreelancerDetailDto fd=mapToFreelancerDetailDTO(f);
-        double star=0;
-        User u=f.getUser();
-        for (Feedback feedback:u.getFeedbackTos())
-            star+=feedback.getStar();
-        star=star/u.getFeedbackTos().size();
-        fd.setStar(star);
-        fd.setSubCareer(f.getSubCareer().getName());
-        fd.setFullName(u.getFullname());
-        fd.setAddress(u.getAddress());
-        fd.setPhone(u.getPhone());
+        try{
+        Optional<Freelancer> freelancer = freelancerRepository.findById(id);
+            Freelancer f = freelancer.get();
+            FreelancerDetailDto fd = mapToFreelancerDetailDTO(f);
+            double star = 0;
+            User u = f.getUser();
+            for (Feedback feedback : u.getFeedbackTos())
+                star += feedback.getStar();
+            star = star / u.getFeedbackTos().size();
+            fd.setStar(star);
+            fd.setSubCareer(f.getSubCareer().getName());
+            fd.setFullName(u.getFullname());
+            fd.setAddress(u.getAddress());
+            fd.setPhone(u.getPhone());
+            fd.setIsBanned(u.getIsBanned());
+            return fd;
+        }
 
-        return fd;
+        catch (Exception e){
+            return null;
+        }
+
     }
 
     @Override
     public List<FreelancerAdminDto> getTop5ByName(String name) {
-        List<Freelancer> freelancers=freelancerRepository.getTop5ByName(name);
+        List<Freelancer> freelancers = freelancerRepository.getTop5ByName(name);
         return convertListFreelancerDto(freelancers);
     }
 

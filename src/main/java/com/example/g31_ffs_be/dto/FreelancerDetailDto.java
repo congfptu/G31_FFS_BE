@@ -23,5 +23,6 @@ public class FreelancerDetailDto {
     double star;
     LocalDate birthdate;
     String subCareer;
+    Boolean isBanned;
 
 }

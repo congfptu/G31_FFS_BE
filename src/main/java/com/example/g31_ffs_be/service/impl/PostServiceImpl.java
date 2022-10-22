@@ -64,7 +64,6 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setBudget(job.getBudget());
         postDetailDTO.setTime(job.getTime());
         postDetailDTO.setIs_Active(job.getIsActive());
-        postDetailDTO.setSkills(job.getSkills());
         postDetailDTO.setIs_Approved(job.getIsApproved());
         postDetailDTO.setApproved_by(job.getApprovedBy().getFullname());
         return postDetailDTO;

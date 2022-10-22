@@ -2,6 +2,7 @@ package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.RecruiterAdminDto;
 import com.example.g31_ffs_be.dto.StaffAdminDto;
+import com.example.g31_ffs_be.dto.StaffDto;
 import com.example.g31_ffs_be.model.Recruiter;
 import com.example.g31_ffs_be.model.Staff;
 import com.example.g31_ffs_be.repository.StaffRepository;
@@ -49,6 +50,10 @@ public class StaffServiceImpl implements StaffService {
         StaffAdminDto staffAdminDto=mapper.map(staff,StaffAdminDto.class);
         return staffAdminDto;
     }
+    private Staff mapDtoToStaff(StaffDto staffDto){
+        Staff staff=mapper.map(staffDto,Staff.class);
+        return staff;
+    }
     @Override
     public List<StaffAdminDto> getStaffByName(String name, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -63,7 +68,11 @@ public class StaffServiceImpl implements StaffService {
         }
         return sads;
     }
-
+    @Override
+    public void updateStaff(StaffDto staffDto) {
+    Staff s=mapDtoToStaff(staffDto);
+        staffRepository.save(s);
+    }
 
 
     @Override

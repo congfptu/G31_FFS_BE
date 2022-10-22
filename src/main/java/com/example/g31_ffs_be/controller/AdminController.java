@@ -88,13 +88,14 @@ public class AdminController {
         }
 
     }
-
-    private static String decode(String encodedString) {
-        return new String(Base64.getUrlDecoder().decode(encodedString));
+    @PostMapping("/update-staff")
+    public ResponseEntity<?> updateStaff(@RequestHeader(name = "Authorization") String token,@Valid @RequestBody StaffDto staffDto) {
+      staffService.updateStaff(staffDto);
+      return new ResponseEntity<>("Update thành công", HttpStatus.OK);
     }
 
     @PostMapping("/add-staff")
-    public ResponseEntity<?> addStaff(@RequestHeader(name = "Authorization") String token, @Valid @RequestBody StaffDto staffDto) {
+    public ResponseEntity<?> addStaff(@RequestHeader(name = "Authorization") String token,@Valid @RequestBody StaffDto staffDto) {
         if (accountService.checkEmailExist(staffDto.getEmail())) {
             return new ResponseEntity<>("Email đã tồn tại trên hệ thống, vui lòng thử email khác", HttpStatus.OK);
         } else {
@@ -153,11 +154,13 @@ public class AdminController {
 
     }
 
+
     @GetMapping("/detail-freelancer")
     public ResponseEntity<?> getDetailFreelancer(@RequestHeader(name = "Authorization") String token,
                                                  @RequestParam(name = "id", defaultValue = "") String id) {
-        System.out.println(id);
-        return new ResponseEntity<>(freelancerService.getDetailFreelancer(id), HttpStatus.OK);
+        FreelancerDetailDto freelancerDetailDto=freelancerService.getDetailFreelancer(id);
+
+        return new ResponseEntity<>(freelancerDetailDto!=null?freelancerDetailDto:"Không có thông tin người dùng này", HttpStatus.OK);
     }
 
 
@@ -226,8 +229,8 @@ public class AdminController {
     @GetMapping("/detail-recruiter")
     public ResponseEntity<?> getDetailRecruiter(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "id", defaultValue = "") String id) {
-        System.out.println(id);
-        return new ResponseEntity<>(recruiterService.getDetailRecruiter(id), HttpStatus.OK);
+        RecruiterDetailDTO recruiterDetailDTO=recruiterService.getDetailRecruiter(id);
+        return new ResponseEntity<>(recruiterDetailDTO!=null?recruiterDetailDTO:"Không có thông tin nhà tuyển dụng này", HttpStatus.OK);
     }
 
     //Service
@@ -259,7 +262,7 @@ public class AdminController {
             return new ResponseEntity<>(serviceDto, HttpStatus.CREATED);
         }
     }
-    @GetMapping("/delete-service")
+    @DeleteMapping("/delete-service")
     public ResponseEntity<?> deleteService(@RequestHeader(name = "Authorization") String token,
                                         @RequestParam(name = "id", defaultValue = "") String id) {
         try{
@@ -285,7 +288,7 @@ public class AdminController {
 
     }
 
-    @PostMapping("update-service")
+    @PutMapping("update-service")
     public ResponseEntity<?> updateService(@RequestHeader(name = "Authorization") String token
             , @RequestBody ServiceDto serviceDto
     ) {

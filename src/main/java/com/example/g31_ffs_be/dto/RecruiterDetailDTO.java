@@ -15,4 +15,5 @@ public class RecruiterDetailDTO {
     String website;
     String companyIntro;
     double star;
+    Boolean isBanned;
 }

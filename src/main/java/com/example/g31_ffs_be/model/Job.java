@@ -51,10 +51,6 @@ public class Job {
     @Column(name = "isActive")
     private Boolean isActive;
 
-    @Size(max = 255)
-    @Column(name = "skills")
-    private String skills;
-
     @Column(name = "is_approved")
     private Boolean isApproved;
 
@@ -162,13 +158,6 @@ public class Job {
         this.isActive = isActive;
     }
 
-    public String getSkills() {
-        return skills;
-    }
-
-    public void setSkills(String skills) {
-        this.skills = skills;
-    }
 
     public Boolean getIsApproved() {
         return isApproved;
