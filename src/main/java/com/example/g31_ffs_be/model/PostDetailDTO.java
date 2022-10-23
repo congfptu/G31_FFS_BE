@@ -19,7 +19,7 @@ public class PostDetailDTO {
     Instant time;
     String area;
     Boolean is_Active;
-    String skills;
     Boolean is_Approved;
     String approved_by;
+    Set<Skill> listSkills;
 }

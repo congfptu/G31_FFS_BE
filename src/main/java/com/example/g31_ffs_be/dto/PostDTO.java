@@ -1,8 +1,10 @@
 package com.example.g31_ffs_be.dto;
 
+import com.example.g31_ffs_be.model.Skill;
 import lombok.Data;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Data
 public class PostDTO {
@@ -11,4 +13,5 @@ public class PostDTO {
     String createdBy;
     String jobTitle;
     Boolean isApproved;
+    String approvedBy;
 }

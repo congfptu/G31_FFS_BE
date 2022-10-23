@@ -300,12 +300,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/admin/report/{offset}")
-    public Page<Report> getReportPaging(@PathVariable int offset) {
-        if (offset >= 0)
-            return reportService.getReportByPaging(offset - 1, 6);
-        return null;
-    }
+
     @GetMapping("/role")
     public ResponseEntity<?> getAllRoles(@RequestHeader(name = "Authorization") String token) {
         return new ResponseEntity<>(roleRepository.findAll(), HttpStatus.CREATED);

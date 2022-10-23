@@ -27,8 +27,9 @@ public class Skill {
 
     @Column(name = "name")
     private String name;
-
-
+@JsonIgnore
+    @ManyToMany(mappedBy = "listSkills")
+    private Set<Job> jobs;
     @OneToMany
     @JoinTable(name = "freelancer_id",
             joinColumns = @JoinColumn(name = "skill_id"),

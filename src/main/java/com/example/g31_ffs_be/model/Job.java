@@ -67,8 +67,17 @@ public class Job {
     @OneToMany(mappedBy = "job")
     private Set<Notification> notifications = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "job")
-    private Set<JobSkill> jobSkills = new LinkedHashSet<>();
+    @ManyToMany
+    @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private Set<Skill> listSkills;
+
+    public Set<Skill> getListSkills() {
+        return listSkills;
+    }
+
+    public void setListSkills(Set<Skill> listSkills) {
+        this.listSkills = listSkills;
+    }
 
     public String getId() {
         return id;
@@ -199,12 +208,5 @@ public class Job {
         this.notifications = notifications;
     }
 
-    public Set<JobSkill> getJobSkills() {
-        return jobSkills;
-    }
-
-    public void setJobSkills(Set<JobSkill> jobSkills) {
-        this.jobSkills = jobSkills;
-    }
 
 }
