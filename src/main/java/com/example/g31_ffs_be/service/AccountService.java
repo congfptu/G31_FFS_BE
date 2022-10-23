@@ -11,4 +11,5 @@ public interface AccountService {
     public Boolean checkIdExist(String id);
     public void addAccountRole(String account_id,int role_id);
     public Boolean checkEmailExist(String email);
+    void sendVerificationEmail(Account account,String siteURL);
 }

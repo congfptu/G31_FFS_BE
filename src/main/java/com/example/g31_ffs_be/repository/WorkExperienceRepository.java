@@ -1,11 +1,11 @@
 package com.example.g31_ffs_be.repository;
 
 
-import com.example.g31_ffs_be.model.Workexperience;
+import com.example.g31_ffs_be.model.WorkExperience;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface WorkExperienceRepository extends CrudRepository<Workexperience,Integer> {
+public interface WorkExperienceRepository extends CrudRepository<WorkExperience,Integer> {
 
 }

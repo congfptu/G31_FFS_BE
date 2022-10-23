@@ -6,4 +6,5 @@ public interface UserService {
    
     void addUser(User u);
     void banUser(String id);
+
 }

@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "workexperience")
@@ -20,7 +21,7 @@ import java.time.LocalDate;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-public class Workexperience {
+public class WorkExperience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -40,10 +41,16 @@ public class Workexperience {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "`from`")
-    private LocalDate from;
+    @Column(name = "month_from")
+    private Integer monthFrom;
 
-    @Column(name = "`to`")
-    private LocalDate to;
+    @Column(name = "year_from")
+    private Integer yearFrom;
+
+    @Column(name = "month_to")
+    private Integer monthTo;
+
+    @Column(name = "year_to")
+    private Integer yearTo;
 
 }

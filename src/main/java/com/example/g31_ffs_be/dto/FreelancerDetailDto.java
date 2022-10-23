@@ -2,7 +2,7 @@ package com.example.g31_ffs_be.dto;
 
 import com.example.g31_ffs_be.model.Education;
 import com.example.g31_ffs_be.model.Skill;
-import com.example.g31_ffs_be.model.Workexperience;
+import com.example.g31_ffs_be.model.WorkExperience;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -19,7 +19,7 @@ public class FreelancerDetailDto {
     double costPerHour;
     String description;
     List<Education> educations;
-    List<Workexperience> workexperiences;
+    List<WorkExperience> workExperiences;
     double star;
     LocalDate birthdate;
     String subCareer;
