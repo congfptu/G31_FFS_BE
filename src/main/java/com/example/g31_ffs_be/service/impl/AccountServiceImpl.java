@@ -74,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void sendVerificationEmail(Account account,String siteURL) {
         try {
-            String toAddress = "congbvhe141326@fpt.edu.vn";
+            String toAddress = "bienvancong1@gmail.com";
             String fromAddress = "lanceddywebsite@gmail.com";
             String senderName = "Your company name";
             String subject = "Please verify your registration";
@@ -92,6 +92,7 @@ public class AccountServiceImpl implements AccountService {
             helper.setSubject(subject);
 
             helper.setText(content, true);
+            System.out.println(helper.getMimeMessage());
 
             mailSender.send(message);
 

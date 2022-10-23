@@ -28,10 +28,10 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceDto;
     }
     @Override
-    public  ServiceResponse getServiceByName(String name, int pageNo, int pageSize) {
+    public  ServiceResponse getServiceByName(String name,String roleId,int pageNo, int pageSize) {
         ServiceResponse serviceResponse=new ServiceResponse();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Service> page = serviceRepository.getServiceByName(name,pageable);
+        Page<Service> page = serviceRepository.getServiceByName(name,roleId,pageable);
         List<Service> services=page.getContent();
         List<ServiceDto> serviceDtos=new ArrayList<>();
         for (Service service: services){
@@ -40,8 +40,8 @@ public class ServiceServiceImpl implements ServiceService {
             serviceDtos.add(serviceDto);
         }
         serviceResponse.setServices(serviceDtos);
-        serviceResponse.setTotalPage(page.getTotalPages());
-        serviceResponse.setPageIndex(pageNo);
+        serviceResponse.setTotalPages(page.getTotalPages());
+        serviceResponse.setPageIndex(pageNo+1);
         return serviceResponse;
 
     }

@@ -55,7 +55,7 @@ public class StaffServiceImpl implements StaffService {
         return staff;
     }
     @Override
-    public List<StaffAdminDto> getStaffByName(String name, int pageNo, int pageSize) {
+    public List<StaffAdminDto> getStaffByName(String name,int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Staff> page = staffRepository.getStaffByName(name,pageable);
         List<Staff> staffs=page.getContent();

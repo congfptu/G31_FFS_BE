@@ -88,7 +88,7 @@ public class AdminController {
         }
 
     }
-    @PostMapping("/update-staff")
+    @PutMapping("/update-staff")
     public ResponseEntity<?> updateStaff(@RequestHeader(name = "Authorization") String token,@Valid @RequestBody StaffDto staffDto) {
       staffService.updateStaff(staffDto);
       return new ResponseEntity<>("Update thành công", HttpStatus.OK);
@@ -121,8 +121,9 @@ public class AdminController {
     }
 
     @PutMapping("/ban-staff")
-    public void banStaff(@RequestParam String id) {
+    public ResponseEntity<?> banStaff(@RequestParam String id) {
         staffService.banStaff(id);
+        return new ResponseEntity<>("Bạn đã ngừng cấp quyền cho nhân viên này", HttpStatus.OK);
 
     }
 
@@ -237,6 +238,7 @@ public class AdminController {
     @GetMapping("/service")
     public ResponseEntity<?> getServiceByName(@RequestHeader(name = "Authorization") String token,
                                               @RequestParam(name = "name", defaultValue = "") String name,
+                                              @RequestParam(name = "roleId", defaultValue = "3") String roleId,
                                               @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
         int pageIndex = 0;
 
@@ -247,7 +249,7 @@ public class AdminController {
         }
         int pageSize = 5;
         Pageable p = PageRequest.of(pageIndex, pageSize);
-        ServiceResponse serviceResponse = serviceService.getServiceByName(name, pageIndex, pageSize);
+        ServiceResponse serviceResponse = serviceService.getServiceByName(name,roleId,pageIndex, pageSize);
         return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
     }
 

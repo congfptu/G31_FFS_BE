@@ -6,6 +6,6 @@ import java.util.List;
 @Data
 public class ServiceResponse {
     List<ServiceDto> services;
-    int totalPage;
+    int totalPages;
     int pageIndex;
 }
