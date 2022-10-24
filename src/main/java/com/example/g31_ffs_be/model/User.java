@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -69,5 +71,12 @@ public class User {
 
     @OneToMany(mappedBy = "from")
     private Set<Feedback> feedbackFroms = new LinkedHashSet<>();
+
+    @Size(max = 255)
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    @Column(name = "reset_password_time")
+    private Instant resetPasswordTime;
 
 }

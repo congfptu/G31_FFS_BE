@@ -13,7 +13,7 @@ public interface StaffService {
 void addStaff(Staff s);
 List<StaffAdminDto> getAllStaffs();
     List<StaffAdminDto> getStaffByName(String name,int pageNo,int pageSize);
-    void banStaff(String id);
+    void banStaff(Staff s);
     public void updateStaff(StaffDto staffDto);
 
 }

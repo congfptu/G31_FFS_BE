@@ -25,8 +25,7 @@ import java.util.List;
 @CrossOrigin("*")
 public class AccountController {
     @Autowired private AccountServiceImpl service;
-    @Autowired private UserServiceImpl userService;
-    @Autowired private FreelancerService freelancerService;
+
     @Autowired
     RoleRepository roleRepository;
 
@@ -45,7 +44,7 @@ public class AccountController {
 
         return accounts ;
     }
-    @PostMapping("/account/add")
+   /* @PostMapping("/account/add")
     public void addAccount(@RequestBody  String strJson){
         String id=RandomString.make(8);
         JSONObject json=new JSONObject(strJson);
@@ -63,12 +62,12 @@ public class AccountController {
             Role role= roleRepository.findById(2).get();
             acc.setRole(role);
             acc.setEmail(json.getString("email"));
-         /*   acc.setPassword(passwordEncoder.encode(json.getString("password")));*/
+         *//*   acc.setPassword(passwordEncoder.encode(json.getString("password")));*//*
             acc.setCreatedDate(Instant.now());
             acc.setUser(u);
             service.addAccount(acc);
         }
-    }
+    }*/
 
 
 }

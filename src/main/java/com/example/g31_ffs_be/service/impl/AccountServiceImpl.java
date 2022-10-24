@@ -1,8 +1,12 @@
 package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.AccountDto;
+import com.example.g31_ffs_be.dto.FreelancerRegisterDto;
 import com.example.g31_ffs_be.model.Account;
+import com.example.g31_ffs_be.model.Role;
+import com.example.g31_ffs_be.model.User;
 import com.example.g31_ffs_be.repository.AccountRepository;
+import com.example.g31_ffs_be.repository.RoleRepository;
 import com.example.g31_ffs_be.service.AccountService;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
@@ -16,8 +20,10 @@ import org.springframework.stereotype.Service;
 import javax.mail.internet.MimeMessage;
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
+import java.time.Instant;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Component
@@ -30,18 +36,22 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    AccountRepository accountRepository;
+    @Autowired
+    RoleRepository roleRepository;
+
     @Override
     @Bean
     @ElementCollection(fetch = FetchType.LAZY)
     public List<AccountDto> getAllAccounts() {
-      /*  List<AccountDto> lists=new ArrayList<>();
-        for (Account a:repo.findAll()) {
-            AccountDto acc = modelMapper.map(a, AccountDto.class);
 
-            lists.add(acc);
-
-        }*/
         return null;
+    }
+
+    public String generateUniqueId(Role role) {
+        if (role.getId() == 3) return "LF" + RandomString.make(8);
+        return "LR" + RandomString.make(8);
     }
 
     public List<Account> getAllAccount() {
@@ -49,13 +59,37 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void addAccount(Account f) {
+    public void createAccount(FreelancerRegisterDto registerDto) {
         try {
-            repo.save(f);
+            Account acc = new Account();
+            acc.setEmail(registerDto.getEmail());
+            System.out.println(acc.getEmail());
+            Role role = roleRepository.findById(3).get();
+            acc.setRole(role);
+            String id = "";
+            while (true) {
+                id = "LF" + RandomString.make(8);
+                if (accountRepository.findById(id).equals(Optional.empty())) {
+                    acc.setId(id);
+                    break;
+                }
+            }
+            User user = new User();
+            user.setId(id);
+            user.setFullname(registerDto.getFullName());
+            user.setAddress(registerDto.getAddress());
+            user.setCity(registerDto.getCity());
+            user.setCountry(registerDto.getCountry());
+            user.setPhone(registerDto.getPhone());
+            user.setVerificationCode(RandomString.make(36));
+            user.setIsBanned(true);
+            acc.setUser(user);
+            accountRepository.save(acc);
+            sendVerificationEmail(acc, "Facebook.com");
+
         } catch (Exception e) {
 
         }
-
     }
 
     @Override
@@ -68,42 +102,91 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Boolean checkEmailExist(String email) {
 
-      return repo.findByEmail(email)!=null?true:false;
+        return repo.findByEmail(email) != null ? true : false;
     }
 
     @Override
-    public void sendVerificationEmail(Account account,String siteURL) {
+    public void sendVerificationEmail(Account account, String siteURL) {
         try {
-            String toAddress = "bienvancong1@gmail.com";
+            String toAddress = account.getEmail();
             String fromAddress = "lanceddywebsite@gmail.com";
-            String senderName = "Your company name";
-            String subject = "Please verify your registration";
-            String content = "Dear Cong,<br>"
-                    + "Please click the link below to verify your registration:<br>"
-                    + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
-                    + "Thank you,<br>"
-                    + "Your company name.";
-
+            String senderName = "Lanceddy Team";
+            String subject = "Xác thực tài khoản của bạn tại lanceddy.com";
+            String content = "Chào bạn [[name]],<br>"
+                    + "Vui lòng click vào link bên dưới để xác thực tài khoản của bạn!:<br>"
+                    + "<h3><a href=\"[[URL]]\" target=\"_self\">Nhấp vào đây để xác thực</a></h3>"
+                    + "Trân trọng!<br>"
+                    + "Lanceddy Team!";
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
-
             helper.setFrom(fromAddress, senderName);
             helper.setTo(toAddress);
             helper.setSubject(subject);
-
+            content = content.replace("[[name]]", account.getUser().getFullname());
+            String verifyURL = siteURL + "/verify?code=" + account.getUser().getResetPasswordToken();
+            content = content.replace("[[URL]]", verifyURL);
             helper.setText(content, true);
-            System.out.println(helper.getMimeMessage());
-
             mailSender.send(message);
 
-        }
-        catch(Exception e){
-
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 
     @Override
-    public void addAccountRole(String account_id, int role_id) {
+    public void sendResetPasswordEmail(Account account, String siteURL) {
+        try {
+            String toAddress = account.getEmail();
+            String fromAddress = "lanceddywebsite@gmail.com";
+            String senderName = "Lanceddy Team";
+            String subject = "Lấy lại mật khẩu lanceddy.com";
+            String content = "Chào bạn [[name]],<br>"
+                    + "Vui lòng click vào link bên dưới để thay đổi mật khẩu mới của bạn!:<br>"
+                    + "<h3><a href=\"[[URL]]\" target=\"_self\">Nhấp vào đây để thay đổi mật khẩu</a></h3>"
+                    + "Trân trọng!<br>"
+                    + "Lanceddy Team!";
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            helper.setFrom(fromAddress, senderName);
+            helper.setTo(toAddress);
+            helper.setSubject(subject);
+            content = content.replace("[[name]]", account.getUser().getFullname());
+            String verifyURL = siteURL + "/reset-password?resetPasswordToken=" + account.getUser().getResetPasswordToken();
+            content = content.replace("[[URL]]", verifyURL);
+            helper.setText(content, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public Boolean changePassword(AccountDto accountDto) {
+        try {
+            Account acc = accountRepository.findByEmail(accountDto.getEmail());
+            acc.setPassword(accountDto.getPassword());
+            accountRepository.save(acc);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
+
+    @Override
+    public Boolean forgotPassword(Account account) {
+        try {
+            String resetPasswordToken = RandomString.make(36);
+            account.getUser().setResetPasswordToken(resetPasswordToken);
+            account.getUser().setResetPasswordTime(Instant.now());
+            accountRepository.save(account);
+            sendResetPasswordEmail(account, "lanceddy.com");
+            return true;
+        }
+        catch(Exception e){
+          return false;
+        }
 
     }
 

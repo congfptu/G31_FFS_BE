@@ -54,7 +54,9 @@ public class AdminController {
     private AccountServiceImpl accountService;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired AccountRepository accountRepository;
     @Autowired ServiceRepository serviceRepository;
+    @Autowired UserRepository userRepository;
 
     //staffController
     @GetMapping("/staff111")
@@ -101,7 +103,6 @@ public class AdminController {
         } else {
             String id = "LS" + RandomString.make(8);
             if (!accountService.checkIdExist(id)) {
-
                 Account acc = new Account();
                 acc.setId(id);
                 acc.setEmail(staffDto.getEmail());
@@ -113,17 +114,18 @@ public class AdminController {
                 s.setPhone(staffDto.getPhone());
                 s.setIsActive(Boolean.TRUE);
                 acc.setStaff(s);
-                acc.setRole(roleRepository.findById(staffDto.getRole()).get());
-                accountService.addAccount(acc);
+             /*   acc.setRole(roleRepository.findById(staffDto.getRole()).get());*/
+                accountRepository.save(acc);
             }
         }
         return new ResponseEntity<>("đăng ký thành công", HttpStatus.OK);
     }
 
     @PutMapping("/ban-staff")
-    public ResponseEntity<?> banStaff(@RequestParam String id) {
-        staffService.banStaff(id);
-        return new ResponseEntity<>("Bạn đã ngừng cấp quyền cho nhân viên này", HttpStatus.OK);
+    public ResponseEntity<?> banStaff(   @RequestParam(name = "id", defaultValue = "") String id) {
+        Staff s=staffRepository.findById(id).get();
+        staffService.banStaff(s);
+        return new ResponseEntity<>(s.getIsActive()?"Bạn đã cấp quyền cho nhân viên này":"Bạn đã ngừng cấp quyền cho nhân viên này", HttpStatus.OK);
 
     }
 
@@ -150,7 +152,7 @@ public class AdminController {
             map.put("totalPages", totalPage);
             return new ResponseEntity<>(map, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }
 
     }
@@ -185,7 +187,15 @@ public class AdminController {
         b.setTypeBan(Integer.parseInt(typeBan));
         banRepository.save(b);
         userService.banUser(userId);
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>("Bạn đã khóa người dùng này!", HttpStatus.OK);
+    }
+    @PutMapping("/unban-user")
+    public ResponseEntity<?> unBanFreelancer(@RequestHeader(name = "Authorization") String token,
+                                           @RequestParam(name = "userId", defaultValue = "") String userId) {
+        User u= userRepository.findById(userId).get();
+        u.setIsBanned(false);
+        userRepository.save(u);
+        return new ResponseEntity<>("Bạn đã mở khóa người dùng này!", HttpStatus.OK);
     }
 
     @GetMapping("/top5-freelancer")

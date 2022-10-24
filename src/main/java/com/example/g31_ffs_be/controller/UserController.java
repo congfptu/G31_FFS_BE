@@ -1,11 +1,20 @@
 package com.example.g31_ffs_be.controller;
 
+import com.example.g31_ffs_be.dto.AccountDto;
+import com.example.g31_ffs_be.dto.FreelancerRegisterDto;
 import com.example.g31_ffs_be.model.Account;
+import com.example.g31_ffs_be.model.User;
+import com.example.g31_ffs_be.repository.AccountRepository;
 import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
+import com.example.g31_ffs_be.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @RestController
 @RequestMapping("")
@@ -13,12 +22,54 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     AccountServiceImpl accountService;
+    @Autowired
+    AccountRepository accountRepository;
+    @Autowired
+    UserServiceImpl userService;
+
+
     @PostMapping("/sign-up")
-    public ResponseEntity<?> singUpUser(@RequestHeader(name = "Authorization") String token){
-        Account a=new Account();
-        a.setEmail("congbvhe141326@fpt.edu.vn");
-       accountService.sendVerificationEmail(a,"facebook.com");
-        return new ResponseEntity<>("Chúng tôi đã gửi email xác thực tới email của bạn.Vui lòng xác thực tài khoản của bạn!", HttpStatus.OK);
+    public ResponseEntity<?> singUpUser(@Valid @RequestBody FreelancerRegisterDto registerDto) {
+        if (accountService.checkEmailExist(registerDto.getEmail()))
+            return new ResponseEntity<>("Email đã tồn tại trong hệ thống!", HttpStatus.BAD_REQUEST);
+        accountService.createAccount(registerDto);
+        return new ResponseEntity<>("Đăng kí thành Công! Chúng tôi đã gửi email xác thực tới email của bạn.Vui lòng xác thực tài khoản của bạn!", HttpStatus.OK);
+    }
+
+    @GetMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam(name = "email", defaultValue = "") String email) {
+        Account acc=accountRepository.findByEmail(email);
+        if(acc==null)
+        return new ResponseEntity<>("Email chưa được đăng kí trong hệ thống!", HttpStatus.OK);
+        accountService.forgotPassword(acc);
+        return new ResponseEntity<>("Chúng tôi đã gửi link thay đổi mật khẩu của bạn ở email, vui lòng click và đổi mật khẩu!", HttpStatus.OK);
+    }
+    @GetMapping("/reset/verify-token")
+    public ResponseEntity<?> verifyResetPasswordToken(@RequestParam(name = "resetPasswordToken", defaultValue = "") String resetPasswordToken) {
+        Account acc=accountRepository.findByResetPasswordToken(resetPasswordToken);
+        User u=acc.getUser();
+        Instant timeReset=u.getResetPasswordTime();
+        if(acc==null ||(Instant.now().minus(1,ChronoUnit.MINUTES).compareTo(timeReset)>=0))
+            return new ResponseEntity<>("Token quá hạn hoặc không hợp lệ!", HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(acc, HttpStatus.OK);
+        }
 
     }
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody AccountDto accountDto) {
+        accountService.changePassword(accountDto);
+        return new ResponseEntity<>("Mật khẩu được thay đổi thành công! Mời bạn đăng nhập vào hệ thống", HttpStatus.OK);
+    }
+    @PutMapping("/verify-account")
+    public ResponseEntity<?> singUpUser(
+            @RequestParam(name = "verifyCode", defaultValue = "") String verifiationCode) {
+        if (userService.verify(verifiationCode))
+            return new ResponseEntity<>("Xác thực tài khoản thành công! Bạn có thể đăng nhập ngay bây giờ!", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Tài khoản của bạn đã được xác thực hoặc verification code không hợp lệ!", HttpStatus.BAD_REQUEST);
+
+    }
+
 }
+

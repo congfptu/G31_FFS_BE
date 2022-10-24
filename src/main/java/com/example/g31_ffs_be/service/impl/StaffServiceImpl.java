@@ -76,9 +76,8 @@ public class StaffServiceImpl implements StaffService {
 
 
     @Override
-    public void banStaff(String id) {
-        Staff s=staffRepository.findById(id).get();
-        s.setIsActive(false);
+    public void banStaff(Staff s) {
+        s.setIsActive(s.getIsActive()?false:true);
         staffRepository.save(s);
     }
 }

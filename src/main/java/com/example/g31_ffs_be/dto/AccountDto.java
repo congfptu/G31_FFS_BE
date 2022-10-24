@@ -17,6 +17,5 @@ import java.util.Set;
 public class AccountDto {
     String id;
     String email;
-    @ElementCollection(fetch = FetchType.LAZY)
-    Set<Role> roles=new LinkedHashSet<>();
+    String password;
 }

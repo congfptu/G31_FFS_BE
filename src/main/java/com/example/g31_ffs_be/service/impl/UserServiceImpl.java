@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    private UserRepository repo;
+    private UserRepository userRepository;
     @Override
     public void addUser(User u) {
         try {
-            repo.save(u);
+            userRepository.save(u);
         }
         catch (Exception e){
 
@@ -22,8 +22,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void banUser(String id) {
-        User u=repo.findById(id).get();
+        User u= userRepository.findById(id).get();
         u.setIsBanned(true);
-        repo.save(u);
+        userRepository.save(u);
+    }
+    public boolean verify(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode);
+        if (user==null||!user.getIsBanned()) {
+            return false;
+        } else {
+            user.setVerificationCode("");
+            user.setIsBanned(false);
+            userRepository.save(user);
+            return true;
+        }
+
     }
 }
