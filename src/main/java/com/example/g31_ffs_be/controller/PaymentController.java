@@ -27,10 +27,10 @@ public class PaymentController {
     PaymentService paymentService;
     @Autowired
     PaymentRepository paymentRepository;
-    @GetMapping("/payment")
-    public ResponseEntity<?> getAllCareerPaging(@RequestHeader(name = "Authorization") String token,
+    @GetMapping("/paymentSearch")
+    public ResponseEntity<?> getAllPaymentSearchPaging(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                                @RequestParam(name = "status", defaultValue = "1") Integer status,
+                                                @RequestParam(name = "status", defaultValue = "") Integer status,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
         int pageIndex = 0;
         try {
@@ -38,18 +38,30 @@ public class PaymentController {
         } catch (Exception e) {
 
         }
-        int pageSize = 4;
+        int pageSize = 5;
         Pageable p = PageRequest.of(pageIndex, pageSize);
-        int totalPage = paymentRepository.getRequestPaymentPaging(keyword,status,p).getTotalPages();
+        int totalPage = paymentRepository.getRequestPaymentSearchPaging(keyword,status,p).getTotalPages();
 
-        if (totalPage >= pageIndex - 1) {
-            PaymentDTOResponse fas = paymentService.getAllPaymentPaging(pageIndex, pageSize, keyword,status, null);
-
+        if (status==1) {
+            PaymentDTOResponse fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize, keyword,1, null);
             return new ResponseEntity<>(fas, HttpStatus.OK);
-        } else {
+        } else if ( status==-1) {
+            PaymentDTOResponse fas = paymentService.getAllPaymentPaging(pageIndex, pageSize, keyword,null);
+            return new ResponseEntity<>(fas, HttpStatus.OK);
+        }
+        else if (status==0) {
+            PaymentDTOResponse fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize,keyword, 0,null);
+            return new ResponseEntity<>(fas, HttpStatus.OK);
+        }
+        else if ( status==2) {
+            PaymentDTOResponse fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize,keyword,2, null);
+            return new ResponseEntity<>(fas, HttpStatus.OK);
+        }
+        else {
             return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }
     }
+
     @PutMapping("/payment/update")
     public ResponseEntity<?> updateStatus(@RequestHeader(name = "Authorization") String token,
                                           @NotEmpty @RequestParam(name = "code") String code,

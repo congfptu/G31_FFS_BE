@@ -12,6 +12,6 @@ public class PostDTO {
     Instant time;
     String createdBy;
     String jobTitle;
-    Boolean isApproved;
+    Integer isApproved;
     String approvedBy;
 }

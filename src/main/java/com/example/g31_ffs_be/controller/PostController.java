@@ -22,7 +22,7 @@ public class PostController {
     @Autowired
     PostRepository postRepository;
     @GetMapping("/post")
-    public ResponseEntity<?> getAllPostPaging(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<?> getAllPostSearchByDesAndStatusPaging(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "name", defaultValue = "") String name,
                                                 @RequestParam(name = "status", defaultValue = "") Boolean status,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
@@ -32,12 +32,35 @@ public class PostController {
         } catch (Exception e) {
 
         }
-        int pageSize = 4;
+        int pageSize = 5;
         Pageable p = PageRequest.of(pageIndex, pageSize);
         int totalPage = postRepository.getRequestPostByStatusAndDescription(name, status,p).getTotalPages();
 
         if (totalPage >= pageIndex - 1) {
-            PostDTOResponse fas = postService.getAllPostPaging(pageIndex, pageSize, name,status, null);
+            PostDTOResponse fas = postService.getAllPostByNameAndStatusPaging(pageIndex, pageSize, name,status, null);
+
+            return new ResponseEntity<>(fas, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+        }
+    }
+    @GetMapping("/allPost")
+    public ResponseEntity<?> getAllPostPaging(@RequestHeader(name = "Authorization") String token,
+                                              @RequestParam(name = "name", defaultValue = "") String name,
+
+                                              @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
+        int pageIndex = 0;
+        try {
+            pageIndex = Integer.parseInt(pageNo);
+        } catch (Exception e) {
+
+        }
+        int pageSize = 5;
+        Pageable p = PageRequest.of(pageIndex, pageSize);
+        int totalPage = postRepository.getRequestPostSearchByNamePaging(name,p).getTotalPages();
+
+        if (totalPage >= pageIndex - 1) {
+            PostDTOResponse fas = postService.getAllPostSearchNamePaging(pageIndex, pageSize, name, null);
 
             return new ResponseEntity<>(fas, HttpStatus.OK);
         } else {

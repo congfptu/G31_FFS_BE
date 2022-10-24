@@ -15,7 +15,10 @@ public interface PostRepository extends JpaRepository<Job, String> {
             " WHERE description LIKE CONCAT('%',:keyword,'%') and is_approved=:status"
             , nativeQuery = true)
     Page<Job> getRequestPostByStatusAndDescription(String keyword, Boolean status, Pageable pageable);
-
+    @Query(value = " SELECT * FROM jobs "+
+            "WHERE description LIKE CONCAT('%',:keyword,'%')"
+            , nativeQuery = true)
+    Page<Job> getRequestPostSearchByNamePaging(String keyword,Pageable pageable);
     @Query(value = " SELECT * FROM jobs " +
             " WHERE id=:id "
             , nativeQuery = true)

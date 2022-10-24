@@ -13,5 +13,8 @@ public interface CareerRepository extends JpaRepository<Career, Integer> {
             " WHERE name LIKE CONCAT('%',:name,'%') "
             , nativeQuery = true)
     Page<Career> getCareerByName(String name, Pageable pageable);
-
+    @Query(value = " SELECT * FROM career " +
+            " WHERE name =:name"
+            , nativeQuery = true)
+   Career getCareerByName(String name);
 }

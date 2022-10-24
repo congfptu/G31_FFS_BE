@@ -33,7 +33,7 @@ public class ReportController {
         } catch (Exception e) {
 
         }
-        int pageSize = 4;
+        int pageSize = 5;
         Pageable p = PageRequest.of(pageIndex, pageSize);
         int totalPage = reportRepository.getReportByCreatedByOrCreatedDate(keyword,p).getTotalPages();
 

@@ -11,5 +11,5 @@ public interface SubCareerService {
     void addSubCareer(Subcareer career);
     void updateSubCareer(Subcareer career);
     void deleteSubCareer(Integer id);
-    SubCareerResponse getAllSubCareer(int pageNumber, int pageSize, String keyword,Integer CareerID, String sortValue);
+    SubCareerResponse getAllSubCareerSearchByCareerIDAndSubName(int pageNumber, int pageSize, String keyword,Integer CareerID, String sortValue);
 }
