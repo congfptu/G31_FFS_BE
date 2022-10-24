@@ -42,6 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
         for (RequestPayment f: paymentDTOResponseList){
             PaymentDTO fa=new PaymentDTO();
             fa=mapToPaymentDTO(f);
+            fa.setId(f.getId());
             fa.setCode(f.getPaymentCode());
             fa.setStatus(f.getStatus());
             fa.setUserId(f.getUser().getId());
@@ -67,6 +68,7 @@ public class PaymentServiceImpl implements PaymentService {
         for (RequestPayment f: paymentDTOResponseList){
             PaymentDTO fa=new PaymentDTO();
             fa=mapToPaymentDTO(f);
+            fa.setId(f.getId());
             fa.setCode(f.getPaymentCode());
             fa.setStatus(f.getStatus());
             fa.setUserId(f.getUser().getId());

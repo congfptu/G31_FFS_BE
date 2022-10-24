@@ -11,6 +11,7 @@ import java.time.Instant;
 @Setter
 @Data
 public class PaymentDTO {
+    String id;
     String code;
     String userId;
     double money;
