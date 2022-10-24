@@ -26,7 +26,7 @@ public class RequestPayment {
     private Instant dateRequest;
 
     @Column(name = "status")
-    private Boolean status;
+    private Integer status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by")
@@ -75,11 +75,11 @@ public class RequestPayment {
         this.dateRequest = dateRequest;
     }
 
-    public Boolean getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

@@ -36,7 +36,7 @@ public class CareerController {
         } catch (Exception e) {
 
         }
-        int pageSize = 4;
+        int pageSize = 5;
         Pageable p = PageRequest.of(pageIndex, pageSize);
         int totalPage = careerRepository.getCareerByName(name, p).getTotalPages();
 
@@ -61,10 +61,17 @@ public class CareerController {
     public ResponseEntity<?> createCareer(@RequestHeader(name = "Authorization") String token,
                                           @RequestParam(name = "name") String name) {
         try {
-            Career career = new Career();
-            career.setName(name);
-            careerRepository.save(career);
-            return new ResponseEntity<>("Thêm mới career thành công", HttpStatus.OK);
+            Career career1= careerRepository.getCareerByName(name);
+
+               if(career1==null) {
+                   Career career = new Career();
+                   career.setName(name);
+                   careerRepository.save(career);
+                   return new ResponseEntity<>("Thêm mới career thành công", HttpStatus.OK);
+            }else{
+                   return new ResponseEntity<>("Thêm mới career thất bại, duplicated name", HttpStatus.BAD_REQUEST);
+               }
+
         } catch (Exception e) {
             return new ResponseEntity<>("Thêm mới career thất bại", HttpStatus.BAD_REQUEST);
         }

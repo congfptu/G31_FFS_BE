@@ -1,13 +1,11 @@
 package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_be.dto.PaymentDTO;
-import com.example.g31_ffs_be.dto.PaymentDTOResponse;
 import com.example.g31_ffs_be.dto.PostDTO;
 import com.example.g31_ffs_be.dto.PostDTOResponse;
+import com.example.g31_ffs_be.dto.RecruiterDto;
 import com.example.g31_ffs_be.model.Job;
-import com.example.g31_ffs_be.model.PostDetailDTO;
-import com.example.g31_ffs_be.model.RequestPayment;
-import com.example.g31_ffs_be.repository.PaymentRepository;
+import com.example.g31_ffs_be.dto.PostDetailDTO;
+import com.example.g31_ffs_be.model.Recruiter;
 import com.example.g31_ffs_be.repository.PostRepository;
 import com.example.g31_ffs_be.service.PostService;
 import org.modelmapper.ModelMapper;
@@ -27,9 +25,33 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private ModelMapper mapper;
     @Override
-    public PostDTOResponse getAllPostPaging(int pageNumber, int pageSize, String keyword, Boolean isApproved, String sortValue) {
+    public PostDTOResponse getAllPostByNameAndStatusPaging(int pageNumber, int pageSize, String keyword, Boolean isApproved, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Job> paymentPaging=postRepository.getRequestPostByStatusAndDescription(keyword,isApproved,pageable);
+        List<Job> paymentDTOResponseList=paymentPaging.getContent();
+        List<PostDTO> fas=new ArrayList<>();
+        for (Job f: paymentDTOResponseList){
+            PostDTO fa=new PostDTO();
+            fa=mapToPostDTO(f);
+            fa.setId(f.getId());
+            fa.setTime(f.getTime());
+            fa.setCreatedBy(f.getCreateBy().getCompanyName());
+            fa.setJobTitle(f.getJobTitle());
+            fa.setIsApproved(f.getIsApproved());
+            fa.setApprovedBy(f.getApprovedBy().getFullname());
+            fas.add(fa);
+        }
+        PostDTOResponse paymentDTOResponse= new PostDTOResponse();
+        paymentDTOResponse.setPosts(fas);
+        paymentDTOResponse.setPageIndex(pageNumber+1);
+        paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
+        return paymentDTOResponse;
+    }
+
+    @Override
+    public PostDTOResponse getAllPostSearchNamePaging(int pageNumber, int pageSize, String keyword, String sortValue) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Job> paymentPaging=postRepository.getRequestPostSearchByNamePaging(keyword,pageable);
         List<Job> paymentDTOResponseList=paymentPaging.getContent();
         List<PostDTO> fas=new ArrayList<>();
         for (Job f: paymentDTOResponseList){
@@ -55,7 +77,8 @@ public class PostServiceImpl implements PostService {
         Job job= postRepository.getJobDetail(id);
         PostDetailDTO postDetailDTO= mapToPostDetailDTO(job);
         postDetailDTO.setPostID(job.getId());
-        postDetailDTO.setCreateBy(job.getCreateBy().getCompanyName());
+        RecruiterDto recruiterDto=mapToRecruiterDTO(job.getCreateBy());
+        postDetailDTO.setCreateBy(recruiterDto);
         postDetailDTO.setJob_title(job.getJobTitle());
         postDetailDTO.setSub_career(job.getSubCareer().getName());
         postDetailDTO.setDescription(job.getDescription());
@@ -74,6 +97,10 @@ public class PostServiceImpl implements PostService {
     private PostDTO mapToPostDTO(Job job){
         PostDTO postDTO=mapper.map(job, PostDTO.class);
         return postDTO;
+    }
+    private RecruiterDto mapToRecruiterDTO(Recruiter recruiter){
+        RecruiterDto recruiterDto=mapper.map(recruiter, RecruiterDto.class);
+        return recruiterDto;
     }
     private PostDetailDTO mapToPostDetailDTO(Job job){
         PostDetailDTO postDetailDTO=mapper.map(job, PostDetailDTO.class);

@@ -48,7 +48,7 @@ public class ReportServiceImpl implements ReportService {
         ReportDTOResponse reportDTOResponse= new ReportDTOResponse();
         reportDTOResponse.setReports(fas);
         reportDTOResponse.setPageIndex(pageNumber+1);
-        reportDTOResponse.setTotalPage(paymentPaging.getTotalPages());
+        reportDTOResponse.setTotalPages(paymentPaging.getTotalPages());
         return reportDTOResponse;
     }
     private ReportDTO mapToReportDTO(Report report){

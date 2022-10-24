@@ -16,7 +16,7 @@ public class PaymentDTO {
     double money;
     Instant dateRequest;
     Instant dateApprove;
-    Boolean state;
+    Integer state;
     String description;
 
 }

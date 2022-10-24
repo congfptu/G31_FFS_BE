@@ -52,7 +52,7 @@ public class Job {
     private Boolean isActive;
 
     @Column(name = "is_approved")
-    private Boolean isApproved;
+    private Integer isApproved;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by")
@@ -168,11 +168,11 @@ public class Job {
     }
 
 
-    public Boolean getIsApproved() {
+    public Integer getIsApproved() {
         return isApproved;
     }
 
-    public void setIsApproved(Boolean isApproved) {
+    public void setIsApproved(Integer isApproved) {
         this.isApproved = isApproved;
     }
 

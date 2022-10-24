@@ -34,9 +34,34 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentDTOResponse getAllPaymentPaging(int pageNumber, int pageSize, String keyword,Integer status, String sortValue) {
+    public PaymentDTOResponse getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword,Integer status, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentPaging(keyword,status,pageable);
+        Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentSearchPaging(keyword,status,pageable);
+        List<RequestPayment> paymentDTOResponseList=paymentPaging.getContent();
+        List<PaymentDTO> fas=new ArrayList<>();
+        for (RequestPayment f: paymentDTOResponseList){
+            PaymentDTO fa=new PaymentDTO();
+            fa=mapToPaymentDTO(f);
+            fa.setCode(f.getPaymentCode());
+            fa.setState(f.getStatus());
+            fa.setUser_id(f.getUser().getId());
+            fa.setMoney(f.getAmount());
+            fa.setDateApprove(f.getDateApproved());
+            fa.setDateRequest(f.getDateRequest());
+            fa.setDescription(f.getResponseMessage());
+            fas.add(fa);
+        }
+        PaymentDTOResponse paymentDTOResponse= new PaymentDTOResponse();
+        paymentDTOResponse.setPayments(fas);
+        paymentDTOResponse.setPageIndex(pageNumber+1);
+        paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
+        return paymentDTOResponse;
+    }
+
+    @Override
+    public PaymentDTOResponse getAllPaymentPaging(int pageNumber, int pageSize,String keyword, String sortValue) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentPaging(keyword,pageable);
         List<RequestPayment> paymentDTOResponseList=paymentPaging.getContent();
         List<PaymentDTO> fas=new ArrayList<>();
         for (RequestPayment f: paymentDTOResponseList){

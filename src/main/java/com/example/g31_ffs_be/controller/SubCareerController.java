@@ -40,12 +40,12 @@ public class SubCareerController {
         } catch (Exception e) {
 
         }
-        int pageSize = 4;
+        int pageSize = 5;
         Pageable p = PageRequest.of(pageIndex, pageSize);
         int totalPage = subCareerRepository.getSubCareerByCareerIDAndSubCareerName(name,careerID, p).getTotalPages();
 
         if (totalPage >= pageIndex - 1) {
-            SubCareerResponse fas = subCareerService.getAllSubCareer(pageIndex, pageSize, name, careerID,null);
+            SubCareerResponse fas = subCareerService.getAllSubCareerSearchByCareerIDAndSubName(pageIndex, pageSize, name, careerID,null);
 
             return new ResponseEntity<>(fas, HttpStatus.OK);
         } else {
@@ -56,11 +56,17 @@ public class SubCareerController {
                                                  @RequestParam(name = "career_id") Integer career_id
                 ,@NotEmpty @RequestParam(name = "name") String name) {
             try {
+                Subcareer subcareer1= subCareerRepository.getSubCareerBySubName(name);
+                if(subcareer1==null) {
                 Subcareer subcareer = new Subcareer();
                 subcareer.setCareer_id(career_id);
                 subcareer.setName(name);
                 subCareerRepository.save(subcareer);
-                return new ResponseEntity<>("Thêm mới subcareer thành công", HttpStatus.OK);
+                return new ResponseEntity<>("Thêm mới subcareer thành công", HttpStatus.OK);}
+                else {
+                    return new ResponseEntity<>("Thêm mới subcareer thất bại, duplicated name", HttpStatus.BAD_REQUEST);
+
+                }
             } catch (Exception e) {
                 return new ResponseEntity<>("Thêm mới subcareer thất bại", HttpStatus.BAD_REQUEST);
             }

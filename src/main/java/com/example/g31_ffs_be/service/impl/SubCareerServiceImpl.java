@@ -57,7 +57,7 @@ public class SubCareerServiceImpl implements SubCareerService {
     }
 
     @Override
-    public SubCareerResponse getAllSubCareer(int pageNumber, int pageSize, String keyword, Integer careerID, String sortValue) {
+    public SubCareerResponse getAllSubCareerSearchByCareerIDAndSubName(int pageNumber, int pageSize, String keyword, Integer careerID, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Subcareer> careerPage=subCareerRepository.getSubCareerByCareerIDAndSubCareerName(keyword,careerID,pageable);
         List<Subcareer> careerList=careerPage.getContent();
