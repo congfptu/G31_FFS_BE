@@ -91,17 +91,18 @@ public class SubCareerController {
     }
     @DeleteMapping("/subcareer/delete")
     public ResponseEntity<?> deleteSubCareer(@RequestHeader(name = "Authorization") String token,
-                                             @NotEmpty @RequestParam(name = "career_id") Integer career_id,
+
                                           @NotEmpty @RequestParam(name = "id") Integer id
     ) {
         try {
-            if (careerRepository.findById(career_id).isPresent()&&
+            if (
                     subCareerRepository.findById(id).isPresent()) {
                 subCareerRepository.deleteById(id);
+                return new ResponseEntity<>("Xóa subcareer thành công", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("ID subcareer không tồn tại", HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>("Xóa subcareer thành công", HttpStatus.OK);
+
         } catch (Exception e) {
             return new ResponseEntity<>("Xóa subcareer thất bại", HttpStatus.BAD_REQUEST);
         }

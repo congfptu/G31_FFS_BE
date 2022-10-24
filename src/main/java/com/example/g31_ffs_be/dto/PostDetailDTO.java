@@ -12,16 +12,16 @@ import java.util.Set;
 public class PostDetailDTO {
     String postID;
     RecruiterDto createBy;
-    String job_title;
-    String sub_career;
+    String jobTitle;
+    String subCareer;
     String description;
     String attach;
-    String payment_type;
+    String paymentType;
     double budget;
     Instant time;
     String area;
-    Boolean is_Active;
-    Integer is_Approved;
-    String approved_by;
+    Boolean isActive;
+    Integer isApproved;
+    String approvedBy;
     Set<Skill> listSkills;
 }

@@ -12,11 +12,11 @@ import java.time.Instant;
 @Data
 public class PaymentDTO {
     String code;
-    String user_id;
+    String userId;
     double money;
     Instant dateRequest;
     Instant dateApprove;
-    Integer state;
-    String description;
+    Integer status;
+    String responseMessage;
 
 }

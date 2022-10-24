@@ -43,12 +43,12 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentDTO fa=new PaymentDTO();
             fa=mapToPaymentDTO(f);
             fa.setCode(f.getPaymentCode());
-            fa.setState(f.getStatus());
-            fa.setUser_id(f.getUser().getId());
+            fa.setStatus(f.getStatus());
+            fa.setUserId(f.getUser().getId());
             fa.setMoney(f.getAmount());
             fa.setDateApprove(f.getDateApproved());
             fa.setDateRequest(f.getDateRequest());
-            fa.setDescription(f.getResponseMessage());
+            fa.setResponseMessage(f.getResponseMessage());
             fas.add(fa);
         }
         PaymentDTOResponse paymentDTOResponse= new PaymentDTOResponse();
@@ -68,12 +68,12 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentDTO fa=new PaymentDTO();
             fa=mapToPaymentDTO(f);
             fa.setCode(f.getPaymentCode());
-            fa.setState(f.getStatus());
-            fa.setUser_id(f.getUser().getId());
+            fa.setStatus(f.getStatus());
+            fa.setUserId(f.getUser().getId());
             fa.setMoney(f.getAmount());
             fa.setDateApprove(f.getDateApproved());
             fa.setDateRequest(f.getDateRequest());
-            fa.setDescription(f.getResponseMessage());
+            fa.setResponseMessage(f.getResponseMessage());
             fas.add(fa);
         }
         PaymentDTOResponse paymentDTOResponse= new PaymentDTOResponse();

@@ -79,17 +79,17 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setPostID(job.getId());
         RecruiterDto recruiterDto=mapToRecruiterDTO(job.getCreateBy());
         postDetailDTO.setCreateBy(recruiterDto);
-        postDetailDTO.setJob_title(job.getJobTitle());
-        postDetailDTO.setSub_career(job.getSubCareer().getName());
+        postDetailDTO.setJobTitle(job.getJobTitle());
+        postDetailDTO.setSubCareer(job.getSubCareer().getName());
         postDetailDTO.setDescription(job.getDescription());
         postDetailDTO.setAttach(job.getAttach());
         postDetailDTO.setArea(job.getArea());
-        postDetailDTO.setPayment_type(job.getPaymentType());
+        postDetailDTO.setPaymentType(job.getPaymentType());
         postDetailDTO.setBudget(job.getBudget());
         postDetailDTO.setTime(job.getTime());
-        postDetailDTO.setIs_Active(job.getIsActive());
-        postDetailDTO.setIs_Approved(job.getIsApproved());
-        postDetailDTO.setApproved_by(job.getApprovedBy().getFullname());
+        postDetailDTO.setIsActive(job.getIsActive());
+        postDetailDTO.setIsApproved(job.getIsApproved());
+        postDetailDTO.setApprovedBy(job.getApprovedBy().getFullname());
         postDetailDTO.setListSkills(job.getListSkills());
         return postDetailDTO;
     }

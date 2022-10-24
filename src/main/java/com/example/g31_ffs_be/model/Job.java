@@ -48,7 +48,7 @@ public class Job {
     @Column(name = "area")
     private String area;
 
-    @Column(name = "isActive")
+    @Column(name = "is_active")
     private Boolean isActive;
 
     @Column(name = "is_approved")

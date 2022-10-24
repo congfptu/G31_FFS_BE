@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface SubCareerRepository extends JpaRepository<Subcareer, Integer> {
     @Query(value = " SELECT sc.* FROM `career` c " +
             "inner join `subcareer` sc on sc.career_id=c.id" +
-            " WHERE sc.name LIKE CONCAT('%',:subName,'%') and sc.career_id LIKE CONCAT('%',:careerID,'%')"
+            " WHERE sc.name LIKE CONCAT('%',:subName,'%') and sc.career_id =:careerID"
             , nativeQuery = true)
     Page<Subcareer> getSubCareerByCareerIDAndSubCareerName(String subName, Integer careerID, Pageable pageable);
 

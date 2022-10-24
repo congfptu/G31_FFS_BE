@@ -4,8 +4,10 @@ import com.example.g31_ffs_be.dto.CareerResponse;
 import com.example.g31_ffs_be.dto.PaymentDTO;
 import com.example.g31_ffs_be.dto.PaymentDTOResponse;
 import com.example.g31_ffs_be.model.RequestPayment;
+import com.example.g31_ffs_be.model.Staff;
 import com.example.g31_ffs_be.model.Subcareer;
 import com.example.g31_ffs_be.repository.PaymentRepository;
+import com.example.g31_ffs_be.repository.StaffRepository;
 import com.example.g31_ffs_be.service.CareerService;
 import com.example.g31_ffs_be.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class PaymentController {
     PaymentService paymentService;
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
+    StaffRepository staffRepository;
     @GetMapping("/paymentSearch")
     public ResponseEntity<?> getAllPaymentSearchPaging(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "keyword", defaultValue = "") String keyword,
@@ -61,24 +65,31 @@ public class PaymentController {
             return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }
     }
-
+//    id:1,
+//    status:1,
+//    approveBy:11,
+//    responseMessage:'noi dung'
     @PutMapping("/payment/update")
     public ResponseEntity<?> updateStatus(@RequestHeader(name = "Authorization") String token,
-                                          @NotEmpty @RequestParam(name = "code") String code,
-                                          @RequestBody PaymentDTO paymentDTO
+                                         @NotEmpty @RequestParam(name = "id", defaultValue = "") String id,
+                                          @NotEmpty  @RequestParam(name = "status", defaultValue = "") Integer status,
+                                          @NotEmpty  @RequestParam(name = "approveBy", defaultValue = "") String approveBy,
+                                          @NotEmpty  @RequestParam(name = "responseMessage", defaultValue = "") String responseMessage
+
                                           ) {
         try {
-            System.out.println(paymentRepository.getRequestPaymentByCode(code).getPaymentCode());
-            if (!paymentRepository.getRequestPaymentByCode(code).getPaymentCode().isEmpty()) {
-                RequestPayment requestPayment = paymentRepository.getRequestPaymentByCode(code);
-                requestPayment.setResponseMessage(paymentDTO.getDescription());
-                requestPayment.setStatus(paymentDTO.getState());
+            if (paymentRepository.findById(id).isPresent()) {
+                RequestPayment requestPayment = paymentRepository.findById(id).get();
+                requestPayment.setResponseMessage(responseMessage);
+                Staff staff=staffRepository.getReferenceById(approveBy);
+               requestPayment.setApprovedBy(staff);
+                requestPayment.setStatus(status);
                 requestPayment.setDateApproved(Instant.now());
                 paymentRepository.save(requestPayment);
             }
-            return new ResponseEntity<>("Cập nhật subcareer thành công", HttpStatus.OK);
+            return new ResponseEntity<>("Cập nhật payment thành công", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Cập nhật subcareer thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Cập nhật payment thất bại", HttpStatus.BAD_REQUEST);
         }
     }
 }
