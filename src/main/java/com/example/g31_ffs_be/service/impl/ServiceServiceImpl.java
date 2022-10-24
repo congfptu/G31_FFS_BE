@@ -51,7 +51,10 @@ public class ServiceServiceImpl implements ServiceService {
     }
     @Override
     public void saveService(ServiceDto serviceDto) {
-        Service service=mapToServiceEntity(serviceDto);
+        Service service=serviceRepository.findById(serviceDto.getId()).get();
+        service.setBenefits(null);
+        serviceRepository.save(service);
+        service=mapToServiceEntity(serviceDto);
         serviceRepository.save(service);
     }
 
