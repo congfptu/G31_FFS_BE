@@ -297,21 +297,18 @@ public class AdminController {
         catch (Exception e){
             return new ResponseEntity<>("Không tìm thấy service cần xóa", HttpStatus.CREATED);
         }
-
     }
 
     @PutMapping("update-service")
     public ResponseEntity<?> updateService(@RequestHeader(name = "Authorization") String token
             , @RequestBody ServiceDto serviceDto
     ) {
-        if (serviceService.checkServiceNameUnique(serviceDto.getServiceName())) {
-            return new ResponseEntity<>("tên service đã tồn tại", HttpStatus.BAD_REQUEST);
-        } else {
+        try{
             serviceService.saveService(serviceDto);
-            return new ResponseEntity<>(serviceDto, HttpStatus.CREATED);
+            return new ResponseEntity<>("Update dịch vụ thành công!", HttpStatus.CREATED);}
+        catch(Exception e){
+            return new ResponseEntity<>("Không thành công!", HttpStatus.CREATED);}
         }
-    }
-
 
     @GetMapping("/role")
     public ResponseEntity<?> getAllRoles(@RequestHeader(name = "Authorization") String token) {

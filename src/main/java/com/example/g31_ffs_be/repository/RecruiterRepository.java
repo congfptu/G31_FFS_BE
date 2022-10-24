@@ -14,7 +14,7 @@ public interface RecruiterRepository extends JpaRepository<Recruiter,String> {
     @Query(value = "select a.* from `recruiter` a" +
             " inner join `user` b on b.user_id=a.recruiter_id" +
             " inner join `account` c on a.recruiter_id=c.id" +
-            " where a.freelancer_id like CONCAT('%',:name,'%') or" +
+            " where a.recruiter_id like CONCAT('%',:name,'%') or" +
             " b.fullname like CONCAT('%',:name,'%') or c.email like CONCAT('%',:name,'%') "+
             "Order by b.fullname asc,c.email asc ", nativeQuery = true)
     Page<Recruiter> getRecruiterByName(String name, Pageable pageable);
