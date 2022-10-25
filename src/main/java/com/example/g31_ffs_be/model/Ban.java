@@ -1,6 +1,8 @@
 package com.example.g31_ffs_be.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +12,8 @@ import java.time.Instant;
 @Table(name = "ban")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Ban {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,8 +1,17 @@
 package com.example.g31_ffs_be.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.Instant;
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "service_price_history")
 public class ServicePriceHistory {
@@ -12,6 +21,7 @@ public class ServicePriceHistory {
     private Integer id;
 
     @Column(name = "date")
+    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     private Instant date;
 
     @Column(name = "price")
@@ -25,44 +35,6 @@ public class ServicePriceHistory {
     @JoinColumn(name = "update_by")
     private Staff updateBy;
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Instant getDate() {
-        return date;
-    }
-
-    public void setDate(Instant date) {
-        this.date = date;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Service getService() {
-        return service;
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
-
-    public Staff getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Staff updateBy) {
-        this.updateBy = updateBy;
-    }
 
 }

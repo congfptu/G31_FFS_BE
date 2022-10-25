@@ -11,10 +11,10 @@ public interface PaymentRepository extends JpaRepository<RequestPayment,String> 
     @Query(value = " SELECT * FROM request_payment " +
             " WHERE (payment_code LIKE CONCAT('%',:keyword,'%') " +
             "or response_message like CONCAT('%',:keyword,'%')) " +
-            "and status =:status " +
+            "and status like CONCAT('%',:status,'%') " +
             "Order by payment_code asc,response_message asc,status asc "
             , nativeQuery = true)
-    Page<RequestPayment> getRequestPaymentSearchPaging(String keyword,Integer status, Pageable pageable);
+    Page<RequestPayment> getRequestPaymentSearchPaging(String keyword,String status, Pageable pageable);
     @Query(value = " SELECT * FROM request_payment "+
             " WHERE payment_code LIKE CONCAT('%',:keyword,'%') " +
             "or response_message like CONCAT('%',:keyword,'%') "

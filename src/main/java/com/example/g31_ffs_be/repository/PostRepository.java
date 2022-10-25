@@ -12,9 +12,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepository extends JpaRepository<Job, String> {
     @Query(value = " SELECT * FROM jobs " +
-            " WHERE description LIKE CONCAT('%',:keyword,'%') and is_approved=:status"
+            " WHERE (description LIKE CONCAT('%',:keyword,'%') " +
+            "or job_title LIKE CONCAT('%',:keyword,'%'))"+
+            " and is_approved LIKE CONCAT('%',:status,'%')"
             , nativeQuery = true)
-    Page<Job> getRequestPostByStatusAndDescription(String keyword, Boolean status, Pageable pageable);
+    Page<Job> getRequestPostByStatusAndDescription(String keyword, String status, Pageable pageable);
     @Query(value = " SELECT * FROM jobs "+
             "WHERE description LIKE CONCAT('%',:keyword,'%')"
             , nativeQuery = true)

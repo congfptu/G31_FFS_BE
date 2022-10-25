@@ -1,10 +1,19 @@
 package com.example.g31_ffs_be.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "career")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Career {
     @Id
     @Column(name = "id", nullable = false)
@@ -15,20 +24,5 @@ public class Career {
     @Column(name = "Name")
     private String name;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
 }

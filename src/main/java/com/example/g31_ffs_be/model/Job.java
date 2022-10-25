@@ -1,12 +1,22 @@
 package com.example.g31_ffs_be.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "jobs")
 public class Job {
     @Id
@@ -42,7 +52,7 @@ public class Job {
     private Double budget;
 
     @Column(name = "time")
-    private Instant time;
+    private LocalDateTime time;
 
     @Size(max = 255)
     @Column(name = "area")
@@ -71,142 +81,7 @@ public class Job {
     @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private Set<Skill> listSkills;
 
-    public Set<Skill> getListSkills() {
-        return listSkills;
-    }
 
-    public void setListSkills(Set<Skill> listSkills) {
-        this.listSkills = listSkills;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Recruiter getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Recruiter createBy) {
-        this.createBy = createBy;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
-    public Subcareer getSubCareer() {
-        return subCareer;
-    }
-
-    public void setSubCareer(Subcareer subCareer) {
-        this.subCareer = subCareer;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAttach() {
-        return attach;
-    }
-
-    public void setAttach(String attach) {
-        this.attach = attach;
-    }
-
-    public String getPaymentType() {
-        return paymentType;
-    }
-
-    public void setPaymentType(String paymentType) {
-        this.paymentType = paymentType;
-    }
-
-    public Double getBudget() {
-        return budget;
-    }
-
-    public void setBudget(Double budget) {
-        this.budget = budget;
-    }
-
-    public Instant getTime() {
-        return time;
-    }
-
-    public void setTime(Instant time) {
-        this.time = time;
-    }
-
-    public String getArea() {
-        return area;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
-
-    public Integer getIsApproved() {
-        return isApproved;
-    }
-
-    public void setIsApproved(Integer isApproved) {
-        this.isApproved = isApproved;
-    }
-
-    public Staff getApprovedBy() {
-        return approvedBy;
-    }
-
-    public void setApprovedBy(Staff approvedBy) {
-        this.approvedBy = approvedBy;
-    }
-
-    public Set<JobRequest> getJobRequests() {
-        return jobRequests;
-    }
-
-    public void setJobRequests(Set<JobRequest> jobRequests) {
-        this.jobRequests = jobRequests;
-    }
-
-    public Set<JobSaved> getJobSaveds() {
-        return jobSaveds;
-    }
-
-    public void setJobSaveds(Set<JobSaved> jobSaveds) {
-        this.jobSaveds = jobSaveds;
-    }
-
-    public Set<Notification> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(Set<Notification> notifications) {
-        this.notifications = notifications;
-    }
 
 
 }

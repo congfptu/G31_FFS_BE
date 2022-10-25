@@ -1,10 +1,19 @@
 package com.example.g31_ffs_be.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "fees")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Fee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,28 +27,5 @@ public class Fee {
     @Column(name = "price")
     private Double price;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
 
 }

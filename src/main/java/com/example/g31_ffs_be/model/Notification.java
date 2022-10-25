@@ -1,11 +1,20 @@
 package com.example.g31_ffs_be.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 
 @Entity
 @Table(name = "notification")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Notification {
     @Id
     @Size(max = 45)
@@ -26,44 +35,5 @@ public class Notification {
     @Column(name = "status")
     private Boolean status;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public Instant getDate() {
-        return date;
-    }
-
-    public void setDate(Instant date) {
-        this.date = date;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
 
 }

@@ -6,6 +6,7 @@ import com.example.g31_ffs_be.dto.RecruiterDto;
 import com.example.g31_ffs_be.model.Job;
 import com.example.g31_ffs_be.dto.PostDetailDTO;
 import com.example.g31_ffs_be.model.Recruiter;
+import com.example.g31_ffs_be.model.Staff;
 import com.example.g31_ffs_be.repository.PostRepository;
 import com.example.g31_ffs_be.service.PostService;
 import org.modelmapper.ModelMapper;
@@ -15,8 +16,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -25,7 +29,7 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private ModelMapper mapper;
     @Override
-    public PostDTOResponse getAllPostByNameAndStatusPaging(int pageNumber, int pageSize, String keyword, Boolean isApproved, String sortValue) {
+    public PostDTOResponse getAllPostByNameAndStatusPaging(int pageNumber, int pageSize, String keyword, String isApproved, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Job> paymentPaging=postRepository.getRequestPostByStatusAndDescription(keyword,isApproved,pageable);
         List<Job> paymentDTOResponseList=paymentPaging.getContent();
@@ -34,11 +38,18 @@ public class PostServiceImpl implements PostService {
             PostDTO fa=new PostDTO();
             fa=mapToPostDTO(f);
             fa.setId(f.getId());
-            fa.setTime(f.getTime());
+            fa.setCreatedDate(f.getTime());
             fa.setCreatedBy(f.getCreateBy().getCompanyName());
             fa.setJobTitle(f.getJobTitle());
             fa.setIsApproved(f.getIsApproved());
-            fa.setApprovedBy(f.getApprovedBy().getFullname());
+             // fa.setApprovedBy(f.getApprovedBy().getFullname());
+            Optional<Staff> staff= Optional.ofNullable(f.getApprovedBy());
+            try{
+                fa.setApprovedBy(f.getApprovedBy().getFullname());
+            }
+            catch (Exception e){
+                fa.setApprovedBy(null);
+            }
             fas.add(fa);
         }
         PostDTOResponse paymentDTOResponse= new PostDTOResponse();
@@ -58,7 +69,7 @@ public class PostServiceImpl implements PostService {
             PostDTO fa=new PostDTO();
             fa=mapToPostDTO(f);
             fa.setId(f.getId());
-            fa.setTime(f.getTime());
+            fa.setCreatedDate(f.getTime());
             fa.setCreatedBy(f.getCreateBy().getCompanyName());
             fa.setJobTitle(f.getJobTitle());
             fa.setIsApproved(f.getIsApproved());
@@ -86,6 +97,7 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setArea(job.getArea());
         postDetailDTO.setPaymentType(job.getPaymentType());
         postDetailDTO.setBudget(job.getBudget());
+//        String formatDate= time.
         postDetailDTO.setTime(job.getTime());
         postDetailDTO.setIsActive(job.getIsActive());
         postDetailDTO.setIsApproved(job.getIsApproved());

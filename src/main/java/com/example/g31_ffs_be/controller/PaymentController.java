@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @RestController
 @CrossOrigin("*")
@@ -34,7 +35,7 @@ public class PaymentController {
     @GetMapping("/paymentSearch")
     public ResponseEntity<?> getAllPaymentSearchPaging(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                                @RequestParam(name = "status", defaultValue = "") Integer status,
+                                                @RequestParam(name = "status", defaultValue = "") String status,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
         int pageIndex = 0;
         try {
@@ -42,27 +43,17 @@ public class PaymentController {
         } catch (Exception e) {
 
         }
+        PaymentDTOResponse fas=new PaymentDTOResponse();
         int pageSize = 5;
-        Pageable p = PageRequest.of(pageIndex, pageSize);
-        int totalPage = paymentRepository.getRequestPaymentSearchPaging(keyword,status,p).getTotalPages();
-
-        if (status==1) {
-            PaymentDTOResponse fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize, keyword,1, null);
-            return new ResponseEntity<>(fas, HttpStatus.OK);
-        } else if ( status==-1) {
-            PaymentDTOResponse fas = paymentService.getAllPaymentPaging(pageIndex, pageSize, keyword,null);
+          if ( status.equals("-1")) {
+             fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize, keyword,"", null);
             return new ResponseEntity<>(fas, HttpStatus.OK);
         }
-        else if (status==0) {
-            PaymentDTOResponse fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize,keyword, 0,null);
+        else if( status.equals("0")||( status.equals("1")||status.equals("2"))){
+              fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize, keyword,status, null);
             return new ResponseEntity<>(fas, HttpStatus.OK);
-        }
-        else if ( status==2) {
-            PaymentDTOResponse fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize,keyword,2, null);
-            return new ResponseEntity<>(fas, HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+        }else{
+              return new ResponseEntity<>("Không có dữ liệu trang này", HttpStatus.NO_CONTENT);
         }
     }
 //    id:1,
@@ -84,7 +75,7 @@ public class PaymentController {
                 Staff staff=staffRepository.getReferenceById(approveBy);
                requestPayment.setApprovedBy(staff);
                 requestPayment.setStatus(status);
-                requestPayment.setDateApproved(Instant.now());
+                requestPayment.setDateApproved(LocalDateTime.now());
                 paymentRepository.save(requestPayment);
             }
             return new ResponseEntity<>("Cập nhật payment thành công", HttpStatus.OK);

@@ -34,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentDTOResponse getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword,Integer status, String sortValue) {
+    public PaymentDTOResponse getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword,String status, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentSearchPaging(keyword,status,pageable);
         List<RequestPayment> paymentDTOResponseList=paymentPaging.getContent();

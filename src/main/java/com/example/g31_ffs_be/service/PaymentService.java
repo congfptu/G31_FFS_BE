@@ -9,6 +9,6 @@ import com.example.g31_ffs_be.model.RequestPayment;
 public interface PaymentService {
     void updateStatusPayment(PaymentDTO paymentDTO);
 
-    PaymentDTOResponse getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword,Integer status, String sortValue);
+    PaymentDTOResponse getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword,String status, String sortValue);
     PaymentDTOResponse getAllPaymentPaging(int pageNumber, int pageSize,String keyword, String sortValue);
 }

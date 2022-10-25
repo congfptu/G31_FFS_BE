@@ -1,10 +1,19 @@
 package com.example.g31_ffs_be.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "type_ban")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TypeBan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,36 +31,5 @@ public class TypeBan {
     @Column(name = "description")
     private String description;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getNumDay() {
-        return numDay;
-    }
-
-    public void setNumDay(Integer numDay) {
-        this.numDay = numDay;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
 }

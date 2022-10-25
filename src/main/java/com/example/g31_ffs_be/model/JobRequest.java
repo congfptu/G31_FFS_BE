@@ -1,11 +1,20 @@
 package com.example.g31_ffs_be.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 
 @Entity
 @Table(name = "job_request")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class JobRequest {
     @Id
     @Size(max = 45)
@@ -25,44 +34,5 @@ public class JobRequest {
     @Column(name = "approved_date")
     private Instant approvedDate;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Instant getApplyDate() {
-        return applyDate;
-    }
-
-    public void setApplyDate(Instant applyDate) {
-        this.applyDate = applyDate;
-    }
-
-    public Instant getApprovedDate() {
-        return approvedDate;
-    }
-
-    public void setApprovedDate(Instant approvedDate) {
-        this.approvedDate = approvedDate;
-    }
 
 }
