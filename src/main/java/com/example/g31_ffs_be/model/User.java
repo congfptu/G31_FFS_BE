@@ -37,7 +37,7 @@ public class User {
     private String phone;
 
     @Column(name = "fullname")
-    private String fullname;
+    private String fullName;
 
     @Column(name = "city")
     private String city;
@@ -54,7 +54,7 @@ public class User {
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Recruiter recruiter;
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Freelancer freelancer;

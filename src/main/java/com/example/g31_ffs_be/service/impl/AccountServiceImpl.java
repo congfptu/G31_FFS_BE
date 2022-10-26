@@ -1,19 +1,19 @@
 package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.AccountDto;
-import com.example.g31_ffs_be.dto.FreelancerRegisterDto;
-import com.example.g31_ffs_be.model.Account;
-import com.example.g31_ffs_be.model.Role;
-import com.example.g31_ffs_be.model.User;
+import com.example.g31_ffs_be.dto.RegisterDto;
+import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.AccountRepository;
 import com.example.g31_ffs_be.repository.RoleRepository;
 import com.example.g31_ffs_be.service.AccountService;
 import net.bytebuddy.utility.RandomString;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +21,9 @@ import javax.mail.internet.MimeMessage;
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Component
@@ -38,6 +38,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Autowired
     RoleRepository roleRepository;
 
@@ -59,16 +61,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void createAccount(FreelancerRegisterDto registerDto) {
+    public void createAccount(RegisterDto registerDto) {
         try {
             Account acc = new Account();
             acc.setEmail(registerDto.getEmail());
             System.out.println(acc.getEmail());
-            Role role = roleRepository.findById(3).get();
+            String roleName=registerDto.getRole();
+            Role role = roleRepository.findByRoleName(roleName);
+            acc.setPassword(passwordEncoder.encode(registerDto.getPassword()));
             acc.setRole(role);
             String id = "";
             while (true) {
-                id = "LF" + RandomString.make(8);
+                String headerID= roleName.equals("freelancer")?"LF":"LR";
+                id =headerID+RandomString.make(8);
                 if (accountRepository.findById(id).equals(Optional.empty())) {
                     acc.setId(id);
                     break;
@@ -76,16 +81,41 @@ public class AccountServiceImpl implements AccountService {
             }
             User user = new User();
             user.setId(id);
-            user.setFullname(registerDto.getFullName());
+            user.setFullName(registerDto.getFullName());
             user.setAddress(registerDto.getAddress());
             user.setCity(registerDto.getCity());
             user.setCountry(registerDto.getCountry());
             user.setPhone(registerDto.getPhone());
             user.setVerificationCode(RandomString.make(36));
             user.setIsBanned(true);
-            acc.setUser(user);
-            accountRepository.save(acc);
-            sendVerificationEmail(acc, "Facebook.com");
+            if(roleName.equals("freelancer")){
+                Freelancer f=new Freelancer();
+                f.setId(id);
+             /*   Subcareer subcareer=new Subcareer();
+                subcareer.setId(registerDto.getSubCareerID());
+                f.setSubCareer(subcareer);*/
+                f.setGender(registerDto.getGender());
+                user.setFreelancer(f);
+                acc.setUser(user);
+                accountRepository.save(acc);
+                sendVerificationEmail(acc, "http://localhost:3000/");
+            }
+            else{
+                Recruiter recruiter=new Recruiter();
+                recruiter.setId(id);
+                Career career=new Career();
+                career.setId(registerDto.getCareerId());
+                recruiter.setCareer(career);
+                recruiter.setTaxNumber(registerDto.getTaxNumber());
+                recruiter.setCompanyName(registerDto.getCompanyName());
+                recruiter.setWebsite(registerDto.getWebsite());
+                user.setRecruiter(recruiter);
+                acc.setUser(user);
+                accountRepository.save(acc);
+
+            }
+
+
 
         } catch (Exception e) {
 
@@ -101,7 +131,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Boolean checkEmailExist(String email) {
-
         return repo.findByEmail(email) != null ? true : false;
     }
 
@@ -122,7 +151,7 @@ public class AccountServiceImpl implements AccountService {
             helper.setFrom(fromAddress, senderName);
             helper.setTo(toAddress);
             helper.setSubject(subject);
-            content = content.replace("[[name]]", account.getUser().getFullname());
+            content = content.replace("[[name]]", account.getUser().getFullName());
             String verifyURL = siteURL + "/verify?code=" + account.getUser().getResetPasswordToken();
             content = content.replace("[[URL]]", verifyURL);
             helper.setText(content, true);
@@ -150,7 +179,7 @@ public class AccountServiceImpl implements AccountService {
             helper.setFrom(fromAddress, senderName);
             helper.setTo(toAddress);
             helper.setSubject(subject);
-            content = content.replace("[[name]]", account.getUser().getFullname());
+            content = content.replace("[[name]]", account.getUser().getFullName());
             String verifyURL = siteURL + "/reset-password?resetPasswordToken=" + account.getUser().getResetPasswordToken();
             content = content.replace("[[URL]]", verifyURL);
             helper.setText(content, true);
@@ -164,7 +193,7 @@ public class AccountServiceImpl implements AccountService {
     public Boolean changePassword(AccountDto accountDto) {
         try {
             Account acc = accountRepository.findByEmail(accountDto.getEmail());
-            acc.setPassword(accountDto.getPassword());
+            acc.setPassword(passwordEncoder.encode(accountDto.getPassword()));
             accountRepository.save(acc);
             return true;
         } catch (Exception e) {
@@ -173,6 +202,9 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    private static String decode(String encodedString) {
+        return new String(Base64.getUrlDecoder().decode(encodedString));
+    }
 
     @Override
     public Boolean forgotPassword(Account account) {
@@ -181,14 +213,20 @@ public class AccountServiceImpl implements AccountService {
             account.getUser().setResetPasswordToken(resetPasswordToken);
             account.getUser().setResetPasswordTime(Instant.now());
             accountRepository.save(account);
-            sendResetPasswordEmail(account, "lanceddy.com");
+            sendResetPasswordEmail(account, "http://localhost:3000/");
             return true;
-        }
-        catch(Exception e){
-          return false;
+        } catch (Exception e) {
+            return false;
         }
 
     }
 
+     public Account getAccountFromToken(String token) {
+        String[] parts = token.split("\\.");
+        JSONObject payload = new JSONObject(decode(parts[1]));
+        String email = payload.getString("sub");
+        Account acc = accountRepository.findByEmail(email);
+        return acc;
 
+    }
 }

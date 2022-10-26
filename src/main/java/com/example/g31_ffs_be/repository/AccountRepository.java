@@ -14,5 +14,5 @@ public interface AccountRepository extends JpaRepository<Account,String> {
                 "inner join account_role c on a.id=c.account_id "+
                "where b.reset_password_token like :resetPasswordToken",nativeQuery = true)
  Account findByResetPasswordToken(String resetPasswordToken);
-
+ void deleteAccountByEmail(String email);
 }

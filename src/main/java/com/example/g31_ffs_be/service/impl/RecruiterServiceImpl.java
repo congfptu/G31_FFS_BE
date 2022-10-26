@@ -44,7 +44,7 @@ public class RecruiterServiceImpl implements RecruiterService {
             RecruiterAdminDto ra;
             User u=r.getUser();
             ra = mapToFreeDTO(r);
-            ra.setFullName(u.getFullname());
+            ra.setFullName(u.getFullName());
             ra.setEmail(u.getAccount().getEmail());
             ra.setIsBanned(u.getIsBanned());
             ra.setAccountBalance(u.getAccountBalance());

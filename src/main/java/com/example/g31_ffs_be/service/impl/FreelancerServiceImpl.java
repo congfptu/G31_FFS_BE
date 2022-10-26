@@ -44,7 +44,7 @@ public class FreelancerServiceImpl implements FreelancerService {
             User u = f.getUser();
             FreelancerAdminDto fa = new FreelancerAdminDto();
             fa = mapToFreeDTO(f);
-            fa.setFullName(u.getFullname());
+            fa.setFullName(u.getFullName());
             fa.setEmail(u.getAccount().getEmail());
             fa.setIsBanned(u.getIsBanned());
             fa.setAccountBalance(u.getAccountBalance() != null ? u.getAccountBalance() : 0);
@@ -76,7 +76,7 @@ public class FreelancerServiceImpl implements FreelancerService {
             star = star / u.getFeedbackTos().size();
             fd.setStar(star);
             fd.setSubCareer(f.getSubCareer().getName());
-            fd.setFullName(u.getFullname());
+            fd.setFullName(u.getFullName());
             fd.setAddress(u.getAddress());
             fd.setPhone(u.getPhone());
             fd.setIsBanned(u.getIsBanned());

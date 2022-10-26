@@ -19,7 +19,6 @@ import javax.persistence.*;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-
 public class Staff {
     @Id
     @Column(name = "id", nullable = false, length = 45)

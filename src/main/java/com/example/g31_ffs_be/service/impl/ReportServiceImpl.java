@@ -39,7 +39,7 @@ public class ReportServiceImpl implements ReportService {
             ReportDTO fa=new ReportDTO();
             fa=mapToReportDTO(f);
             fa.setId(f.getId());
-            fa.setCreatedBy(f.getFrom().getFullname());
+            fa.setCreatedBy(f.getFrom().getFullName());
             fa.setTitle(f.getTitle());
             fa.setDetail(f.getContent());
             fa.setCreatedDate(f.getDateCreated());

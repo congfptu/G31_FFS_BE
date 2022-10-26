@@ -3,6 +3,7 @@ package com.example.g31_ffs_be.controller;
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
+import com.example.g31_ffs_be.security.CustomUserDetailService;
 import com.example.g31_ffs_be.service.ServiceService;
 import com.example.g31_ffs_be.service.impl.*;
 import net.bytebuddy.utility.RandomString;
@@ -13,8 +14,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.time.Instant;
 import java.util.*;
@@ -57,6 +60,8 @@ public class AdminController {
     @Autowired AccountRepository accountRepository;
     @Autowired ServiceRepository serviceRepository;
     @Autowired UserRepository userRepository;
+    @Autowired
+    CustomUserDetailService customUserDetailService;
 
     //staffController
     @GetMapping("/staff111")
@@ -64,11 +69,15 @@ public class AdminController {
         return staffService.getAllStaffs();
     }
 
+    @PreAuthorize("hasAuthority('admin')")
     @GetMapping("/staff")
     public ResponseEntity<?> getStaffByname(@RequestHeader(name = "Authorization") String token,
                                             @RequestParam(name = "name", defaultValue = "") String name,
                                             @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
     ) {
+        Account acc = accountService.getAccountFromToken(token);
+        Role role = roleRepository.findByRoleName("admin");
+        if(acc.getRole().equals(role)){
         int pageIndex = 0;
         try {
             pageIndex = Integer.parseInt(pageNo);
@@ -78,6 +87,7 @@ public class AdminController {
         int pageSize = 5;
         Pageable p = PageRequest.of(pageIndex, pageSize);
         int totalPage = staffRepository.getStaffByName(name, p).getTotalPages();
+            System.out.println(totalPage);
         if (totalPage >= pageIndex - 1) {
             List<StaffAdminDto> sads = staffService.getStaffByName(name, pageIndex, pageSize);
             Map<String, Object> map = new HashMap<>();
@@ -86,7 +96,11 @@ public class AdminController {
             map.put("totalPages", totalPage);
             return new ResponseEntity<>(map, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.OK);
+        }
+        }
+        else{
+            return new ResponseEntity<>("Người dùng không phải admin!", HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -95,7 +109,6 @@ public class AdminController {
       staffService.updateStaff(staffDto);
       return new ResponseEntity<>("Update thành công", HttpStatus.OK);
     }
-
     @PostMapping("/add-staff")
     public ResponseEntity<?> addStaff(@RequestHeader(name = "Authorization") String token,@Valid @RequestBody StaffDto staffDto) {
         if (accountService.checkEmailExist(staffDto.getEmail())) {
@@ -114,7 +127,7 @@ public class AdminController {
                 s.setPhone(staffDto.getPhone());
                 s.setIsActive(Boolean.TRUE);
                 acc.setStaff(s);
-             /*   acc.setRole(roleRepository.findById(staffDto.getRole()).get());*/
+                acc.setRole(roleRepository.findByRoleName("staff"));
                 accountRepository.save(acc);
             }
         }
@@ -334,6 +347,12 @@ public class AdminController {
         } catch (Exception e) {
 
         }
+    }
+    @GetMapping("/testJwtUser")
+    public ResponseEntity<?> test() {
+        return new ResponseEntity<>(customUserDetailService.loadUserByUsername("congbvhe141326@fpt.edu.vn"),HttpStatus.OK);
+
+
     }
 
 
