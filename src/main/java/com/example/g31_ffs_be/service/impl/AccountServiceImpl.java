@@ -91,9 +91,9 @@ public class AccountServiceImpl implements AccountService {
             if(roleName.equals("freelancer")){
                 Freelancer f=new Freelancer();
                 f.setId(id);
-             /*   Subcareer subcareer=new Subcareer();
-                subcareer.setId(registerDto.getSubCareerID());
-                f.setSubCareer(subcareer);*/
+                Subcareer subcareer=new Subcareer();
+                subcareer.setId(registerDto.getSubCareer());
+                f.setSubCareer(subcareer);
                 f.setGender(registerDto.getGender());
                 user.setFreelancer(f);
                 acc.setUser(user);
@@ -104,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
                 Recruiter recruiter=new Recruiter();
                 recruiter.setId(id);
                 Career career=new Career();
-                career.setId(registerDto.getCareerId());
+                career.setId(registerDto.getCareer());
                 recruiter.setCareer(career);
                 recruiter.setTaxNumber(registerDto.getTaxNumber());
                 recruiter.setCompanyName(registerDto.getCompanyName());
@@ -152,7 +152,7 @@ public class AccountServiceImpl implements AccountService {
             helper.setTo(toAddress);
             helper.setSubject(subject);
             content = content.replace("[[name]]", account.getUser().getFullName());
-            String verifyURL = siteURL + "/verify?code=" + account.getUser().getResetPasswordToken();
+            String verifyURL = siteURL + "verify?code=" + account.getUser().getVerificationCode();
             content = content.replace("[[URL]]", verifyURL);
             helper.setText(content, true);
             mailSender.send(message);

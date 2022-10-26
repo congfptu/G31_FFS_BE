@@ -16,13 +16,13 @@ public class RegisterDto {
     String country;
     String phone;
     String role;
-    int subCareerID;
+    int subCareer;
     String taxNumber;
     String website;
     Boolean gender;
-    LocalDate birthDate;
+    LocalDate birthdate;
     double costPerHour;
-    int careerId;
+    int career;
     String companyName;
 
 

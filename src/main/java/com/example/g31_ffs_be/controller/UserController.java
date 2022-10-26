@@ -76,8 +76,8 @@ public class UserController {
     }
     @PutMapping("/verify-account")
     public ResponseEntity<?> singUpUser(
-            @RequestParam(name = "verifyCode", defaultValue = "") String verifiationCode) {
-        if (userService.verify(verifiationCode))
+            @RequestParam(name = "verifyCode", defaultValue = "") String verificationCode) {
+        if (userService.verify(verificationCode))
             return new ResponseEntity<>("Xác thực tài khoản thành công! Bạn có thể đăng nhập ngay bây giờ!", HttpStatus.OK);
         else
             return new ResponseEntity<>("Tài khoản của bạn đã được xác thực hoặc verification code không hợp lệ!", HttpStatus.BAD_REQUEST);
