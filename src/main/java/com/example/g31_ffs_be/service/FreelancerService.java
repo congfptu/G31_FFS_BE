@@ -2,6 +2,7 @@ package com.example.g31_ffs_be.service;
 
 import com.example.g31_ffs_be.dto.FreelancerAdminDto;
 import com.example.g31_ffs_be.dto.FreelancerDetailDto;
+import com.example.g31_ffs_be.dto.FreelancerProfileDTO;
 import com.example.g31_ffs_be.model.Freelancer;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface FreelancerService {
     List<FreelancerAdminDto> getFreelancerByName(String name,int pageNo,int pageSize);
     FreelancerDetailDto getDetailFreelancer(String id);
     List<FreelancerAdminDto>getTop5ByName(String name);
+    FreelancerProfileDTO getFreelancerProfile(String id);
 }

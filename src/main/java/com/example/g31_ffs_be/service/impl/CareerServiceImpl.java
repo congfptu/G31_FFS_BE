@@ -28,7 +28,7 @@ public class CareerServiceImpl implements CareerService {
             careerRepository.save(career);
         }
         catch (Exception e){
-
+            System.out.println(e);
         }
     }
 
@@ -41,7 +41,7 @@ public class CareerServiceImpl implements CareerService {
         }
     }
       catch (Exception e){
-
+          System.out.println(e);
       }
     }
 
@@ -52,37 +52,47 @@ public class CareerServiceImpl implements CareerService {
             if(careerOptional!=null){
             careerRepository.deleteById(id);}
         }catch (Exception e){
-
+            System.out.println(e);
         }
     }
 
     @Override
     public CareerResponse getAllCareer(int pageNumber, int pageSize, String keyword, String sortValue) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Career> careerPage=careerRepository.getCareerByName(keyword,pageable);
-        List<Career> careerList=careerPage.getContent();
-        CareerResponse careerResponse= new CareerResponse();
-        careerResponse.setCareers(careerList);
-        careerResponse.setPageIndex(pageNumber+1);
-        careerResponse.setTotalPages(careerPage.getTotalPages());
-        return careerResponse;
+        try{
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Page<Career> careerPage=careerRepository.getCareerByName(keyword,pageable);
+            List<Career> careerList=careerPage.getContent();
+            CareerResponse careerResponse= new CareerResponse();
+            careerResponse.setCareers(careerList);
+            careerResponse.setPageIndex(pageNumber+1);
+            careerResponse.setTotalPages(careerPage.getTotalPages());
+            return careerResponse;
+        }catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
     }
 
     @Override
     public List<CareerTitleDTO> getCareerTitle() {
-        List<Career> careers=careerRepository.findAll();
-        List<CareerTitleDTO> list= new ArrayList<>();
-        for (Career c:careers) {
-            CareerTitleDTO careerTitleDTO= new CareerTitleDTO();
-            careerTitleDTO.setId(c.getId());
-            careerTitleDTO.setName(c.getName());
-            SubCareerTitleDTO subCareerTitleDTO = new SubCareerTitleDTO();
-            Set<Subcareer> listSub=c.getSubcareers();
-            subCareerTitleDTO.setData(listSub);
-            subCareerTitleDTO.setTitle(c.getName());
-            careerTitleDTO.setSubCareers(subCareerTitleDTO);
-            list.add(careerTitleDTO);
+        try {
+            List<Career> careers=careerRepository.findAll();
+            List<CareerTitleDTO> list= new ArrayList<>();
+            for (Career c:careers) {
+                CareerTitleDTO careerTitleDTO= new CareerTitleDTO();
+                careerTitleDTO.setId(c.getId());
+                careerTitleDTO.setName(c.getName());
+                SubCareerTitleDTO subCareerTitleDTO = new SubCareerTitleDTO();
+                Set<Subcareer> listSub=c.getSubcareers();
+                subCareerTitleDTO.setData(listSub);
+                subCareerTitleDTO.setTitle(c.getName());
+                careerTitleDTO.setSubCareers(subCareerTitleDTO);
+                list.add(careerTitleDTO);
+            }
+            return list;
+        }catch (Exception e){
+            System.out.println(e);
+            return null;
         }
-        return list;
     }
 }
