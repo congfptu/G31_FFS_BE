@@ -1,7 +1,12 @@
 package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.CareerResponse;
+import com.example.g31_ffs_be.dto.CareerTitleDTO;
+import com.example.g31_ffs_be.dto.FreelancerAdminDto;
+import com.example.g31_ffs_be.dto.SubCareerTitleDTO;
 import com.example.g31_ffs_be.model.Career;
+import com.example.g31_ffs_be.model.Freelancer;
+import com.example.g31_ffs_be.model.Subcareer;
 import com.example.g31_ffs_be.repository.CareerRepository;
 import com.example.g31_ffs_be.service.CareerService;
 import org.modelmapper.ModelMapper;
@@ -11,14 +16,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CareerServiceImpl implements CareerService {
     @Autowired
     private CareerRepository careerRepository;
-    private ModelMapper mapper;
     @Override
     public void addCareer(Career career) {
         try {
@@ -63,5 +66,23 @@ public class CareerServiceImpl implements CareerService {
         careerResponse.setPageIndex(pageNumber+1);
         careerResponse.setTotalPages(careerPage.getTotalPages());
         return careerResponse;
+    }
+
+    @Override
+    public List<CareerTitleDTO> getCareerTitle() {
+        List<Career> careers=careerRepository.findAll();
+        List<CareerTitleDTO> list= new ArrayList<>();
+        for (Career c:careers) {
+            CareerTitleDTO careerTitleDTO= new CareerTitleDTO();
+            careerTitleDTO.setId(c.getId());
+            careerTitleDTO.setName(c.getName());
+            SubCareerTitleDTO subCareerTitleDTO = new SubCareerTitleDTO();
+            Set<Subcareer> listSub=c.getSubcareers();
+            subCareerTitleDTO.setData(listSub);
+            subCareerTitleDTO.setTitle(c.getName());
+            careerTitleDTO.setSubCareers(subCareerTitleDTO);
+            list.add(careerTitleDTO);
+        }
+        return list;
     }
 }

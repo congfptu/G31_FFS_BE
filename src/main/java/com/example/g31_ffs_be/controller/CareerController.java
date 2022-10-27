@@ -1,9 +1,11 @@
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.CareerResponse;
+import com.example.g31_ffs_be.dto.CareerTitleDTO;
 import com.example.g31_ffs_be.model.Ban;
 import com.example.g31_ffs_be.model.Career;
 import com.example.g31_ffs_be.repository.CareerRepository;
+import com.example.g31_ffs_be.repository.SubCareerRepository;
 import com.example.g31_ffs_be.service.CareerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +27,8 @@ public class CareerController {
     CareerService careerService;
     @Autowired
     CareerRepository careerRepository;
+    @Autowired
+    SubCareerRepository subCareerRepository;
 
     @GetMapping("/career")
     public ResponseEntity<?> getAllCareerPaging(@RequestHeader(name = "Authorization") String token,
@@ -52,6 +56,16 @@ public class CareerController {
     public ResponseEntity<?> getAllCareer() {
         if(careerRepository.findAll().size()!=0){
             return new ResponseEntity<>(careerRepository.findAll(), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
+        }
+    }
+    @GetMapping("/getCareerTitle")
+    public ResponseEntity<?> getAllCareerTitle() {
+        if(careerService.getCareerTitle().size()!=0){
+            List<CareerTitleDTO> list=careerService.getCareerTitle();
+            return new ResponseEntity<>(list, HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);

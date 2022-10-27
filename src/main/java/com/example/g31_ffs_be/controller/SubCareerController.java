@@ -59,7 +59,7 @@ public class SubCareerController {
                 Subcareer subcareer1= subCareerRepository.getSubCareerBySubName(name);
                 if(subcareer1==null) {
                 Subcareer subcareer = new Subcareer();
-                subcareer.setCareer_id(career_id);
+                subcareer.getCareer().setId(career_id);
                 subcareer.setName(name);
                 subCareerRepository.save(subcareer);
                 return new ResponseEntity<>("Thêm mới subcareer thành công", HttpStatus.OK);}
@@ -81,7 +81,7 @@ public class SubCareerController {
                 Subcareer subcareer = new Subcareer();
                 subcareer.setId(id);
                 subcareer.setName(name);
-                subcareer.setCareer_id(career_id);
+                subcareer.getCareer().setId(career_id);
                 subCareerRepository.save(subcareer);
             }
             return new ResponseEntity<>("Cập nhật subcareer thành công", HttpStatus.OK);

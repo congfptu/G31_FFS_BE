@@ -24,11 +24,11 @@ public class Subcareer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-
     @Column(name = "Name")
     private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @Column(name = "career_id")
-    private Integer career_id;
+    @JoinColumn(name = "career_id")
+    private Career career;
 
 }
