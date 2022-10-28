@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class RegisterDto {
+    String id;
     @Email(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message = "Email không hợp lệ.")
     String email;
     String password;

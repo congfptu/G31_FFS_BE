@@ -2,14 +2,16 @@ package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.CareerResponse;
-import com.example.g31_ffs_be.model.Career;
-import com.example.g31_ffs_be.model.JobSaved;
+import com.example.g31_ffs_be.dto.RegisterDto;
+import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.FreelancerRepository;
 import com.example.g31_ffs_be.repository.JobRequestRepository;
 import com.example.g31_ffs_be.repository.JobSavedRepository;
 import com.example.g31_ffs_be.repository.PostRepository;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
+import com.example.g31_ffs_be.repository.SkillRepository;
+import com.example.g31_ffs_be.service.impl.FreelancerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,13 +20,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/freelancer")
 public class FreelancerController {
     @Autowired
-    FreelancerService freelancerService;
+    FreelancerServiceImpl freelancerService;
+    @Autowired
+    FreelancerRepository freelancerRepository;
+    @Autowired
+    SkillRepository skillRepository;
     @Autowired
     PostService postService;
     @Autowired
@@ -107,5 +115,152 @@ public class FreelancerController {
             System.out.println(e);
             return new ResponseEntity<>("Thêm mới jobRequest thất bại", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/add-education")
+    public ResponseEntity<?> addEducation(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestBody Education education,
+            @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId) {
+
+       try{
+           freelancerService.addEducation(education,freelancerId);
+           return new ResponseEntity<>(true, HttpStatus.OK);
+       }
+       catch (Exception e){
+           System.out.println(e);
+           return new ResponseEntity<>(false, HttpStatus.OK);
+       }
+
+    }
+    @DeleteMapping("/delete-education")
+    public ResponseEntity<?> deleteEducation(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestParam(name = "educationId", defaultValue = "") String educationId) {
+
+        try{
+            freelancerService.deleteEducation(Integer.parseInt(educationId));
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
+    }
+    @DeleteMapping("/delete-exp")
+    public ResponseEntity<?> deleteExp(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestParam(name = "expId", defaultValue = "") String expId) {
+
+        try{
+            freelancerService.deleteWorkExperience(Integer.parseInt(expId));
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
+    }
+    @PutMapping("/update-education")
+    public ResponseEntity<?> updateEducation(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestBody Education education) {
+
+        try{
+            freelancerService.updateEducation(education);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
+    }
+    @PutMapping("/update-exp")
+    public ResponseEntity<?> update(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestBody WorkExperience workExperience) {
+
+        try{
+            freelancerService.updateWorkExperience(workExperience);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
+    }
+    @PostMapping("/add-exp")
+    public ResponseEntity<?> addWorkExperience(
+            @RequestHeader(name = "Authorization") String token,
+            @RequestBody WorkExperience workExperience,
+            @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId) {
+
+        try{
+            freelancerService.addWorkExperience(workExperience,freelancerId);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
+    }
+    @GetMapping("/skill")
+    public ResponseEntity<?> getSkillRemain(@RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId) {
+        System.out.println(freelancerId);
+        return new ResponseEntity<>(skillRepository.getAllRemainSkills(freelancerId), HttpStatus.OK);
+
+    }
+    @GetMapping("/add-skill")
+    public ResponseEntity<?> addSkill(@RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
+                                      @RequestBody List<Skill> skills) {
+        freelancerService.addSkill(skills,freelancerId);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+
+    }
+    @GetMapping("/delete-skill")
+    public ResponseEntity<?> deleteSkill(@RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
+                                         @RequestBody Skill skill) {
+        try{
+            freelancerService.deleteSkill(skill,freelancerId);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @PutMapping("/update-profile")
+    public ResponseEntity<?> editInformation(@RequestParam(name = "freelancerId") String freelancerId,
+                                             @RequestParam(name = "field") String field,
+                                             @RequestParam(name = "value") String value) {
+        try{
+        Freelancer f=freelancerRepository.findById(freelancerId).get();
+        if(field.equals("avatar"))
+            f.getUser().setAvatar(value);
+        else if(field.equals("costPerHour"))
+            f.setCostPerHour(Double.parseDouble(value));
+        else if(field.equals("description"))
+            f.setDescription(value);
+        freelancerRepository.save(f);
+        return new ResponseEntity<>(true, HttpStatus.OK);}
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);}
+    }
+    @PutMapping("/update-profiles")
+    public ResponseEntity<?> updateDetailProfile(@RequestBody RegisterDto registerDto) {
+          try {
+              freelancerService.updateProfile(registerDto);
+              return new ResponseEntity<>(true, HttpStatus.OK);
+          }
+          catch (Exception e){
+              System.out.println(e);
+              return new ResponseEntity<>(false, HttpStatus.OK);
+          }
     }
 }

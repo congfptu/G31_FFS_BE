@@ -32,7 +32,7 @@ public class WorkExperience {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "freelancer_id")
+    @JoinColumn(name = "freelancer_id",updatable = false)
     @JsonIgnore
     private Freelancer freelancer;
 

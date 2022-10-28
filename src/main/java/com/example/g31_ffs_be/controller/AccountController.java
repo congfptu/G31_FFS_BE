@@ -29,45 +29,7 @@ public class AccountController {
     @Autowired
     RoleRepository roleRepository;
 
-/*  @Autowired  PasswordEncoder passwordEncoder;*/
 
-
-   /* @GetMapping("/account")
-    public List<AccountDto> showUserList(){
-        List<AccountDto> accounts=service.getAllAccounts();
-
-        return accounts ;
-    }*/
-    @GetMapping("/accounts")
-    public List<Account> showUserList(){
-        List<Account> accounts=service.getAllAccount();
-
-        return accounts ;
-    }
-   /* @PostMapping("/account/add")
-    public void addAccount(@RequestBody  String strJson){
-        String id=RandomString.make(8);
-        JSONObject json=new JSONObject(strJson);
-        if(json.getString("role_id").equals("2"))
-            id="LF"+id;
-        else id="LR"+id;
-        if (!service.checkIdExist(id)){
-            Account acc=new Account();
-            User u=new User();
-            acc.setId(id);
-            u.setId(id);
-            Freelancer f=new Freelancer();
-            f.setId(id);
-            u.setFreelancer(f);
-            Role role= roleRepository.findById(2).get();
-            acc.setRole(role);
-            acc.setEmail(json.getString("email"));
-         *//*   acc.setPassword(passwordEncoder.encode(json.getString("password")));*//*
-            acc.setCreatedDate(Instant.now());
-            acc.setUser(u);
-            service.addAccount(acc);
-        }
-    }*/
 
 
 }

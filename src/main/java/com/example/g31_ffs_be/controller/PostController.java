@@ -72,7 +72,6 @@ public class PostController {
                 Staff staff=staffRepository.getReferenceById(approveBy);
                 job.setApprovedBy(staff);
                 job.setIsApproved(status);
-//                job.setTime(Instant.now());
                 postRepository.save(job);
             }
             return new ResponseEntity<>("Cập nhật post thành công", HttpStatus.OK);

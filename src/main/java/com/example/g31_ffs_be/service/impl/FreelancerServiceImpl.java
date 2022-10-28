@@ -2,7 +2,10 @@ package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
+import com.example.g31_ffs_be.repository.EducationRepository;
 import com.example.g31_ffs_be.repository.FreelancerRepository;
+import com.example.g31_ffs_be.repository.UserRepository;
+import com.example.g31_ffs_be.repository.WorkExperienceRepository;
 import com.example.g31_ffs_be.service.FreelancerService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,12 @@ public class FreelancerServiceImpl implements FreelancerService {
     FreelancerRepository freelancerRepository;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    EducationRepository educationRepository;
+    @Autowired
+    WorkExperienceRepository workExperienceRepository;
 
     @Override
     public void addFreelancer(Freelancer f) {
@@ -126,7 +135,7 @@ public class FreelancerServiceImpl implements FreelancerService {
                educationDTO.setMajor(e.getDescription());
                educationDTO.setTo(e.getTo().toString());
                educationDTO.setFrom(e.getFrom().toString());
-               educationDTO.setLevel(e.getLevel());
+               educationDTO.setLevel(e.getMajor());
                educationDTOS.add(educationDTO);
            }
            freelancerProfileDTO.setEducations(educationDTOS);
@@ -156,6 +165,85 @@ public class FreelancerServiceImpl implements FreelancerService {
            System.out.println(e);
        }
         return null;
+    }
+    @Override
+    public void addEducation(Education education, String freelancerId) {
+        Freelancer f=new Freelancer();
+        f.setId(freelancerId);
+        education.setFreelancer(f);
+        educationRepository.save(education);
+    }
+
+    @Override
+    public void updateEducation(Education education) {
+        educationRepository.save(education);
+    }
+
+    @Override
+    public void deleteEducation(int id) {
+        educationRepository.deleteById(id);
+    }
+
+    @Override
+    public void addWorkExperience(WorkExperience workExperience, String freelancerId) {
+        Freelancer f=new Freelancer();
+        f.setId(freelancerId);
+        workExperience.setFreelancer(f);
+        workExperienceRepository.save(workExperience);
+    }
+
+    @Override
+    public void deleteWorkExperience(int id) {
+        workExperienceRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateWorkExperience(WorkExperience workExperience) {
+        workExperienceRepository.save(workExperience);
+    }
+
+    @Override
+    public void addSkill(List<Skill> skill,String freelancerId) {
+        Freelancer freelancer=freelancerRepository.findById(freelancerId).get();
+        freelancer.getSkills().addAll(skill);
+        freelancerRepository.save(freelancer);
+    }
+    @Override
+    public void deleteSkill(Skill skill,String freelancerId) {
+        Freelancer freelancer=freelancerRepository.findById(freelancerId).get();
+        List<Skill> skills=new ArrayList<>();
+        skills=freelancer.getSkills();
+        for (int i=0;i<skills.size();i++)
+        {
+            if(skills.get(i).getId()==skill.getId()) {
+                freelancer.getSkills().remove(i);
+                break;
+            }
+        }
+        freelancerRepository.save(freelancer);
+    }
+
+    @Override
+    public void updateProfile(RegisterDto registerDto) {
+        try{
+            String id=registerDto.getId();
+            User user=userRepository.getReferenceById(id);
+            user.setFullName(registerDto.getFullName());
+            user.setAddress(registerDto.getAddress());
+            user.setCity(registerDto.getCity());
+            user.setCountry(registerDto.getCountry());
+            user.setPhone(registerDto.getPhone());
+            userRepository.save(user);
+            Freelancer freelancer=freelancerRepository.getReferenceById(id);
+            freelancer.setBirthdate(registerDto.getBirthdate());
+            freelancer.setGender(registerDto.getGender());
+            Subcareer s=new Subcareer();
+            s.setId(registerDto.getSubCareer());
+            freelancer.setSubCareer(s);
+            freelancerRepository.save(freelancer);}
+        catch (Exception e){
+            System.out.println(e);
+        }
     }
 
 

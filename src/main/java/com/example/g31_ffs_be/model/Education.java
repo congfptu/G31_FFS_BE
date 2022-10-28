@@ -11,6 +11,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "education")
@@ -32,8 +33,9 @@ public class Education {
     @Column(name = "university")
     private String university;
 
-    @Column(name = "level")
-    private String level;
+    @Size(max = 255)
+    @Column(name = "major")
+    private String major;
 
     @Column(name = "`from`")
     private Integer from;
@@ -45,9 +47,11 @@ public class Education {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "freelancer_id")
+    @JoinColumn(name = "freelancer_id",updatable = false)
     @JsonIgnore
     private Freelancer freelancer;
+
+
 
 
 }

@@ -50,16 +50,7 @@ public class AccountServiceImpl implements AccountService {
 
         return null;
     }
-
-    public String generateUniqueId(Role role) {
-        if (role.getId() == 3) return "LF" + RandomString.make(8);
-        return "LR" + RandomString.make(8);
-    }
-
-    public List<Account> getAllAccount() {
-        return (List<Account>) repo.findAll();
-    }
-
+    
     @Override
     public void createAccount(RegisterDto registerDto) {
         try {
@@ -199,7 +190,6 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             return false;
         }
-
     }
 
     private static String decode(String encodedString) {
@@ -213,7 +203,7 @@ public class AccountServiceImpl implements AccountService {
             account.getUser().setResetPasswordToken(resetPasswordToken);
             account.getUser().setResetPasswordTime(Instant.now());
             accountRepository.save(account);
-            sendResetPasswordEmail(account, "http://localhost:3000/");
+            sendResetPasswordEmail(account, "http://localhost:3000");
             return true;
         } catch (Exception e) {
             return false;

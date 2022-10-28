@@ -65,7 +65,7 @@ public class UserController {
         if(acc==null ||(Instant.now().minus(2,ChronoUnit.MINUTES).compareTo(timeReset)>=0))
             return new ResponseEntity<>("Token quá hạn hoặc không hợp lệ!", HttpStatus.OK);
         else{
-            return new ResponseEntity<>(acc, HttpStatus.OK);
+            return new ResponseEntity<>(acc.getEmail(), HttpStatus.OK);
         }
 
     }
@@ -97,7 +97,13 @@ public class UserController {
                 ));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 String token = tokenProvider.generateToken(authentication);
-                return new ResponseEntity<>(new JWTAuthResponse(token), HttpStatus.OK);
+                JWTAuthResponse jwtAuthResponse=new JWTAuthResponse();
+                jwtAuthResponse.setUserId(account.getId());
+                jwtAuthResponse.setAccessToken(token);
+                jwtAuthResponse.setTokenType("Bearer");
+                jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+
+                return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
             }else{
                 return new ResponseEntity<>(" Người dùng đã bị chặn !", HttpStatus.BAD_REQUEST);
             }

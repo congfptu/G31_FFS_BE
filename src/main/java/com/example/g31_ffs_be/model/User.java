@@ -83,4 +83,7 @@ public class User {
     @Column(name = "reset_password_time")
     private Instant resetPasswordTime;
 
+    @Column(name = "is_member_ship")
+    private Boolean isMemberShip;
+
 }

@@ -1,20 +1,16 @@
 package com.example.g31_ffs_be.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+
+@Data
 public class JWTAuthResponse {
+    private String userId;
+    private String role;
+    private Boolean isMemberShip;
+    private double accountBalance;
     private String accessToken;
     private String tokenType = "Bearer";
-//    private boolean isAdmin;
-    public JWTAuthResponse(String accessToken) {
-        this.accessToken = accessToken;
-    }
 
-//    public JWTAuthResponse(String accessToken, boolean isAdmin) {
-//        this.accessToken = accessToken;
-//        this.isAdmin = isAdmin;
-//    }
+
 }
