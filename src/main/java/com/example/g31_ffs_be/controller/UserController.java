@@ -99,6 +99,7 @@ public class UserController {
                 String token = tokenProvider.generateToken(authentication);
                 JWTAuthResponse jwtAuthResponse=new JWTAuthResponse();
                 jwtAuthResponse.setUserId(account.getId());
+                jwtAuthResponse.setRole(account.getRole().getRoleName());
                 jwtAuthResponse.setAccessToken(token);
                 jwtAuthResponse.setTokenType("Bearer");
                 jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
