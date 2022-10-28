@@ -15,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class JobSaved {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -22,5 +23,9 @@ public class JobSaved {
     @JoinColumn(name = "job_id")
     private Job job;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "freelancer_id")
+    private Freelancer freelancer;
 
 }

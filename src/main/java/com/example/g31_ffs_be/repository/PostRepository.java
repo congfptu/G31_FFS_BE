@@ -25,4 +25,12 @@ public interface PostRepository extends JpaRepository<Job, String> {
             " WHERE id=:id "
             , nativeQuery = true)
     Job getJobDetail(String id);
+    @Query(value = " SELECT * FROM jobs " +
+            "where area LIKE CONCAT('%',:keyword1,'%') and budget LIKE CONCAT('%',:keyword2,'%') "
+            , nativeQuery = true)
+    Page<Job> getJobSearch(String keyword1,String keyword2,Pageable pageable);
+    @Query(value = " SELECT * FROM jobs " +
+            "where area LIKE CONCAT('%',:keyword1,'%') and budget LIKE CONCAT('%',:keyword2,'%') and sub_career_id=:sub_career_id"
+            , nativeQuery = true)
+    Page<Job> getJobSearch(String keyword1,String keyword2,String sub_career_id,Pageable pageable);
 }

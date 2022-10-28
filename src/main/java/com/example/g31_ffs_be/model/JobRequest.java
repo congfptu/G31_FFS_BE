@@ -19,7 +19,8 @@ public class JobRequest {
     @Id
     @Size(max = 45)
     @Column(name = "id", nullable = false, length = 45)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
@@ -34,5 +35,9 @@ public class JobRequest {
     @Column(name = "approved_date")
     private Instant approvedDate;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "freelancer_id")
+    private Freelancer freelancer;
 
 }

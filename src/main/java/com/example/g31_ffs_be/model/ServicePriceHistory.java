@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -14,6 +16,8 @@ import java.time.Instant;
 @NoArgsConstructor
 @Entity
 @Table(name = "service_price_history")
+@DynamicUpdate
+@DynamicInsert
 public class ServicePriceHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

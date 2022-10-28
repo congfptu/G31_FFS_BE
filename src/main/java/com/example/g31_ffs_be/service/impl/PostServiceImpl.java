@@ -1,10 +1,7 @@
 package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_be.dto.PostDTO;
-import com.example.g31_ffs_be.dto.PostDTOResponse;
-import com.example.g31_ffs_be.dto.RecruiterDto;
+import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Job;
-import com.example.g31_ffs_be.dto.PostDetailDTO;
 import com.example.g31_ffs_be.model.Recruiter;
 import com.example.g31_ffs_be.model.Staff;
 import com.example.g31_ffs_be.repository.PostRepository;
@@ -104,6 +101,62 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setApprovedBy(job.getApprovedBy().getFullname());
         postDetailDTO.setListSkills(job.getListSkills());
         return postDetailDTO;
+    }
+
+    @Override
+    public APIResponse getJobSearch(int pageNumber, int pageSize, String keyword1, String keyword2, String sortValue) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Job> paymentPaging=postRepository.getJobSearch(keyword1,keyword2,pageable);
+        List<Job> paymentDTOResponseList=paymentPaging.getContent();
+        List<PostFindingDTO> fas=new ArrayList<>();
+        for (Job f: paymentDTOResponseList){
+            PostFindingDTO fa=new PostFindingDTO();
+          fa.setPostID(f.getId());
+          fa.setJobTitle(f.getJobTitle());
+          fa.setSubCareer(f.getSubCareer().getName());
+          fa.setDescription(f.getDescription());
+          fa.setAttach(f.getAttach());
+          fa.setPaymentType(f.getPaymentType());
+          fa.setBudget(f.getBudget());
+          fa.setCreatedDate(f.getTime());
+          fa.setArea(f.getArea());
+          fa.setIsActive(f.getIsActive());
+          fa.setListSkills(f.getListSkills());
+            fas.add(fa);
+        }
+        APIResponse paymentDTOResponse= new APIResponse();
+        paymentDTOResponse.setResults(fas);
+        paymentDTOResponse.setPageIndex(pageNumber+1);
+        paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
+        return  paymentDTOResponse;
+    }
+
+    @Override
+    public APIResponse getJobSearch(int pageNumber, int pageSize, String keyword1, String keyword2, String keyword3, String sortValue) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Job> paymentPaging=postRepository.getJobSearch(keyword1,keyword2,keyword3,pageable);
+        List<Job> paymentDTOResponseList=paymentPaging.getContent();
+        List<PostFindingDTO> fas=new ArrayList<>();
+        for (Job f: paymentDTOResponseList){
+            PostFindingDTO fa=new PostFindingDTO();
+            fa.setPostID(f.getId());
+            fa.setJobTitle(f.getJobTitle());
+            fa.setSubCareer(f.getSubCareer().getName());
+            fa.setDescription(f.getDescription());
+            fa.setAttach(f.getAttach());
+            fa.setPaymentType(f.getPaymentType());
+            fa.setBudget(f.getBudget());
+            fa.setCreatedDate(f.getTime());
+            fa.setArea(f.getArea());
+            fa.setIsActive(f.getIsActive());
+            fa.setListSkills(f.getListSkills());
+            fas.add(fa);
+        }
+        APIResponse paymentDTOResponse= new APIResponse();
+        paymentDTOResponse.setResults(fas);
+        paymentDTOResponse.setPageIndex(pageNumber+1);
+        paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
+        return  paymentDTOResponse;
     }
 
     private PostDTO mapToPostDTO(Job job){
