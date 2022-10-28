@@ -60,7 +60,7 @@ public class PaymentController {
 //    status:1,
 //    approveBy:11,
 //    responseMessage:'noi dung'
-    @PutMapping("/payment/update")
+ /*   @PutMapping("/payment/update")
     public ResponseEntity<?> updateStatus(@RequestHeader(name = "Authorization") String token,
                                          @NotEmpty @RequestParam(name = "id", defaultValue = "") String id,
                                           @NotEmpty  @RequestParam(name = "status", defaultValue = "") Integer status,
@@ -71,16 +71,14 @@ public class PaymentController {
         try {
             if (paymentRepository.findById(id).isPresent()) {
                 RequestPayment requestPayment = paymentRepository.findById(id).get();
-                requestPayment.setResponseMessage(responseMessage);
+
                 Staff staff=staffRepository.getReferenceById(approveBy);
-               requestPayment.setApprovedBy(staff);
-                requestPayment.setStatus(status);
-                requestPayment.setDateApproved(LocalDateTime.now());
+
                 paymentRepository.save(requestPayment);
             }
             return new ResponseEntity<>("Cập nhật payment thành công", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Cập nhật payment thất bại", HttpStatus.BAD_REQUEST);
         }
-    }
+    }*/
 }

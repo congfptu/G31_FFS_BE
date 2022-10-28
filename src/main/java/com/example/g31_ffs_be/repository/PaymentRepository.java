@@ -6,6 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface PaymentRepository extends JpaRepository<RequestPayment,String> {
     @Query(value = " SELECT * FROM request_payment " +
@@ -24,4 +29,15 @@ public interface PaymentRepository extends JpaRepository<RequestPayment,String> 
             " WHERE payment_code =:keyword"
             , nativeQuery = true)
     RequestPayment getRequestPaymentByCode(String keyword);
+
+    @Query(value = " SELECT * FROM request_payment " +
+            " WHERE user_id =:userId"
+            , nativeQuery = true)
+    List<RequestPayment> getRequestPaymentByUserId(String userId);
+    @Query(value = " SELECT * FROM request_payment " +
+            " WHERE (date_request between :from and :to) and user_id=:userId"
+            , nativeQuery = true)
+    List<RequestPayment> getRequestPaymentByDateRequest(LocalDateTime from, LocalDateTime to, String userId);
+
+
 }

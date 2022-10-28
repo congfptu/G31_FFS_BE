@@ -2,6 +2,7 @@ package com.example.g31_ffs_be.model;
 
 import com.example.g31_ffs_be.model.Staff;
 import com.example.g31_ffs_be.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,11 +25,12 @@ import java.time.LocalDateTime;
 @DynamicInsert
 public class RequestPayment {
     @Id
-    @Size(max = 45)
-    @Column(name = "id", nullable = false, length = 45)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -39,22 +41,14 @@ public class RequestPayment {
     private LocalDateTime dateRequest;
 
     @Column(name = "status")
-    private Integer status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "approved_by")
-    private Staff approvedBy;
-
-    @Column(name = "date_approved")
-    private LocalDateTime dateApproved;
+    private Boolean status;
 
     @Size(max = 255)
-    @Column(name = "response_message")
-    private String responseMessage;
-
-    @Size(max = 45)
-    @Column(name = "payment_code", length = 45)
+    @Column(name = "payment_code")
     private String paymentCode;
+
+
+
 
 
 }

@@ -21,7 +21,7 @@ public class PaymentDTO {
     LocalDateTime dateRequest;
     @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     LocalDateTime dateApprove;
-    Integer status;
+    Boolean status;
     String responseMessage;
 
 }

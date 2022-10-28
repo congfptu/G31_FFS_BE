@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>G31_FFS_BE</name>
     <description>G31_FFS_BE</description>
+    <packaging>war</packaging>
     <properties>
         <java.version>1.8</java.version>
     </properties>

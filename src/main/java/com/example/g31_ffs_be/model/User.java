@@ -86,4 +86,7 @@ public class User {
     @Column(name = "is_member_ship")
     private Boolean isMemberShip;
 
+    @OneToMany(mappedBy = "user")
+    private Set<RequestPayment> requestPayments = new LinkedHashSet<>();
+
 }

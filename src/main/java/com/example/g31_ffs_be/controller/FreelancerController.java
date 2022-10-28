@@ -4,14 +4,11 @@ import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.CareerResponse;
 import com.example.g31_ffs_be.dto.RegisterDto;
 import com.example.g31_ffs_be.model.*;
-import com.example.g31_ffs_be.repository.FreelancerRepository;
-import com.example.g31_ffs_be.repository.JobRequestRepository;
-import com.example.g31_ffs_be.repository.JobSavedRepository;
-import com.example.g31_ffs_be.repository.PostRepository;
+import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
-import com.example.g31_ffs_be.repository.SkillRepository;
 import com.example.g31_ffs_be.service.impl.FreelancerServiceImpl;
+import javafx.util.converter.LocalDateStringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.Valid;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -32,12 +31,14 @@ public class FreelancerController {
     @Autowired
     FreelancerRepository freelancerRepository;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     SkillRepository skillRepository;
     @Autowired
     PostService postService;
     @Autowired
     PostRepository postRepository;
-    @Autowired
+    @Autowired PaymentRepository paymentRepository;
     JobSavedRepository jobSavedRepository;
     @Autowired
     JobRequestRepository jobRequestRepository;
@@ -210,20 +211,22 @@ public class FreelancerController {
 
     }
     @GetMapping("/skill")
-    public ResponseEntity<?> getSkillRemain(@RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId) {
+    public ResponseEntity<?> getSkillRemain(@RequestHeader(name = "Authorization") String token,@RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId) {
         System.out.println(freelancerId);
         return new ResponseEntity<>(skillRepository.getAllRemainSkills(freelancerId), HttpStatus.OK);
 
     }
     @GetMapping("/add-skill")
-    public ResponseEntity<?> addSkill(@RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
+    public ResponseEntity<?> addSkill(@RequestHeader(name = "Authorization") String token,
+                                      @RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
                                       @RequestBody List<Skill> skills) {
         freelancerService.addSkill(skills,freelancerId);
         return new ResponseEntity<>(true, HttpStatus.OK);
 
     }
-    @GetMapping("/delete-skill")
-    public ResponseEntity<?> deleteSkill(@RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
+    @DeleteMapping("/delete-skill")
+    public ResponseEntity<?> deleteSkill(@RequestHeader(name = "Authorization") String token,
+                                         @RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
                                          @RequestBody Skill skill) {
         try{
             freelancerService.deleteSkill(skill,freelancerId);
@@ -235,7 +238,8 @@ public class FreelancerController {
         }
     }
     @PutMapping("/update-profile")
-    public ResponseEntity<?> editInformation(@RequestParam(name = "freelancerId") String freelancerId,
+    public ResponseEntity<?> editInformation(@RequestHeader(name = "Authorization") String token,
+                                             @RequestParam(name = "freelancerId") String freelancerId,
                                              @RequestParam(name = "field") String field,
                                              @RequestParam(name = "value") String value) {
         try{
@@ -253,7 +257,8 @@ public class FreelancerController {
             return new ResponseEntity<>(false, HttpStatus.OK);}
     }
     @PutMapping("/update-profiles")
-    public ResponseEntity<?> updateDetailProfile(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<?> updateDetailProfile(@RequestHeader(name = "Authorization") String token,
+                                                 @RequestBody RegisterDto registerDto) {
           try {
               freelancerService.updateProfile(registerDto);
               return new ResponseEntity<>(true, HttpStatus.OK);
@@ -262,5 +267,48 @@ public class FreelancerController {
               System.out.println(e);
               return new ResponseEntity<>(false, HttpStatus.OK);
           }
+    }
+    @PutMapping("/recharge-money")
+    public ResponseEntity<?> rechargeMoney(@RequestHeader(name = "Authorization") String token,
+                                           @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId,
+                                           @RequestParam(name = "amount", defaultValue = "") String amount) {
+        try {
+            User user=userRepository.getReferenceById(freelancerId);
+            user.setAccountBalance(Double.parseDouble(amount)+user.getAccountBalance());
+            userRepository.save(user);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch (Exception e){
+
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/transaction-history")
+    public ResponseEntity<?> transactionHistory(@RequestHeader(name = "Authorization") String token,
+                                           @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId) {
+        try {
+            return new ResponseEntity<>(paymentRepository.getRequestPaymentByUserId(freelancerId), HttpStatus.OK);
+        }
+        catch (Exception e){
+
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/searchTransaction")
+    public ResponseEntity<?> searchTransaction(
+                                           @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId ,
+                                               @RequestParam(name = "from", defaultValue = "") Date from,
+                                               @RequestParam(name = "to", defaultValue = "") Date to) {
+        try {
+             LocalDate fromDate= from.toLocalDate();
+             LocalDate toDate=to.toLocalDate();
+            return new ResponseEntity<>(paymentRepository.getRequestPaymentByDateRequest(fromDate.atTime(0,0),
+                                                                                         toDate.atTime(23,59),
+                                                                                          freelancerId), HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
     }
 }

@@ -42,14 +42,12 @@ public class PaymentServiceImpl implements PaymentService {
         for (RequestPayment f: paymentDTOResponseList){
             PaymentDTO fa=new PaymentDTO();
             fa=mapToPaymentDTO(f);
-            fa.setId(f.getId());
+            fa.setUserId(f.getUser().getId());
             fa.setCode(f.getPaymentCode());
             fa.setStatus(f.getStatus());
             fa.setUserId(f.getUser().getId());
             fa.setMoney(f.getAmount());
-            fa.setDateApprove(f.getDateApproved());
             fa.setDateRequest(f.getDateRequest());
-            fa.setResponseMessage(f.getResponseMessage());
             fas.add(fa);
         }
         PaymentDTOResponse paymentDTOResponse= new PaymentDTOResponse();
@@ -68,14 +66,12 @@ public class PaymentServiceImpl implements PaymentService {
         for (RequestPayment f: paymentDTOResponseList){
             PaymentDTO fa=new PaymentDTO();
             fa=mapToPaymentDTO(f);
-            fa.setId(f.getId());
+            fa.setUserId(f.getUser().getId());
             fa.setCode(f.getPaymentCode());
             fa.setStatus(f.getStatus());
             fa.setUserId(f.getUser().getId());
             fa.setMoney(f.getAmount());
-            fa.setDateApprove(f.getDateApproved());
             fa.setDateRequest(f.getDateRequest());
-            fa.setResponseMessage(f.getResponseMessage());
             fas.add(fa);
         }
         PaymentDTOResponse paymentDTOResponse= new PaymentDTOResponse();

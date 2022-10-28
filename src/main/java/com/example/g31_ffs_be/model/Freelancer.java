@@ -24,13 +24,10 @@ public class Freelancer {
     @Id
     @Column(name = "freelancer_id", nullable = false, length = 45)
     private String id;
-
     @Column(name = "birthdate")
     private LocalDate birthdate;
-
     @Column(name = "gender")
     private Boolean gender;
-
     @Column(name = "cost_per_hour")
     private Double costPerHour;
 
@@ -39,8 +36,6 @@ public class Freelancer {
 
     @Column(name = "cv")
     private String cv;
-
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "freelancer_id", nullable = false)
     private User user;
