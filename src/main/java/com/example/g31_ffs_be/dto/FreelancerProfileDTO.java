@@ -16,6 +16,7 @@ public class FreelancerProfileDTO {
     Boolean gender;
     String phone;
     String fullName;
+    String avatar;
     String address;
     String city;
     String country;

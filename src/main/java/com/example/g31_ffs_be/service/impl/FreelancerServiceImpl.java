@@ -109,6 +109,7 @@ public class FreelancerServiceImpl implements FreelancerService {
            FreelancerProfileDTO freelancerProfileDTO = new FreelancerProfileDTO();
            freelancerProfileDTO.setId(id);
            freelancerProfileDTO.setGender(freelancer.get().getGender());
+           freelancerProfileDTO.setAvatar(freelancer.get().getUser().getAvatar());
            freelancerProfileDTO.setPhone(freelancer.get().getUser().getPhone());
            freelancerProfileDTO.setFullName(freelancer.get().getUser().getFullName());
            freelancerProfileDTO.setAddress(freelancer.get().getUser().getAddress());

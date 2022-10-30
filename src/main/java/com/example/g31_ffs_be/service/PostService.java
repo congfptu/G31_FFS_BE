@@ -8,6 +8,6 @@ public interface PostService {
     PostDTOResponse getAllPostByNameAndStatusPaging(int pageNumber, int pageSize, String keyword, String isApproved, String sortValue);
     PostDTOResponse getAllPostSearchNamePaging(int pageNumber, int pageSize, String keyword, String sortValue);
     PostDetailDTO getPostDetail(String id);
-    APIResponse getJobSearch(int pageNumber, int pageSize, String keyword1,String keyword2, String sortValue);
-    APIResponse getJobSearch(int pageNumber, int pageSize, String keyword1,String keyword2,String keyword3, String sortValue);
+    APIResponse getJobSearch(int pageNumber, int pageSize, String area,String budget,String keyword,String is_top, String sortValue);
+    APIResponse getJobSearch(int pageNumber, int pageSize, String area,String budget,String keyword,String sub_career_id,String is_top, String sortValue);
 }

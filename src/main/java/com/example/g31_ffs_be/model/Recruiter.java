@@ -9,6 +9,8 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "recruiter")
@@ -44,5 +46,8 @@ public class Recruiter {
     @Size(max = 255)
     @Column(name = "company_name")
     private String companyName;
+
+    @OneToMany(mappedBy = "createBy")
+    private Set<Job> jobs = new LinkedHashSet<>();
 
 }

@@ -5,6 +5,9 @@ import lombok.Data;
 @Data
 public class RecruiterDto {
     String id;
-    String name;
-
+    String companyName;
+    String website;
+    double star;
+    Integer numberOfFeedback;
+    Integer totalPosted;
 }

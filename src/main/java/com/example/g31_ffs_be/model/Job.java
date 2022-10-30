@@ -67,7 +67,6 @@ public class Job {
 
     @Column(name = "is_approved")
     private Integer isApproved;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by")
     private Staff approvedBy;
@@ -86,6 +85,10 @@ public class Job {
     private Set<Skill> listSkills;
 
 
+    @Column(name = "is_top")
+    private Boolean isTop;
 
+    @Column(name = "fee")
+    private Double fee;
 
 }
