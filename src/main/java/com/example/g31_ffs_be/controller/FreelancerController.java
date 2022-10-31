@@ -225,11 +225,12 @@ public class FreelancerController {
             return new ResponseEntity<>(skillRepository.getAllRemainSkills(freelancerId,skill), HttpStatus.OK);
         }
         catch(Exception e){
+
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
 
     }
-    @GetMapping("/add-skill")
+    @PostMapping("/add-skill")
     public ResponseEntity<?> addSkill(@RequestHeader(name = "Authorization") String token,
                                       @RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
                                       @RequestBody List<Skill> skills) {
@@ -240,8 +241,10 @@ public class FreelancerController {
     @DeleteMapping("/delete-skill")
     public ResponseEntity<?> deleteSkill(@RequestHeader(name = "Authorization") String token,
                                          @RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
-                                         @RequestBody Skill skill) {
+                                         @RequestParam(name = "skillId", defaultValue = "0") int skillId ) {
         try {
+            Skill skill=new Skill();
+            skill.setId(skillId);
             freelancerService.deleteSkill(skill, freelancerId);
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {

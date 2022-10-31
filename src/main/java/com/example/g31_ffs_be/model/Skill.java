@@ -32,7 +32,7 @@ public class Skill {
 
     @Column(name = "name")
     private String name;
-@JsonIgnore
+   @JsonIgnore
     @ManyToMany(mappedBy = "listSkills")
     private Set<Job> jobs;
     @OneToMany

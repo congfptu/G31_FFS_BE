@@ -12,10 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class FreelancerServiceImpl implements FreelancerService {
@@ -220,16 +217,16 @@ public class FreelancerServiceImpl implements FreelancerService {
     @Override
     public void deleteSkill(Skill skill,String freelancerId) {
         Freelancer freelancer=freelancerRepository.findById(freelancerId).get();
-        List<Skill> skills=new ArrayList<>();
-        skills= (List<Skill>) freelancer.getSkills();
-        for (int i=0;i<skills.size();i++)
-        {
-            if(skills.get(i).getId()==skill.getId()) {
-                freelancer.getSkills().remove(i);
+        Set<Skill> skills= new LinkedHashSet<>();
+        skills= freelancer.getSkills();
+        for (Skill s : skills) {
+            if (s.getId()==skill.getId()) {
+                skills.remove(s);
+                freelancerRepository.save(freelancer);
                 break;
             }
         }
-        freelancerRepository.save(freelancer);
+
     }
 
     @Override
