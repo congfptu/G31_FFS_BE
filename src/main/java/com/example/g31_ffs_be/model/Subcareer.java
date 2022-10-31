@@ -28,7 +28,7 @@ public class Subcareer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Column(name = "Name")
+    @Column(name = "name")
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore

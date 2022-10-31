@@ -15,5 +15,5 @@ public interface JobRequestRepository extends JpaRepository<JobRequest,String> {
     @Transactional
     @Query(value = " insert into job_request (job_id,freelancer_id) values (:job_id,:freelancer_id)"
             , nativeQuery = true)
-    Integer insert(String job_id, String freelancer_id);
+    Integer insert(Integer job_id, Integer freelancer_id);
 }

@@ -41,12 +41,9 @@ public class CareerController {
 
         }
         int pageSize = 5;
-        Pageable p = PageRequest.of(pageIndex, pageSize);
-        int totalPage = careerRepository.getCareerByName(name, p).getTotalPages();
 
-        if (totalPage >= pageIndex - 1) {
-            CareerResponse fas = careerService.getAllCareer(pageIndex, pageSize, name, null);
-
+        CareerResponse fas = careerService.getAllCareer(pageIndex, pageSize, name, null);
+        if (fas.getTotalPages() >= pageIndex - 1) {
             return new ResponseEntity<>(fas, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
@@ -79,6 +76,7 @@ public class CareerController {
 
                if(career1==null) {
                    Career career = new Career();
+                   System.out.println("chay vao day");
                    career.setName(name);
                    careerRepository.save(career);
                    return new ResponseEntity<>("Thêm mới career thành công", HttpStatus.OK);
@@ -87,6 +85,7 @@ public class CareerController {
                }
 
         } catch (Exception e) {
+            System.out.println(e);
             return new ResponseEntity<>("Thêm mới career thất bại", HttpStatus.BAD_REQUEST);
         }
     }

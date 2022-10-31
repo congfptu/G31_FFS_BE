@@ -30,19 +30,21 @@ public class ReportController {
         int pageIndex = 0;
         try {
             pageIndex = Integer.parseInt(pageNo);
+            int pageSize = 5;
+            Pageable p = PageRequest.of(pageIndex, pageSize);
+            int totalPage = reportRepository.getReportByCreatedByOrCreatedDate(keyword,p).getTotalPages();
+
+            if (totalPage >= pageIndex - 1) {
+                ReportDTOResponse fas = reportService.getReportPagingByDateOrCreatedBy(pageIndex, pageSize, keyword, null);
+
+                return new ResponseEntity<>(fas, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+            }
         } catch (Exception e) {
-
-        }
-        int pageSize = 5;
-        Pageable p = PageRequest.of(pageIndex, pageSize);
-        int totalPage = reportRepository.getReportByCreatedByOrCreatedDate(keyword,p).getTotalPages();
-
-        if (totalPage >= pageIndex - 1) {
-            ReportDTOResponse fas = reportService.getReportPagingByDateOrCreatedBy(pageIndex, pageSize, keyword, null);
-
-            return new ResponseEntity<>(fas, HttpStatus.OK);
-        } else {
+            System.out.println(e);
             return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }
+
     }
 }

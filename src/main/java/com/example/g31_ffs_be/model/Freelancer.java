@@ -10,7 +10,9 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "freelancer")
@@ -44,16 +46,16 @@ public class Freelancer {
     @JoinColumn(name = "sub_career_id")
     private Subcareer subCareer;
 
-    @OneToMany(mappedBy = "freelancer")
-    private List<Education> educations = new ArrayList<>();
+    @OneToMany(mappedBy = "freelancer",fetch = FetchType.LAZY)
+    private Set<Education> educations = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "freelancer")
-    private List<WorkExperience> workExperiences = new ArrayList<>();
+    private Set<WorkExperience> workExperiences = new LinkedHashSet<>();
     @OneToMany
     @JoinTable(name = "freelancer_skill",
             joinColumns = @JoinColumn(name = "freelancer_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
-    private List<Skill> skills;
+    private Set<Skill> skills;
 
 
 }

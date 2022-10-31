@@ -104,31 +104,31 @@ public class FreelancerServiceImpl implements FreelancerService {
     @Override
     public FreelancerProfileDTO getFreelancerProfile(String id) {
        try {
-           Optional<Freelancer> freelancer = freelancerRepository.findById(id);
+        Freelancer freelancer = freelancerRepository.getProfileFreelancer(id);
 
            FreelancerProfileDTO freelancerProfileDTO = new FreelancerProfileDTO();
            freelancerProfileDTO.setId(id);
-           freelancerProfileDTO.setGender(freelancer.get().getGender());
-           freelancerProfileDTO.setAvatar(freelancer.get().getUser().getAvatar());
-           freelancerProfileDTO.setPhone(freelancer.get().getUser().getPhone());
-           freelancerProfileDTO.setFullName(freelancer.get().getUser().getFullName());
-           freelancerProfileDTO.setAddress(freelancer.get().getUser().getAddress());
-           freelancerProfileDTO.setCity(freelancer.get().getUser().getCity());
-           freelancerProfileDTO.setCountry(freelancer.get().getUser().getCountry());
+           freelancerProfileDTO.setGender(freelancer.getGender());
+           freelancerProfileDTO.setAvatar(freelancer.getUser().getAvatar());
+           freelancerProfileDTO.setPhone(freelancer.getUser().getPhone());
+           freelancerProfileDTO.setFullName(freelancer.getUser().getFullName());
+           freelancerProfileDTO.setAddress(freelancer.getUser().getAddress());
+           freelancerProfileDTO.setCity(freelancer.getUser().getCity());
+           freelancerProfileDTO.setCountry(freelancer.getUser().getCountry());
            List<SkillDTO> skillDTOS = new ArrayList<>();
-           for (Skill s : freelancer.get().getSkills()) {
+           for (Skill s : freelancer.getSkills()) {
                SkillDTO skillDTO = new SkillDTO();
                skillDTO.setId(s.getId());
                skillDTO.setName(s.getName());
                skillDTOS.add(skillDTO);
            }
            freelancerProfileDTO.setSkills(skillDTOS);
-           freelancerProfileDTO.setCostPerHour(freelancer.get().getCostPerHour());
-           freelancerProfileDTO.setEmail(freelancer.get().getUser().getAccount().getEmail());
-           freelancerProfileDTO.setDescription(freelancer.get().getDescription());
-           freelancerProfileDTO.setCv(freelancer.get().getCv());
+           freelancerProfileDTO.setCostPerHour(freelancer.getCostPerHour());
+           freelancerProfileDTO.setEmail(freelancer.getUser().getAccount().getEmail());
+           freelancerProfileDTO.setDescription(freelancer.getDescription());
+           freelancerProfileDTO.setCv(freelancer.getCv());
            List<EducationDTO> educationDTOS = new ArrayList<>();
-           for (Education e : freelancer.get().getEducations()
+           for (Education e : freelancer.getEducations()
            ) {
                EducationDTO educationDTO = new EducationDTO();
                educationDTO.setId(e.getId().toString());
@@ -141,22 +141,24 @@ public class FreelancerServiceImpl implements FreelancerService {
            }
            freelancerProfileDTO.setEducations(educationDTOS);
            List<WorkExperienceDTO> workExperienceDTOS = new ArrayList<>();
-           for (WorkExperience w : freelancer.get().getWorkExperiences()
+           for (WorkExperience w : freelancer.getWorkExperiences()
            ) {
                WorkExperienceDTO workExperienceDTO = new WorkExperienceDTO();
                workExperienceDTO.setId(w.getId().toString());
                workExperienceDTO.setDescription(w.getDescription());
-               workExperienceDTO.setTo(w.getMonthTo().toString()+"-"+w.getYearTo().toString());
-               workExperienceDTO.setFrom(w.getMonthFrom().toString()+"-"+w.getYearFrom().toString());
+               workExperienceDTO.setMonthFrom(w.getMonthFrom());
+               workExperienceDTO.setYearFrom(w.getYearFrom());
+               workExperienceDTO.setMonthTo(w.getMonthTo());
+               workExperienceDTO.setYearTo(w.getYearTo());
                workExperienceDTO.setCompanyName(w.getCompanyName());
                workExperienceDTO.setPosition(w.getPosition());
                workExperienceDTOS.add(workExperienceDTO);
            }
            freelancerProfileDTO.setWorkExps(workExperienceDTOS);
-           freelancerProfileDTO.setBirthDate(freelancer.get().getBirthdate());
-           freelancerProfileDTO.setSubCareer(freelancer.get().getSubCareer().getName());
+           freelancerProfileDTO.setBirthDate(freelancer.getBirthdate());
+           freelancerProfileDTO.setSubCareer(freelancer.getSubCareer().getName());
            double star = 0;
-           User u = freelancer.get().getUser();
+           User u = freelancer.getUser();
            for (Feedback feedback : u.getFeedbackTos())
                star += feedback.getStar();
            star = star / u.getFeedbackTos().size();
@@ -213,7 +215,7 @@ public class FreelancerServiceImpl implements FreelancerService {
     public void deleteSkill(Skill skill,String freelancerId) {
         Freelancer freelancer=freelancerRepository.findById(freelancerId).get();
         List<Skill> skills=new ArrayList<>();
-        skills=freelancer.getSkills();
+        skills= (List<Skill>) freelancer.getSkills();
         for (int i=0;i<skills.size();i++)
         {
             if(skills.get(i).getId()==skill.getId()) {

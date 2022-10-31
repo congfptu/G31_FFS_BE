@@ -34,9 +34,9 @@ public class Account {
     @Column(name = "email")
     private String email;
 
-    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL,fetch = FetchType.LAZY, optional = false)
     private User user;
-    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL,fetch = FetchType.LAZY, optional = false)
     private Staff staff;
 
     @Column(name = "created_date")

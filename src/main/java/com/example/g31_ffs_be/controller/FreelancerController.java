@@ -40,6 +40,7 @@ public class FreelancerController {
     PostRepository postRepository;
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
     JobSavedRepository jobSavedRepository;
     @Autowired
     JobRequestRepository jobRequestRepository;
@@ -47,54 +48,65 @@ public class FreelancerController {
     EducationRepository educationRepository;
 
     @GetMapping("/getProfileFreelancer")
-    public ResponseEntity<?> getAllCareer(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<?> getProfileFreelancer(@RequestHeader(name = "Authorization") String token,
                                           @RequestParam(name = "id", defaultValue = "") String id) {
-        if (freelancerService.getFreelancerProfile(id) != null) {
-            return new ResponseEntity<>(freelancerService.getFreelancerProfile(id), HttpStatus.OK);
-        } else {
+        try{
+            if (freelancerService.getFreelancerProfile(id) != null) {
+                return new ResponseEntity<>(freelancerService.getFreelancerProfile(id), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
+            }
+        }catch (Exception e){
+            System.out.println(e);
             return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
         }
+
     }
 
     @GetMapping("/findingJob")
     public ResponseEntity<?> findJob(@RequestHeader(name = "Authorization") String token,
                                      @RequestParam(name = "area", defaultValue = "") String area,
-                                     @RequestParam(name = "budget", defaultValue = "") String budget,
+                                     @RequestParam(name = "budget", defaultValue = "") Double budget,
                                      @RequestParam(name = "keyword", defaultValue = "") String keyword,
                                      @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo,
-                                     @RequestParam(name = "sub_career_id", defaultValue = "-1") String sub_career_id,
-                                     @RequestParam(name = "is_top") String is_top
+                                     @RequestParam(name = "sub_career_id", defaultValue = "-1") Integer sub_career_id,
+                                     @RequestParam(name = "is_top") Boolean is_top
     ) {
-        int pageIndex = 0;
         try {
-            pageIndex = Integer.parseInt(pageNo);
-        } catch (Exception e) {
+            int pageIndex = 0;
+            try {
+                pageIndex = Integer.parseInt(pageNo);
+            } catch (Exception e) {
 
-        }
-        int pageSize = 5;
-        if (!sub_career_id.equals("-1")) {
-            APIResponse fas = postService.getJobSearch(pageIndex, pageSize, area, budget, keyword, sub_career_id, is_top, null);
-            if (fas.getTotalPages() >= pageIndex - 1) {
-                return new ResponseEntity<>(fas, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
             }
-        } else {
-            System.out.println("fsdfsd");
-            APIResponse fas = postService.getJobSearch(pageIndex, pageSize, area, budget, keyword, is_top, null);
-            if (fas.getTotalPages() >= pageIndex - 1) {
-                return new ResponseEntity<>(fas, HttpStatus.OK);
+            int pageSize = 5;
+            if (sub_career_id != -1) {
+                APIResponse fas = postService.getJobSearch(pageIndex, pageSize, area, budget, keyword, is_top, sub_career_id, null);
+                if (fas.getTotalPages() >= pageIndex - 1) {
+                    return new ResponseEntity<>(fas, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+                }
             } else {
-                return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+                APIResponse fas = postService.getJobSearch(pageIndex, pageSize, area, budget, keyword, is_top, null);
+                if (fas.getTotalPages() >= pageIndex - 1) {
+                    return new ResponseEntity<>(fas, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+                }
+
             }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }
 
     }
 
     @PostMapping("/addJobSaved")
     public ResponseEntity<?> addJobSaved(@RequestHeader(name = "Authorization") String token,
-                                         @NotEmpty @RequestParam(name = "freelancer_id") String freelancer_id,
-                                         @NotEmpty @RequestParam(name = "job_id") String job_id
+                                         @NotEmpty @RequestParam(name = "freelancer_id") Integer freelancer_id,
+                                         @NotEmpty @RequestParam(name = "job_id") Integer job_id
     ) {
         try {
 
@@ -108,8 +120,8 @@ public class FreelancerController {
 
     @PostMapping("/addJobRequest")
     public ResponseEntity<?> addJobRequest(@RequestHeader(name = "Authorization") String token,
-                                           @NotEmpty @RequestParam(name = "freelancer_id") String freelancer_id,
-                                           @NotEmpty @RequestParam(name = "job_id") String job_id
+                                           @NotEmpty @RequestParam(name = "freelancer_id") Integer freelancer_id,
+                                           @NotEmpty @RequestParam(name = "job_id") Integer job_id
     ) {
         try {
 

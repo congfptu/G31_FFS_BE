@@ -40,21 +40,22 @@ public class PaymentController {
         int pageIndex = 0;
         try {
             pageIndex = Integer.parseInt(pageNo);
+            PaymentDTOResponse fas=new PaymentDTOResponse();
+            int pageSize = 5;
+            if ( status.equals("-1")) {
+                fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize, keyword,"", null);
+                return new ResponseEntity<>(fas, HttpStatus.OK);
+            }
+            else if( status.equals("0")||( status.equals("1")||status.equals("2"))){
+                fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize, keyword,status, null);
+                return new ResponseEntity<>(fas, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>("Không có dữ liệu trang này", HttpStatus.NO_CONTENT);
+            }
         } catch (Exception e) {
+            return new ResponseEntity<>("Không có dữ liệu trang này "+e, HttpStatus.NO_CONTENT);
+        }
 
-        }
-        PaymentDTOResponse fas=new PaymentDTOResponse();
-        int pageSize = 5;
-          if ( status.equals("-1")) {
-             fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize, keyword,"", null);
-            return new ResponseEntity<>(fas, HttpStatus.OK);
-        }
-        else if( status.equals("0")||( status.equals("1")||status.equals("2"))){
-              fas = paymentService.getAllPaymentSearchPaging(pageIndex, pageSize, keyword,status, null);
-            return new ResponseEntity<>(fas, HttpStatus.OK);
-        }else{
-              return new ResponseEntity<>("Không có dữ liệu trang này", HttpStatus.NO_CONTENT);
-        }
     }
 //    id:1,
 //    status:1,

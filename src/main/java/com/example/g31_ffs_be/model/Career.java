@@ -28,7 +28,7 @@ public class Career {
     private Integer id;
 
     @Size(max = 255)
-    @Column(name = "Name")
+    @Column(name = "name")
     private String name;
 
     @JsonIgnore

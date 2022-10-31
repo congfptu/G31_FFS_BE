@@ -17,4 +17,5 @@ public interface CareerRepository extends JpaRepository<Career, Integer> {
             " WHERE name =:name"
             , nativeQuery = true)
    Career getCareerByName(String name);
+
 }

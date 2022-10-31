@@ -115,7 +115,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public APIResponse getJobSearch(int pageNumber, int pageSize, String area, String budget,String keyword,String is_top, String sortValue) {
+    public APIResponse<PostFindingDTO> getJobSearch(int pageNumber, int pageSize, String area, Double budget,String keyword,Boolean is_top, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Job> paymentPaging=postRepository.getJobSearch(area,budget,keyword,is_top,pageable);
         List<Job> paymentDTOResponseList=paymentPaging.getContent();
@@ -135,7 +135,7 @@ public class PostServiceImpl implements PostService {
           fa.setListSkills(f.getListSkills());
             fas.add(fa);
         }
-        APIResponse paymentDTOResponse= new APIResponse();
+        APIResponse<PostFindingDTO> paymentDTOResponse= new APIResponse();
         paymentDTOResponse.setResults(fas);
         paymentDTOResponse.setPageIndex(pageNumber+1);
         paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
@@ -144,9 +144,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public APIResponse getJobSearch(int pageNumber, int pageSize, String area, String budget, String keyword,String sub_career_id,String is_top, String sortValue) {
+    public APIResponse getJobSearch(int pageNumber, int pageSize, String area, Double budget, String keyword,Boolean is_top,Integer sub_career_id, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Job> paymentPaging=postRepository.getJobSearch(area,budget,sub_career_id,keyword,is_top,pageable);
+        Page<Job> paymentPaging=postRepository.getJobSearch(area,budget,keyword,is_top,sub_career_id,pageable);
         List<Job> paymentDTOResponseList=paymentPaging.getContent();
         List<PostFindingDTO> fas=new ArrayList<>();
         for (Job f: paymentDTOResponseList){
@@ -165,7 +165,7 @@ public class PostServiceImpl implements PostService {
 
             fas.add(fa);
         }
-        APIResponse paymentDTOResponse= new APIResponse();
+        APIResponse<PostFindingDTO> paymentDTOResponse= new APIResponse();
         paymentDTOResponse.setResults(fas);
         paymentDTOResponse.setPageIndex(pageNumber+1);
         paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
