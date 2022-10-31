@@ -13,6 +13,7 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "feedback")
@@ -44,7 +45,7 @@ public class Feedback {
     private String content;
 
     @Column(name = "date")
-    private Instant date;
+    private LocalDateTime date;
 
 
 }

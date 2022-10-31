@@ -8,7 +8,7 @@ import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
 import com.example.g31_ffs_be.service.impl.FreelancerServiceImpl;
-import javafx.util.converter.LocalDateStringConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

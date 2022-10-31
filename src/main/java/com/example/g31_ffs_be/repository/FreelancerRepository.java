@@ -46,20 +46,20 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
   Freelancer getDetailFreelancer(String id);
 
   @Query(value = "select a from Freelancer a"+
-          " inner join fetch a.subCareer b" +
-          " inner join fetch a.skills c" +
-          " inner join fetch a.educations d"+
-          " inner join fetch a.workExperiences e"+
-          " inner join fetch a.user f"+
-          " inner join fetch f.account g"+
+          " LEFT join fetch a.subCareer b" +
+          " LEFT join fetch a.skills c" +
+          " LEFT join fetch a.educations d"+
+          " LEFT join fetch a.workExperiences e"+
+          " LEFT join fetch a.user f"+
+          " LEFT join fetch f.account g"+
           " where a.id= :id"
           , countQuery = "select count(a) from Freelancer a"+
-          " inner join  a.subCareer b" +
-          " inner join  a.skills c" +
-          " inner join  a.educations d"+
-          " inner join a.workExperiences e"+
-          " inner join a.user f"+
-          " inner join f.account g"+
+          " LEFT join  a.subCareer b" +
+          " LEFT join  a.skills c" +
+          " LEFT join  a.educations d"+
+          " LEFT join a.workExperiences e"+
+          " LEFT join a.user f"+
+          " LEFT join f.account g"+
           " where a.id= :id")
   Freelancer getProfileFreelancer(String id);
 
