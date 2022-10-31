@@ -36,7 +36,6 @@ public class Skill {
     @ManyToMany(mappedBy = "listSkills")
     private Set<Job> jobs;
     @OneToMany
-    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "freelancer_id",
             joinColumns = @JoinColumn(name = "skill_id"),
             inverseJoinColumns = @JoinColumn(name = "freelancer_id"))

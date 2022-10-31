@@ -218,9 +218,15 @@ public class FreelancerController {
 
     }
     @GetMapping("/skill")
-    public ResponseEntity<?> getSkillRemain(@RequestHeader(name = "Authorization") String token, @RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId) {
-        System.out.println(freelancerId);
-        return new ResponseEntity<>(skillRepository.getAllRemainSkills(freelancerId), HttpStatus.OK);
+    public ResponseEntity<?> getSkillRemain(@RequestHeader(name = "Authorization") String token,
+                                            @RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
+                                            @RequestParam(name = "skill", defaultValue = "") String skill) {
+        try{
+            return new ResponseEntity<>(skillRepository.getAllRemainSkills(freelancerId,skill), HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
 
     }
     @GetMapping("/add-skill")

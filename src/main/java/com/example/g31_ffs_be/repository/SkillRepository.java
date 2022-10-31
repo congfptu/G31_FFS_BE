@@ -11,7 +11,8 @@ import java.util.List;
 
 public interface SkillRepository extends JpaRepository<Skill,Integer> {
     @Query(value ="select a.* from `skill` a " +
-                    "where a.id  not in " +
-                    "(select skill_id from `freelancer_skill` where freelancer_id like :freelancerId)", nativeQuery = true)
-    List<Skill> getAllRemainSkills(String freelancerId);
+                    "where a.name like CONCAT('%',:name,'%')  and a.id  not in " +
+                    "(select skill_id from `freelancer_skill` where freelancer_id like :freelancerId) limit 5 "
+            , nativeQuery = true)
+    List<Skill> getAllRemainSkills(String freelancerId,String name);
 }
