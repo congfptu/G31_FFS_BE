@@ -2,6 +2,7 @@ package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Account;
+import com.example.g31_ffs_be.model.Feedback;
 import com.example.g31_ffs_be.model.RequestPayment;
 import com.example.g31_ffs_be.model.User;
 import com.example.g31_ffs_be.repository.*;
@@ -131,13 +132,10 @@ public class UserController {
     }
     @PostMapping ("/addFeedback")
     public ResponseEntity<?> insertFeedBack(@RequestHeader(name = "Authorization") String token,
-                                            @RequestParam(name = "fromId", defaultValue = "") String fromId,
-                                            @RequestParam(name = "toId", defaultValue = "") String toId,
-                                            @RequestParam(name = "star", defaultValue = "") Integer star,
-                                            @RequestParam(name = "content", defaultValue = "") String content
-                                              ) {
+                                            @RequestBody FeedbackDTO feedback
+                                            ) {
         try {
-            feedbackRepository.insert(fromId,toId,star,content,Instant.now());
+            feedbackRepository.insert(feedback.getFromUserId(),feedback.getToUserId(),feedback.getStar(),feedback.getContent(),Instant.now());
             return new ResponseEntity<>("Create feedback successfully", HttpStatus.CREATED);
         }
         catch (Exception e){
