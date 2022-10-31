@@ -1,6 +1,7 @@
 package com.example.g31_ffs_be.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,11 +9,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
+import javax.jws.HandlerChain;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,7 +36,8 @@ public class User {
     @Id
     @Column(name = "user_id", nullable = false, length = 45)
     private String id;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private Account account;
 
@@ -58,22 +65,27 @@ public class User {
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,fetch =FetchType.LAZY,optional = false)
+    @JsonIgnore
     private Recruiter recruiter;
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,fetch =FetchType.LAZY,optional = false)
+    @JsonIgnore
     private Freelancer freelancer;
 
     @OneToMany(mappedBy = "from")
+    @JsonIgnore
     private Set<Report> reports = new LinkedHashSet<>();
 
     @Column(name = "is_banned")
     private Boolean isBanned;
 
-
     @OneToMany(mappedBy = "to")
+    @JsonIgnore
     private Set<Feedback> feedbackTos = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "from")
+    @JsonIgnore
     private Set<Feedback> feedbackFroms = new LinkedHashSet<>();
 
     @Size(max = 255)
@@ -87,6 +99,10 @@ public class User {
     private Boolean isMemberShip;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<RequestPayment> requestPayments = new LinkedHashSet<>();
 
+    public User(String id) {
+        this.id = id;
+    }
 }

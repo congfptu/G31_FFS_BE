@@ -8,5 +8,5 @@ public class APIResponse<T> {
     List<T> results;
     private int pageIndex;
     private int totalPages;
-    private int totalResults;
+    private long totalResults;
 }

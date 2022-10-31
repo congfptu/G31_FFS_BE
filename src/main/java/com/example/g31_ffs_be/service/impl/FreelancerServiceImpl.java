@@ -2,10 +2,7 @@ package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
-import com.example.g31_ffs_be.repository.EducationRepository;
-import com.example.g31_ffs_be.repository.FreelancerRepository;
-import com.example.g31_ffs_be.repository.UserRepository;
-import com.example.g31_ffs_be.repository.WorkExperienceRepository;
+import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.service.FreelancerService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +11,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class FreelancerServiceImpl implements FreelancerService {
@@ -30,6 +29,8 @@ public class FreelancerServiceImpl implements FreelancerService {
     EducationRepository educationRepository;
     @Autowired
     WorkExperienceRepository workExperienceRepository;
+    @Autowired
+    PaymentRepository paymentRepository;
 
     @Override
     public void addFreelancer(Freelancer f) {
@@ -53,6 +54,7 @@ public class FreelancerServiceImpl implements FreelancerService {
             FreelancerAdminDto fa = new FreelancerAdminDto();
             fa = mapToFreeDTO(f);
             fa.setFullName(u.getFullName());
+            fa.setIsBanned(u.getIsBanned());
             fa.setEmail(u.getAccount().getEmail());
             fa.setIsBanned(u.getIsBanned());
             fa.setAccountBalance(u.getAccountBalance() != null ? u.getAccountBalance() : 0);
@@ -62,26 +64,29 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public List<FreelancerAdminDto> getFreelancerByName(String name, int pageNo, int pageSize) {
+    public APIResponse<FreelancerAdminDto> getFreelancerByName(String name, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
+        APIResponse apiResponse=new APIResponse();
         Page<Freelancer> page = freelancerRepository.getFreelancerByName(name, pageable);
-        List<Freelancer> freelancers = page.getContent();
-        return convertListFreelancerDto(freelancers);
-
-
+        apiResponse.setTotalPages(page.getTotalPages());
+        apiResponse.setResults(convertListFreelancerDto(page.getContent()));
+        apiResponse.setTotalResults(page.getTotalElements());
+        apiResponse.setPageIndex(pageNo+1);
+          return apiResponse;
     }
 
     @Override
     public FreelancerDetailDto getDetailFreelancer(String id) {
         try {
-            Optional<Freelancer> freelancer = freelancerRepository.findById(id);
-            Freelancer f = freelancer.get();
-            FreelancerDetailDto fd = mapToFreelancerDetailDTO(f);
+            Freelancer f = freelancerRepository.getDetailFreelancer(id);
+            FreelancerDetailDto fd= mapToFreelancerDetailDTO(f);
             double star = 0;
             User u = f.getUser();
-            for (Feedback feedback : u.getFeedbackTos())
+            Set<Feedback> feedbacks=u.getFeedbackTos();
+            for (Feedback feedback : feedbacks)
                 star += feedback.getStar();
-            star = star / u.getFeedbackTos().size();
+            star = star / feedbacks.size();
+            fd.setFeedbackTos(feedbacks);
             fd.setStar(star);
             fd.setSubCareer(f.getSubCareer().getName());
             fd.setFullName(u.getFullName());
@@ -97,7 +102,8 @@ public class FreelancerServiceImpl implements FreelancerService {
 
     @Override
     public List<FreelancerAdminDto> getTop5ByName(String name) {
-        List<Freelancer> freelancers = freelancerRepository.getTop5ByName(name);
+        Page<Freelancer>page=freelancerRepository.getTop5ByName(name,PageRequest.of(0,5));
+        List<Freelancer> freelancers = page.getContent();
         return convertListFreelancerDto(freelancers);
     }
 

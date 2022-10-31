@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.service.impl;
 
+import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.RecruiterAdminDto;
 import com.example.g31_ffs_be.dto.StaffAdminDto;
 import com.example.g31_ffs_be.dto.StaffDto;
@@ -36,7 +37,7 @@ public class StaffServiceImpl implements StaffService {
             StaffAdminDto sad=new StaffAdminDto();
             sad.setId(a.getId());
             sad.setPhone(a.getPhone());
-            sad.setFullname(a.getFullname());
+            sad.setFullName(a.getFullName());
             sad.setAddress(a.getAddress());
             sad.setEmail(a.getAccount().getEmail());
             lists.add(sad);
@@ -55,7 +56,8 @@ public class StaffServiceImpl implements StaffService {
         return staff;
     }
     @Override
-    public List<StaffAdminDto> getStaffByName(String name,int pageNo, int pageSize) {
+    public APIResponse<StaffAdminDto> getStaffByName(String name, int pageNo, int pageSize) {
+        APIResponse apiResponse=new APIResponse<>();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Staff> page = staffRepository.getStaffByName(name,pageable);
         List<Staff> staffs=page.getContent();
@@ -66,7 +68,11 @@ public class StaffServiceImpl implements StaffService {
             sad.setEmail(s.getAccount().getEmail());
             sads.add(sad);
         }
-        return sads;
+        apiResponse.setResults(sads);
+        apiResponse.setTotalPages(page.getTotalPages());
+        apiResponse.setTotalResults(page.getTotalElements());
+        apiResponse.setPageIndex(pageNo+1);
+        return apiResponse;
     }
     @Override
     public void updateStaff(StaffDto staffDto) {

@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<RequestPayment,String> {
@@ -33,11 +34,13 @@ public interface PaymentRepository extends JpaRepository<RequestPayment,String> 
     @Query(value = " SELECT * FROM request_payment " +
             " WHERE user_id =:userId"
             , nativeQuery = true)
-    List<RequestPayment> getRequestPaymentByUserId(String userId);
+    Page<RequestPayment> getRequestPaymentByUserId(String userId, Pageable pageable);
     @Query(value = " SELECT * FROM request_payment " +
             " WHERE (date_request between :from and :to) and user_id=:userId"
             , nativeQuery = true)
-    List<RequestPayment> getRequestPaymentByDateRequest(LocalDateTime from, LocalDateTime to, String userId);
+    Page<RequestPayment> getRequestPaymentByDateRequest(LocalDateTime from, LocalDateTime to, String userId,Pageable pageable);
+
+    Optional<RequestPayment> findByPaymentCode(String paymentCode);
 
 
 }

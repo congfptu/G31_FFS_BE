@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -31,11 +33,6 @@ public class WorkExperience {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "freelancer_id",updatable = false)
-    @JsonIgnore
-    private Freelancer freelancer;
-
     @Column(name = "company_name")
     private String companyName;
 
@@ -56,5 +53,9 @@ public class WorkExperience {
 
     @Column(name = "year_to")
     private Integer yearTo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "freelancer_id",updatable = false)
+    @JsonIgnore
+    private Freelancer freelancer;
 
 }

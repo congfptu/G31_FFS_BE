@@ -21,6 +21,7 @@ import javax.mail.internet.MimeMessage;
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -43,13 +44,6 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     RoleRepository roleRepository;
 
-    @Override
-    @Bean
-    @ElementCollection(fetch = FetchType.LAZY)
-    public List<AccountDto> getAllAccounts() {
-
-        return null;
-    }
     
     @Override
     public void createAccount(RegisterDto registerDto) {
@@ -77,6 +71,8 @@ public class AccountServiceImpl implements AccountService {
             user.setCity(registerDto.getCity());
             user.setCountry(registerDto.getCountry());
             user.setPhone(registerDto.getPhone());
+            user.setAccountBalance(0.0);
+            acc.setCreatedDate(LocalDateTime.now());
             user.setVerificationCode(RandomString.make(36));
             user.setIsBanned(true);
             if(roleName.equals("freelancer")){
@@ -103,14 +99,15 @@ public class AccountServiceImpl implements AccountService {
                 user.setRecruiter(recruiter);
                 acc.setUser(user);
                 accountRepository.save(acc);
-
             }
-
-
-
         } catch (Exception e) {
 
         }
+    }
+
+    @Override
+    public List<AccountDto> getAllAccounts() {
+        return null;
     }
 
     @Override

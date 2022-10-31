@@ -1,9 +1,6 @@
 package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_be.dto.FreelancerAdminDto;
-import com.example.g31_ffs_be.dto.FreelancerDetailDto;
-import com.example.g31_ffs_be.dto.RecruiterAdminDto;
-import com.example.g31_ffs_be.dto.RecruiterDetailDTO;
+import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Feedback;
 import com.example.g31_ffs_be.model.Freelancer;
 import com.example.g31_ffs_be.model.Recruiter;
@@ -54,18 +51,22 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public List<RecruiterAdminDto> getRecruiterByName(String name, int pageNo, int pageSize) {
+    public APIResponse<RecruiterAdminDto> getRecruiterByName(String name, int pageNo, int pageSize) {
+        APIResponse<RecruiterAdminDto> apiResponse=new APIResponse();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Recruiter> page = recruiterRepository.getRecruiterByName(name, pageable);
-        List<Recruiter> recruiters = page.getContent();
-        return convertListRecruiterAdminDto(recruiters);
+        apiResponse.setPageIndex(pageNo+1);
+        apiResponse.setResults(convertListRecruiterAdminDto(page.getContent()));
+        apiResponse.setTotalPages(page.getTotalPages());
+        apiResponse.setTotalResults(page.getTotalElements());
+
+        return apiResponse;
     }
 
     @Override
     public RecruiterDetailDTO getDetailRecruiter(String id) {
         try {
-            Optional<Recruiter> recruiter = recruiterRepository.findById(id);
-            Recruiter r = recruiter.get();
+            Recruiter r  = recruiterRepository.getDetailRecruiter(id);
             RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
             double star = 0;
             User u = r.getUser();
@@ -86,7 +87,7 @@ public class RecruiterServiceImpl implements RecruiterService {
 
     @Override
     public List<RecruiterAdminDto> getTop5RecruiterByName(String name) {
-        List<Recruiter> recruiters = recruiterRepository.getTop5Recruiter(name);
+        List<Recruiter> recruiters = recruiterRepository.getTop5Recruiter(name,PageRequest.of(0,5)).getContent();
         return convertListRecruiterAdminDto(recruiters);
     }
 }

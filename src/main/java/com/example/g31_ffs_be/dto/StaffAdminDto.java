@@ -7,7 +7,7 @@ import lombok.*;
 public class StaffAdminDto {
     private String id;
     private String email;
-    private String fullname;
+    private String fullName;
     private String phone;
     private String address;
     private Boolean isActive;

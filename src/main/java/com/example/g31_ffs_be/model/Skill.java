@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -34,6 +36,7 @@ public class Skill {
     @ManyToMany(mappedBy = "listSkills")
     private Set<Job> jobs;
     @OneToMany
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "freelancer_id",
             joinColumns = @JoinColumn(name = "skill_id"),
             inverseJoinColumns = @JoinColumn(name = "freelancer_id"))

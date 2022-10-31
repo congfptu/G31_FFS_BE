@@ -40,7 +40,7 @@ public class PostServiceImpl implements PostService {
              // fa.setApprovedBy(f.getApprovedBy().getFullname());
             Optional<Staff> staff= Optional.ofNullable(f.getApprovedBy());
             try{
-                fa.setApprovedBy(f.getApprovedBy().getFullname());
+                fa.setApprovedBy(f.getApprovedBy().getFullName());
             }
             catch (Exception e){
                 fa.setApprovedBy(null);
@@ -68,7 +68,7 @@ public class PostServiceImpl implements PostService {
             fa.setCreatedBy(f.getCreateBy().getCompanyName());
             fa.setJobTitle(f.getJobTitle());
             fa.setIsApproved(f.getIsApproved());
-            fa.setApprovedBy(f.getApprovedBy().getFullname());
+            fa.setApprovedBy(f.getApprovedBy().getFullName());
             fas.add(fa);
         }
         PostDTOResponse paymentDTOResponse= new PostDTOResponse();
@@ -109,7 +109,7 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setTime(job.getTime());
         postDetailDTO.setIsActive(job.getIsActive());
         postDetailDTO.setIsApproved(job.getIsApproved());
-        postDetailDTO.setApprovedBy(job.getApprovedBy().getFullname());
+        postDetailDTO.setApprovedBy(job.getApprovedBy().getFullName());
         postDetailDTO.setListSkills(job.getListSkills());
         return postDetailDTO;
     }

@@ -15,9 +15,11 @@ import java.util.Optional;
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff,String> {
-    @Query(value = "select a.* from `staff` a " +
-            " inner join `account` b on a.id=b.id " +
-            " where a.fullname like CONCAT('%',:name,'%') or b.email like CONCAT('%',:name,'%') "+
-            " Order by a.fullname asc,b.email asc ", nativeQuery = true)
+   @Query(value = "SELECT s from Staff s "+
+           "LEFT JOIN FETCH s.account a " +
+           "where s.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')",
+           countQuery = "SELECT count(s.id) from Staff s "+
+                   "LEFT JOIN  s.account a " +
+                   "where s.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')")
     Page<Staff> getStaffByName(String name, Pageable pageable);
 }

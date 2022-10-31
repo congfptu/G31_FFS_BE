@@ -30,7 +30,6 @@ public class Benefit {
     @Size(max = 255)
     @Column(name = "name")
     private String name;
-
     @ManyToMany
     @JoinTable(name = "benefit_service",
             joinColumns = @JoinColumn(name = "benefit_id"),

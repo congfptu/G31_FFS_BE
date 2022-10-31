@@ -28,7 +28,7 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceDto;
     }
     @Override
-    public  ServiceResponse getServiceByName(String name,String roleId,int pageNo, int pageSize) {
+    public  ServiceResponse getServiceByName(String name,int roleId,int pageNo, int pageSize) {
         ServiceResponse serviceResponse=new ServiceResponse();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Service> page = serviceRepository.getServiceByName(name,roleId,pageable);
@@ -40,7 +40,7 @@ public class ServiceServiceImpl implements ServiceService {
             serviceDtos.add(serviceDto);
         }
         serviceResponse.setServices(serviceDtos);
-        serviceResponse.setTotalPages(page.getTotalPages());
+        serviceResponse.setTotalPages(( page.getTotalPages()));
         serviceResponse.setPageIndex(pageNo+1);
         return serviceResponse;
 
@@ -60,8 +60,7 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public List<Benefit> getBenefitsOfServiceByID(int id) {
-
-        return  serviceRepository.findById(id).get().getBenefits();
+        return  serviceRepository.getBenefitByServiceID(id).getBenefits();
     }
 
 

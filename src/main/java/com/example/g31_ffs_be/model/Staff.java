@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Staff {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", nullable = false)
+    @JsonIgnore
     private Account account;
 
     @Column(name = "phone")
@@ -38,7 +40,7 @@ public class Staff {
     @Column(name = "address")
     private String address;
     @Column(name = "fullname")
-    private String fullname;
+    private String fullName;
 
     @Column(name = "isActive")
     private Boolean isActive;

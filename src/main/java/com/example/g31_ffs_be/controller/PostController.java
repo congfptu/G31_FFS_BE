@@ -30,7 +30,6 @@ public class PostController {
     PostRepository postRepository;
     @Autowired
     StaffRepository staffRepository;
-
     @GetMapping("/post")
     public ResponseEntity<?> getAllPostSearchByDesAndStatusPaging(@RequestHeader(name = "Authorization") String token,
                                                                   @RequestParam(name = "keyword", defaultValue = "") String keyword,
@@ -54,9 +53,7 @@ public class PostController {
         } catch (Exception e) {
             return new ResponseEntity<>("không có dữ liệu trang này! " + e, HttpStatus.NO_CONTENT);
         }
-
     }
-
     @PutMapping("/post/update")
     public ResponseEntity<?> updateStatus(@RequestHeader(name = "Authorization") String token,
                                           @NotEmpty @RequestParam(name = "id", defaultValue = "") String id,

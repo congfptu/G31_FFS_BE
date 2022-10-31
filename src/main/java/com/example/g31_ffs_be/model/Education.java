@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -45,13 +47,13 @@ public class Education {
 
     @Column(name = "description")
     private String description;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "freelancer_id",updatable = false)
     @JsonIgnore
+    @JoinColumn(name = "freelancer_id",updatable = false)
     private Freelancer freelancer;
 
-
-
+    @Size(max = 255)
+    @Column(name = "level")
+    private String level;
 
 }

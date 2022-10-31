@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "report")
@@ -30,9 +32,9 @@ public class Report {
 
     @Column(name = "content")
     private String content;
-
+    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     @Column(name = "date_created")
-    private Instant dateCreated;
+    private LocalDateTime dateCreated;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_id")
