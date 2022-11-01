@@ -13,5 +13,4 @@ public class JWTAuthResponse {
     private String tokenType = "Bearer";
     private String avatar;
 
-
 }

@@ -2,12 +2,15 @@ package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Account;
+import com.example.g31_ffs_be.model.Feedback;
 import com.example.g31_ffs_be.model.RequestPayment;
 import com.example.g31_ffs_be.model.User;
 import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.security.JwtTokenProvider;
+import com.example.g31_ffs_be.service.FeedbackService;
 import com.example.g31_ffs_be.service.PostService;
 import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
+import com.example.g31_ffs_be.service.impl.FeedbackServiceImpl;
 import com.example.g31_ffs_be.service.impl.FreelancerServiceImpl;
 import com.example.g31_ffs_be.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +52,12 @@ public class UserController {
     @Autowired
     PostRepository postRepository;
     @Autowired PaymentRepository paymentRepository;
-
+    @Autowired
+    FeedbackServiceImpl feedbackService;
     @Autowired
     JobRequestRepository jobRequestRepository;
+    @Autowired
+    FeedbackRepository feedbackRepository;
     @GetMapping("/transaction-history")
     public ResponseEntity<?> transactionHistory(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "userId", defaultValue = "") String userId,
@@ -109,6 +115,33 @@ public class UserController {
             return new ResponseEntity<>("Không tìm thấy user!", HttpStatus.BAD_REQUEST);
         }
     }
-
+    @GetMapping("/feedback")
+    public ResponseEntity<?> getFeedBackToId(@RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "id", defaultValue = "") String toId,
+                                               @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
+        int pageSize = 5;
+        try {
+            int pageIndex=0;
+            pageIndex =Integer.parseInt(pageNo);
+            return new ResponseEntity<>(feedbackService.getFeedbackByFromUser(pageIndex,pageSize,toId), HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping ("/addFeedback")
+    public ResponseEntity<?> insertFeedBack(@RequestHeader(name = "Authorization") String token,
+                                            @RequestBody FeedbackDTO feedback
+                                            ) {
+        try {
+            feedbackRepository.insert(feedback.getFromUserId(),feedback.getToUserId(),feedback.getStar(),feedback.getContent(),Instant.now());
+            return new ResponseEntity<>("Create feedback successfully", HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>("Failed to create feedback", HttpStatus.BAD_REQUEST);
+        }
+    }
 }
 
