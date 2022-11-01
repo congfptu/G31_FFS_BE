@@ -265,6 +265,11 @@ public class FreelancerController {
                 f.setCostPerHour(Double.parseDouble(value));
             else if (field.equals("description"))
                 f.setDescription(value);
+            else if (field.equals("cv"))
+                f.setCv(value);
+            else{
+                return new ResponseEntity<>(false, HttpStatus.OK);
+            }
             freelancerRepository.save(f);
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
