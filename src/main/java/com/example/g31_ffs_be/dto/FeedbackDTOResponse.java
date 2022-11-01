@@ -12,4 +12,5 @@ public class FeedbackDTOResponse {
     Double starAverage;
      Integer pageIndex;
     Integer totalPages;
+    Long totalResults;
 }

@@ -48,6 +48,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedbackDTOResponse.setPageIndex(pageNumber + 1);
         feedbackDTOResponse.setStarAverage(star);
         feedbackDTOResponse.setTotalPages(feedbackDTOPage.getTotalPages());
+        feedbackDTOResponse.setTotalResults(feedbackDTOPage.getTotalElements());
         return feedbackDTOResponse;
     }
 }
