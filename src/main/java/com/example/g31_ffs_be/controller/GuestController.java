@@ -105,7 +105,7 @@ public class GuestController {
                 jwtAuthResponse.setTokenType("Bearer");
                 jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
                 jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
-
+                jwtAuthResponse.setAvatar(account.getUser().getAvatar());
                 return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
             }else{
                 return new ResponseEntity<>(" Người dùng đã bị chặn !", HttpStatus.BAD_REQUEST);

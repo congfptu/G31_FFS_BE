@@ -11,6 +11,6 @@ public class JWTAuthResponse {
     private double accountBalance;
     private String accessToken;
     private String tokenType = "Bearer";
-
+    private String avatar;
 
 }
