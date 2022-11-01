@@ -103,6 +103,7 @@ public class GuestController {
                 jwtAuthResponse.setRole(account.getRole().getRoleName());
                 jwtAuthResponse.setAccessToken(token);
                 jwtAuthResponse.setTokenType("Bearer");
+                jwtAuthResponse.setAvatar(account.getUser().getAvatar());
                 jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
                 jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
 

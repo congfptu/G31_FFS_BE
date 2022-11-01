@@ -136,10 +136,10 @@ public class FreelancerServiceImpl implements FreelancerService {
                EducationDTO educationDTO = new EducationDTO();
                educationDTO.setId(e.getId().toString());
                educationDTO.setUniversity(e.getUniversity());
-               educationDTO.setMajor(e.getDescription());
+               educationDTO.setMajor(e.getMajor());
                educationDTO.setTo(e.getTo().toString());
                educationDTO.setFrom(e.getFrom().toString());
-               educationDTO.setLevel(e.getMajor());
+               educationDTO.setLevel(e.getLevel());
                educationDTOS.add(educationDTO);
            }
            freelancerProfileDTO.setEducations(educationDTOS);
