@@ -109,6 +109,7 @@ public class UserController {
             jwtAuthResponse.setUserId(account.getId());
             jwtAuthResponse.setRole(account.getRole().getRoleName());
             jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
+            jwtAuthResponse.setAvatar(account.getUser().getAvatar());
             jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.BAD_REQUEST);
         }catch (AuthenticationException e){
