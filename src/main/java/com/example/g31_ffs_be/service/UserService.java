@@ -12,7 +12,7 @@ public interface UserService {
     void addUser(User u);
     void banUser(String id);
     APIResponse<RequestPayment> getTransactionHistoryById(String userId, int pageNo, int pageSize);
-    APIResponse<RequestPayment> searchTransactionHistoryByTime(LocalDateTime from, LocalDateTime to, String userId, int pageNo, int pageSize);
+    APIResponse<RequestPayment> searchTransactionHistoryByTime(String from, String to, String userId, int pageNo, int pageSize);
     Boolean rechargeMoney(RequestPaymentDto requestPaymentDto);
 
 }

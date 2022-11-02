@@ -36,9 +36,25 @@ public interface PaymentRepository extends JpaRepository<RequestPayment,String> 
             , nativeQuery = true)
     Page<RequestPayment> getRequestPaymentByUserId(String userId, Pageable pageable);
     @Query(value = " SELECT * FROM request_payment " +
-            " WHERE (date_request between :from and :to) and user_id=:userId"
+            " WHERE (date_request between :from and :to) and user_id=:userId " +
+            "order by date_request desc"
             , nativeQuery = true)
-    Page<RequestPayment> getRequestPaymentByDateRequest(LocalDateTime from, LocalDateTime to, String userId,Pageable pageable);
+    Page<RequestPayment> getRequestPaymentByFromTo(LocalDateTime from, LocalDateTime to, String userId,Pageable pageable);
+    @Query(value = " SELECT * FROM request_payment " +
+            " WHERE date_request >= :from  and user_id=:userId " +
+            "order by date_request desc"
+            , nativeQuery = true)
+    Page<RequestPayment> getRequestPaymentByFrom(LocalDateTime from, String userId,Pageable pageable);
+    @Query(value = " SELECT * FROM request_payment " +
+            " WHERE date_request <= :todate  and user_id=:userId " +
+            "order by date_request desc"
+            , nativeQuery = true)
+    Page<RequestPayment> getRequestPaymentByTo(LocalDateTime todate, String userId,Pageable pageable);
+    @Query(value = " SELECT * FROM request_payment " +
+            " WHERE user_id=:userId " +
+            "order by date_request desc"
+            , nativeQuery = true)
+    Page<RequestPayment> getAllRequestPayment(String userId,Pageable pageable);
 
     Optional<RequestPayment> findByPaymentCode(String paymentCode);
 

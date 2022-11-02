@@ -75,15 +75,14 @@ public class UserController {
     @GetMapping("/searchTransaction")
     public ResponseEntity<?> searchTransaction(
             @RequestParam(name = "userId", defaultValue = "") String userId ,
-            @RequestParam(name = "from", defaultValue = "") Date from,
-            @RequestParam(name = "to", defaultValue = "") Date to,
+            @RequestParam(name = "from", defaultValue = "") String from,
+            @RequestParam(name = "to", defaultValue = "") String to,
             @RequestParam(name = "pageNo", defaultValue = "0") String pageNo)
     {
         try {
             int pageIndex=Integer.parseInt(pageNo);
-            LocalDateTime fromDate= from.toLocalDate().atTime(0,0);
-            LocalDateTime toDate=to.toLocalDate().atTime(23,59);
-            return new ResponseEntity<>(userService.searchTransactionHistoryByTime(fromDate,toDate,userId,pageIndex,10), HttpStatus.OK);
+
+            return new ResponseEntity<>(userService.searchTransactionHistoryByTime(from,to,userId,pageIndex,10), HttpStatus.OK);
         }
         catch (Exception e){
             System.out.println(e);
