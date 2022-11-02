@@ -98,6 +98,7 @@ public class User {
     private Set<RequestPayment> requestPayments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<UserService> userServices = new LinkedHashSet<>();
 
     public User(String id) {

@@ -22,8 +22,8 @@ import java.time.Instant;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/staff")
-public class PostController {
+@RequestMapping("/api/job")
+public class    PostController {
     @Autowired
     PostService postService;
     @Autowired
@@ -79,14 +79,13 @@ public class PostController {
 
     @GetMapping("/postDetail")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
-                                           @RequestParam(name = "id", defaultValue = "") String id
-    ) {
+                                           @RequestParam(name = "id", defaultValue = "") int id) {
 
         try {
             return new ResponseEntity<>(postService.getPostDetail(id), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
-            return new ResponseEntity<>("Cập nhật post thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
 

@@ -86,11 +86,21 @@ public class FreelancerController {
                                          @NotEmpty @RequestParam(name = "jobId") Integer job_id
     ) {
         try {
+            JobSaved jobSaved=jobSavedRepository.getJob(job_id,freelancer_id);
+            if(jobSaved!=null){
+                 jobSavedRepository.delete(job_id,freelancer_id);
+                return new ResponseEntity<>("Xóa lưu job", HttpStatus.CREATED);
+            }
+            else{
             jobSavedRepository.insert(job_id, freelancer_id);
-            return new ResponseEntity<>("Thêm mới jobSaved thành công", HttpStatus.CREATED);
+                return new ResponseEntity<>("Lưu job", HttpStatus.CREATED);
+            }
+
+
+
         } catch (Exception e) {
             System.out.println(e);
-            return new ResponseEntity<>("Thêm mới jobSaved thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Có lỗi xảy ra, vui lòng thử lại", HttpStatus.BAD_REQUEST);
         }
         }
     @PostMapping("/addJobRequest")

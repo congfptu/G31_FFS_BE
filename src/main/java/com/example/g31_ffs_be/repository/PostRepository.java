@@ -21,10 +21,13 @@ public interface PostRepository extends JpaRepository<Job, String> {
             "WHERE description LIKE CONCAT('%',:keyword,'%')"
             , nativeQuery = true)
     Page<Job> getRequestPostSearchByNamePaging(String keyword,Pageable pageable);
-    @Query(value = " SELECT * FROM jobs " +
-            " WHERE id=:id "
-            , nativeQuery = true)
-    Job getJobDetail(String id);
+    @Query(value = " SELECT j FROM Job j" +
+            " LEFT JOIN FETCH j.skills " +
+            " LEFT JOIN FETCH j.subCareer " +
+            " LEFT JOIN FETCH j.createBy " +
+            "WHERE j.id=:id "
+            )
+    Job getJobDetail(int id);
 @Query(value = " SELECT DISTINCT j FROM Job j " +
         " LEFT JOIN FETCH j.skills s "+
         " LEFT JOIN FETCH j.subCareer sub "+

@@ -1,13 +1,12 @@
 package com.example.g31_ffs_be.controller;
 
-import com.example.g31_ffs_be.dto.AccountDto;
-import com.example.g31_ffs_be.dto.JWTAuthResponse;
-import com.example.g31_ffs_be.dto.LoginDTO;
-import com.example.g31_ffs_be.dto.RegisterDto;
+import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Account;
 import com.example.g31_ffs_be.model.User;
 import com.example.g31_ffs_be.repository.AccountRepository;
+import com.example.g31_ffs_be.repository.CareerRepository;
 import com.example.g31_ffs_be.security.JwtTokenProvider;
+import com.example.g31_ffs_be.service.CareerService;
 import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
 import com.example.g31_ffs_be.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+
 @RestController
 @RequestMapping("")
 @CrossOrigin("*")
@@ -38,6 +39,10 @@ public class GuestController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtTokenProvider tokenProvider;
+    @Autowired
+    CareerService careerService;
+    @Autowired
+    CareerRepository careerRepository;
 
 
     @PostMapping("/sign-up")
@@ -113,6 +118,16 @@ public class GuestController {
             }
         }catch (AuthenticationException e){
             return new ResponseEntity<>("Email hoặc mật khẩu không đúng!", HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/getCareerTitle")
+    public ResponseEntity<?> getAllCareerTitle() {
+        if(careerService.getCareerTitle().size()!=0){
+            List<CareerTitleDTO> list=careerService.getCareerTitle();
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
         }
     }
 

@@ -19,7 +19,8 @@ public class PostDetailDTO {
     String description;
     String attach;
     String paymentType;
-    double budget;
+    String budget;
+    String timeCount;
     @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     LocalDateTime time;
     String area;

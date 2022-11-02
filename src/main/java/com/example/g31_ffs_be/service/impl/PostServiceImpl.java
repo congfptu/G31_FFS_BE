@@ -80,9 +80,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDetailDTO getPostDetail(String id) {
+    public PostDetailDTO getPostDetail(int id) {
         Job job= postRepository.getJobDetail(id);
-        PostDetailDTO postDetailDTO= mapToPostDetailDTO(job);
+        PostDetailDTO postDetailDTO=new PostDetailDTO();
         postDetailDTO.setPostID(job.getId());
         RecruiterDto recruiterDto= new RecruiterDto();
         recruiterDto.setId(job.getCreateBy().getId());
@@ -103,9 +103,23 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setDescription(job.getDescription());
         postDetailDTO.setAttach(job.getAttach());
         postDetailDTO.setArea(job.getArea());
-        postDetailDTO.setPaymentType("job.getPaymentType()");
-        postDetailDTO.setBudget(job.getBudget());
-
+        postDetailDTO.setPaymentType(job.getPaymentType()==1?"Trả theo giờ":"Trả theo dự án");
+        String message="Đã đăng cách đây ";
+        long count=ChronoUnit.HOURS.between(job.getTime(), LocalDateTime.now());
+        if(count<24)
+            message+=count+" giờ";
+        else if(count<24*7)
+            message+=count/24+" ngày";
+        else if(count<24*30)
+            message+=count/(24*7)+" tuần";
+        else{
+            message+=count/(24*30)+" tháng";
+        }
+        postDetailDTO.setTimeCount(message);
+        Locale vn = new Locale("en", "VN");
+        NumberFormat vnFormat = NumberFormat.getCurrencyInstance(vn);
+        /*  request.setAttribute("total", vnFormat.format(total).substring(3) + " VNĐ");*/
+        postDetailDTO.setBudget(vnFormat.format(job.getBudget()).substring(1) + " VNĐ");
 //        String formatDate= time.
         postDetailDTO.setTime(job.getTime());
         postDetailDTO.setIsActive(job.getIsActive());
