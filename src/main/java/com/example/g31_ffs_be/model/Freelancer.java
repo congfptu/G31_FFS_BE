@@ -57,5 +57,14 @@ public class Freelancer {
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private Set<Skill> skills;
 
+    @ManyToMany
+    @JoinTable(name = "job_saved",
+            joinColumns = @JoinColumn(name = "freelancer_id"),
+            inverseJoinColumns = @JoinColumn(name = "job_id"))
+    private Set<Job> jobSaves;
+
+
+    @OneToMany(mappedBy = "freelancer")
+    private Set<JobRequest> jobRequests = new LinkedHashSet<>();
 
 }

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -30,6 +32,7 @@ public class Job {
      Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "create_by")
     private Recruiter createBy;
 
@@ -71,16 +74,23 @@ public class Job {
     @JoinColumn(name = "approved_by")
     private Staff approvedBy;
 
-    @OneToMany(mappedBy = "job")
-    private Set<JobSaved> jobSaveds = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "job")
+    @JsonIgnore
     private Set<Notification> notifications = new LinkedHashSet<>();
 
     @ManyToMany
+    @JsonIgnore
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private Set<Skill> skills;
 
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(name = "job_saved",
+            joinColumns = @JoinColumn(name = "job_id"),
+            inverseJoinColumns = @JoinColumn(name = "freelancer_id"))
+    private Set<Freelancer> freelancers;
 
     @Column(name = "fee")
     private Double fee;
@@ -88,10 +98,8 @@ public class Job {
     @Column(name = "top_time")
     private LocalDateTime topTime;
 
+
     @OneToMany(mappedBy = "job")
-    @JsonIgnore
     private Set<JobRequest> jobRequests = new LinkedHashSet<>();
-
-
 
 }

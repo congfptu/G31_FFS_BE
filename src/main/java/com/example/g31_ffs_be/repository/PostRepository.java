@@ -29,7 +29,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
             )
     Job getJobDetail(int id);
 @Query(value = " SELECT DISTINCT j FROM Job j " +
-        " LEFT JOIN FETCH j.skills s "+
+        " LEFT JOIN  j.skills s "+
         " LEFT JOIN FETCH j.subCareer sub "+
         " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
         " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
@@ -61,7 +61,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
     Page<Job> getAllJobMemberShip(String area,String keyword,Pageable pageable);
 
     @Query(value = " SELECT DISTINCT j FROM Job j " +
-            " LEFT JOIN FETCH j.skills s "+
+            " LEFT JOIN  j.skills s "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
@@ -80,7 +80,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
     )
     Page<Job> getAllJobNormalWithSub(String area,String keyword,int subCareerId,Pageable pageable);
     @Query(value = " SELECT DISTINCT j FROM Job j " +
-            " LEFT JOIN FETCH j.skills s "+
+            " LEFT JOIN  j.skills s "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
@@ -98,7 +98,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
     )
     Page<Job> getAllJobMemberShipWithSub(String area,String keyword,int subCareerId,Pageable pageable);
     @Query(value = " SELECT DISTINCT j FROM Job j " +
-            " LEFT JOIN FETCH j.skills s "+
+            " LEFT JOIN  j.skills s "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
@@ -118,7 +118,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
     )
     Page<Job> getAllJobNormalWithPaymentType(String area,String keyword,int paymentType,Pageable pageable);
     @Query(value = " SELECT DISTINCT j FROM Job j " +
-            " LEFT JOIN FETCH j.skills s "+
+            " LEFT JOIN  j.skills s "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
@@ -137,7 +137,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
 
 
     @Query(value = " SELECT DISTINCT j FROM Job j " +
-            " LEFT JOIN FETCH j.skills s "+
+            " LEFT JOIN  j.skills s "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
@@ -159,7 +159,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
     )
     Page<Job> getAllJobNormalSearchAll(String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
     @Query(value = " SELECT DISTINCT j FROM Job j " +
-            " LEFT JOIN FETCH j.skills s "+
+            " LEFT JOIN  j.skills s "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
@@ -177,6 +177,8 @@ public interface PostRepository extends JpaRepository<Job, String> {
             "Order by j.topTime desc,j.budget desc"
     )
     Page<Job> getAllJobMemberShipSearchAll(String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
+
+
 
 
 

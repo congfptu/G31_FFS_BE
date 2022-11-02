@@ -6,21 +6,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.Instant;
 
 @Entity
-@Table(name = "job_request")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "job_request")
 public class JobRequest {
     @Id
-    @Size(max = 45)
-    @Column(name = "id", nullable = false, length = 45)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "freelancer_id")
+    private Freelancer freelancer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
@@ -36,8 +38,5 @@ public class JobRequest {
     private Instant approvedDate;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "freelancer_id")
-    private Freelancer freelancer;
 
 }

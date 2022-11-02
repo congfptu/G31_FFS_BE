@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "select distinct s from Service s " +
-            "LEFT JOIN FETCH s.benefits b "+
+            "LEFT JOIN  s.benefits b "+
             "LEFT JOIN FETCH s.role r "+
             "where s.serviceName like CONCAT('%',:name,'%') and r.id = :roleId " +
             "group by s",

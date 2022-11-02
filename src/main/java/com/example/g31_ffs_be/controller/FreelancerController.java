@@ -86,8 +86,8 @@ public class FreelancerController {
                                          @NotEmpty @RequestParam(name = "jobId") Integer job_id
     ) {
         try {
-            JobSaved jobSaved=jobSavedRepository.getJob(job_id,freelancer_id);
-            if(jobSaved!=null){
+
+            if( jobSavedRepository.getJob(job_id,freelancer_id)!=null){
                  jobSavedRepository.delete(job_id,freelancer_id);
                 return new ResponseEntity<>("Xóa lưu job", HttpStatus.CREATED);
             }
@@ -103,6 +103,32 @@ public class FreelancerController {
             return new ResponseEntity<>("Có lỗi xảy ra, vui lòng thử lại", HttpStatus.BAD_REQUEST);
         }
         }
+    @GetMapping("/getAllJobSaved")
+    public ResponseEntity<?> getAllJobSaved(@RequestHeader(name = "Authorization") String token,
+                                          @RequestParam(name = "freelancerId") String freelancer_id,
+                                            @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex
+    ) {
+        System.out.println("fsdd");
+        try {
+                return new ResponseEntity<>(freelancerService.getJobSaved(freelancer_id,pageIndex,10), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>("Có lỗi xảy ra, vui lòng thử lại", HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/getAllJobRequest")
+    public ResponseEntity<?> getAllJobRequest(@RequestHeader(name = "Authorization") String token,
+                                              @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId,
+                                              @RequestParam(name = "status", defaultValue = "-1") int status,
+                                              @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex
+    ) {
+        try {
+            return new ResponseEntity<>(freelancerService.getJobRequest(freelancerId,status,pageIndex,10), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>("Có lỗi xảy ra, vui lòng thử lại", HttpStatus.BAD_REQUEST);
+        }
+    }
     @PostMapping("/addJobRequest")
     public ResponseEntity<?> addJobRequest(@RequestHeader(name = "Authorization") String token,
                                          @NotEmpty @RequestParam(name = "freelancerId") String freelancer_id,

@@ -10,8 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -26,8 +29,10 @@ public class FreelancerServiceImpl implements FreelancerService {
     EducationRepository educationRepository;
     @Autowired
     WorkExperienceRepository workExperienceRepository;
+    @Autowired JobSavedRepository jobSavedRepository;
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired JobRequestRepository jobRequestRepository;
 
     @Override
     public void addFreelancer(Freelancer f) {
@@ -250,6 +255,109 @@ public class FreelancerServiceImpl implements FreelancerService {
         catch (Exception e){
             System.out.println(e);
         }
+    }
+
+    @Override
+    public APIResponse<PostFindingDTO> getJobSaved(String freelancerId,int pageNo,int pageSize) {
+     Pageable pageable=PageRequest.of(pageNo,pageSize);
+        Page<Job> jobs=jobSavedRepository.getAllJobSaved(freelancerId,pageable);
+        List<Job> paymentDTOResponseList=jobs.getContent();
+        List<PostFindingDTO> listJobs=new ArrayList<>();
+        for (Job j: paymentDTOResponseList){
+            PostFindingDTO post=new PostFindingDTO();
+            post.setPostID(j.getId());
+            post.setJobTitle(j.getJobTitle());
+            post.setSubCareer(j.getSubCareer().getName());
+            String des=j.getDescription();
+            if(des.length()>=100)
+                des=des.substring(0,99);
+            post.setDescription(des);
+            post.setAttach(j.getAttach());
+            post.setPaymentType(j.getPaymentType()==1?"Trả theo giờ":"Trả theo dự án");
+            String message="Đã đăng cách đây ";
+            long count= ChronoUnit.HOURS.between(j.getTime(), LocalDateTime.now());
+            if(count<24)
+                message+=count+" giờ";
+            else if(count<24*7)
+                message+=count/24+" ngày";
+            else if(count<24*30)
+                message+=count/(24*7)+" tuần";
+            else{
+                message+=count/(24*30)+" tháng";
+            }
+
+            post.setTimeCount(message);
+            Locale vn = new Locale("en", "VN");
+            NumberFormat vnFormat = NumberFormat.getCurrencyInstance(vn);
+            /*  request.setAttribute("total", vnFormat.format(total).substring(3) + " VNĐ");*/
+            post.setBudget(vnFormat.format(j.getBudget()).substring(3) + " VNĐ");
+            post.setCreatedDate(j.getTime());
+            post.setArea(j.getArea());
+            post.setIsActive(j.getIsActive());
+            post.setListSkills(j.getSkills());
+            listJobs.add(post);
+        }
+        APIResponse<PostFindingDTO> postFindingDTOAPIResponse= new APIResponse();
+        postFindingDTOAPIResponse.setResults(listJobs);
+        postFindingDTOAPIResponse.setPageIndex(pageNo+1);
+        postFindingDTOAPIResponse.setTotalPages(jobs.getTotalPages());
+        postFindingDTOAPIResponse.setTotalResults(jobs.getTotalElements());
+        return  postFindingDTOAPIResponse;
+    }
+
+    @Override
+    public APIResponse<PostFindingDTO> getJobRequest(String freelancerId, int status, int pageNo, int pageSize) {
+        Pageable pageable=PageRequest.of(pageNo,pageSize);
+        Page<Job> jobs=null;
+        switch ( status){
+            case 0:jobs=jobRequestRepository.getJobRequestWithStatus(freelancerId,0,pageable); break;
+            case 1:jobs=jobRequestRepository.getJobRequestWithStatus(freelancerId,1,pageable); break;
+            case 2:jobs=jobRequestRepository.getJobRequestWithStatus(freelancerId,2,pageable); break;
+            case -1:jobs=jobRequestRepository.getAllJobRequest(freelancerId,pageable); break;
+        }
+
+        List<Job> paymentDTOResponseList=jobs.getContent();
+        List<PostFindingDTO> listJobs=new ArrayList<>();
+        for (Job j: paymentDTOResponseList){
+            PostFindingDTO post=new PostFindingDTO();
+            post.setPostID(j.getId());
+            post.setJobTitle(j.getJobTitle());
+            post.setSubCareer(j.getSubCareer().getName());
+            String des=j.getDescription();
+            if(des.length()>=100)
+                des=des.substring(0,99);
+            post.setDescription(des);
+            post.setAttach(j.getAttach());
+            post.setPaymentType(j.getPaymentType()==1?"Trả theo giờ":"Trả theo dự án");
+            String message="Đã đăng cách đây ";
+            long count= ChronoUnit.HOURS.between(j.getTime(), LocalDateTime.now());
+            if(count<24)
+                message+=count+" giờ";
+            else if(count<24*7)
+                message+=count/24+" ngày";
+            else if(count<24*30)
+                message+=count/(24*7)+" tuần";
+            else{
+                message+=count/(24*30)+" tháng";
+            }
+
+            post.setTimeCount(message);
+            Locale vn = new Locale("en", "VN");
+            NumberFormat vnFormat = NumberFormat.getCurrencyInstance(vn);
+            /*  request.setAttribute("total", vnFormat.format(total).substring(3) + " VNĐ");*/
+            post.setBudget(vnFormat.format(j.getBudget()).substring(3) + " VNĐ");
+            post.setCreatedDate(j.getTime());
+            post.setArea(j.getArea());
+            post.setIsActive(j.getIsActive());
+            post.setListSkills(j.getSkills());
+            listJobs.add(post);
+        }
+        APIResponse<PostFindingDTO> postFindingDTOAPIResponse= new APIResponse();
+        postFindingDTOAPIResponse.setResults(listJobs);
+        postFindingDTOAPIResponse.setPageIndex(pageNo+1);
+        postFindingDTOAPIResponse.setTotalPages(jobs.getTotalPages());
+        postFindingDTOAPIResponse.setTotalResults(jobs.getTotalElements());
+        return  postFindingDTOAPIResponse;
     }
 
 

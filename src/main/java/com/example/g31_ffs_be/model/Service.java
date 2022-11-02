@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class Service {
     @JoinTable(name = "benefit_service",
             joinColumns = @JoinColumn(name = "service_id"),
             inverseJoinColumns = @JoinColumn(name = "benefit_id"))
+    @Fetch(FetchMode.SUBSELECT)
     private List<Benefit> benefits = new ArrayList<>();
 
     @OneToMany(mappedBy = "service")

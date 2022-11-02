@@ -3,6 +3,7 @@ package com.example.g31_ffs_be.service;
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import org.hibernate.jdbc.Work;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,4 +25,6 @@ public interface FreelancerService {
     void addSkill(List<Skill> skill,String freelancerId);
     void deleteSkill(Skill skill,String freelancerId);
     void updateProfile(RegisterDto registerDto);
+    APIResponse<PostFindingDTO> getJobSaved(String freelancerId,int pageNo,int pageSize);
+    APIResponse<PostFindingDTO> getJobRequest(String freelancerId,int status,int pageNo,int pageSize);
 }
