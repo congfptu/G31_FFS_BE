@@ -51,7 +51,7 @@ public class Freelancer {
 
     @OneToMany(mappedBy = "freelancer")
     private Set<WorkExperience> workExperiences = new LinkedHashSet<>();
-    @OneToMany
+    @ManyToMany
     @JoinTable(name = "freelancer_skill",
             joinColumns = @JoinColumn(name = "freelancer_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))

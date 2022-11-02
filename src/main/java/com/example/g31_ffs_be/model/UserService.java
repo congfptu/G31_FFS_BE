@@ -21,6 +21,7 @@ import java.time.LocalDate;
 public class UserService {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,5 +31,12 @@ public class UserService {
     @Column(name = "date_buy")
     private LocalDate dateBuy;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id")
+    private Service service;
+
+    @Column(name = "service_price")
+    private Double servicePrice;
 
 }

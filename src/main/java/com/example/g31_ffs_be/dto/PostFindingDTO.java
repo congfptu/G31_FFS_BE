@@ -9,15 +9,16 @@ import java.util.Set;
 
 @Data
 public class PostFindingDTO {
-    String postID;
+    int postID;
     String jobTitle;
     String subCareer;
     String description;
     String attach;
     String paymentType;
-    double budget;
+    String budget;
     @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     LocalDateTime createdDate;
+    String timeCount;
     String area;
     Boolean isActive;
     Set<Skill> listSkills;

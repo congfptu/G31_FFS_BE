@@ -14,4 +14,5 @@ public interface UserService {
     APIResponse<RequestPayment> getTransactionHistoryById(String userId, int pageNo, int pageSize);
     APIResponse<RequestPayment> searchTransactionHistoryByTime(LocalDateTime from, LocalDateTime to, String userId, int pageNo, int pageSize);
     Boolean rechargeMoney(RequestPaymentDto requestPaymentDto);
+
 }

@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Data
 public class PostDTO {
-    String id;
+    int id;
     @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     LocalDateTime createdDate;
     String createdBy;

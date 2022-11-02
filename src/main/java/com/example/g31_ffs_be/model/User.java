@@ -9,16 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
-import javax.jws.HandlerChain;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -101,6 +96,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private Set<RequestPayment> requestPayments = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserService> userServices = new LinkedHashSet<>();
 
     public User(String id) {
         this.id = id;

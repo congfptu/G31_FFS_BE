@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,7 @@ public class Service {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "role_id")
+    @JsonIgnore
     private Role role;
 
     @ManyToMany
@@ -50,5 +52,9 @@ public class Service {
             joinColumns = @JoinColumn(name = "service_id"),
             inverseJoinColumns = @JoinColumn(name = "benefit_id"))
     private List<Benefit> benefits = new ArrayList<>();
+
+    @OneToMany(mappedBy = "service")
+    @JsonIgnore
+    private Set<UserService> userServices = new LinkedHashSet<>();
 
 }

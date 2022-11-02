@@ -1,14 +1,12 @@
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.*;
-import com.example.g31_ffs_be.model.Account;
-import com.example.g31_ffs_be.model.Feedback;
-import com.example.g31_ffs_be.model.RequestPayment;
-import com.example.g31_ffs_be.model.User;
+import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.security.JwtTokenProvider;
 import com.example.g31_ffs_be.service.FeedbackService;
 import com.example.g31_ffs_be.service.PostService;
+import com.example.g31_ffs_be.service.ServiceService;
 import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
 import com.example.g31_ffs_be.service.impl.FeedbackServiceImpl;
 import com.example.g31_ffs_be.service.impl.FreelancerServiceImpl;
@@ -50,14 +48,17 @@ public class UserController {
     @Autowired
     PostService postService;
     @Autowired
+    ServiceService serviceService;
+    @Autowired
     PostRepository postRepository;
     @Autowired PaymentRepository paymentRepository;
     @Autowired
     FeedbackServiceImpl feedbackService;
+    @Autowired FeedbackRepository feedbackRepository;
     @Autowired
     JobRequestRepository jobRequestRepository;
-    @Autowired
-    FeedbackRepository feedbackRepository;
+    @Autowired ServiceRepository serviceRepository;
+    @Autowired UserServiceRepository userServiceRepository;
     @GetMapping("/transaction-history")
     public ResponseEntity<?> transactionHistory(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "userId", defaultValue = "") String userId,
@@ -111,7 +112,7 @@ public class UserController {
             jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
             jwtAuthResponse.setAvatar(account.getUser().getAvatar());
             jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
-            return new ResponseEntity<>(jwtAuthResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
         }catch (AuthenticationException e){
             return new ResponseEntity<>("Không tìm thấy user!", HttpStatus.BAD_REQUEST);
         }
@@ -142,6 +143,35 @@ public class UserController {
         catch (Exception e){
             System.out.println(e);
             return new ResponseEntity<>("Failed to create feedback", HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping ("/getAllService")
+    public ResponseEntity<?> insertFeedBack( @RequestParam(name = "role", defaultValue = "") String roleName) {
+        try {
+            return new ResponseEntity<>( serviceService.getAllService(roleName), HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping ("/buy-service")
+    public ResponseEntity<?> addService( @RequestHeader(name = "Authorization") String token,
+                                         @RequestParam(name = "userId", defaultValue = "") String userId,
+                                         @RequestParam(name = "serviceId", defaultValue = "") int serviceId)
+    {
+        try {
+            Service service=serviceRepository.getReferenceById(serviceId);
+            User user=userRepository.getReferenceById(userId);
+            userRepository.insertUserService(userId,serviceId,LocalDateTime.now(),service.getPrice());
+            user.setAccountBalance(user.getAccountBalance()-service.getPrice());
+            user.setIsMemberShip(true);
+            userRepository.save(user);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
 }

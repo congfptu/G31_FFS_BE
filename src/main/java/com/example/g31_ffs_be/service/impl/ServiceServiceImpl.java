@@ -3,6 +3,7 @@ package com.example.g31_ffs_be.service.impl;
 import com.example.g31_ffs_be.dto.ServiceDto;
 import com.example.g31_ffs_be.dto.ServiceResponse;
 import com.example.g31_ffs_be.model.Benefit;
+
 import com.example.g31_ffs_be.model.Service;
 import com.example.g31_ffs_be.repository.BenefitRepository;
 import com.example.g31_ffs_be.repository.ServiceRepository;
@@ -69,5 +70,10 @@ public class ServiceServiceImpl implements ServiceService {
         if (serviceRepository.getService(name)!=null)
             return true;
         return false;
+    }
+
+    @Override
+    public List<Service> getAllService(String roleName) {
+       return serviceRepository.getAllService(roleName);
     }
 }

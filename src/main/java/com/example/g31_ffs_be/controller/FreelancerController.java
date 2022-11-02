@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,6 +29,7 @@ public class FreelancerController {
     FreelancerServiceImpl freelancerService;
     @Autowired
     FreelancerRepository freelancerRepository;
+    @Autowired AccountRepository accountRepository;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -61,37 +63,17 @@ public class FreelancerController {
     }
     @GetMapping("/findingJob")
     public ResponseEntity<?> findJob(@RequestHeader(name = "Authorization") String token,
+                                     @RequestParam(name = "userId", defaultValue = "") String userId,
                                      @RequestParam(name = "area", defaultValue = "") String area,
-                                     @RequestParam(name = "budget", defaultValue = "") Double budget,
+                                     @RequestParam(name = "paymentType", defaultValue = "-1") int paymentType,
                                      @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                     @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo,
-                                     @RequestParam(name = "sub_career_id", defaultValue = "-1") Integer sub_career_id,
-                                     @RequestParam(name = "is_top") Boolean is_top
+                                     @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex,
+                                     @RequestParam(name = "sub_career_id", defaultValue = "-1") int sub_career_id
     ) {
         try {
-            int pageIndex = 0;
-            try {
-                pageIndex = Integer.parseInt(pageNo);
-            } catch (Exception e) {
+            Account acc=accountRepository.findByUserId(userId);
+            return new ResponseEntity<>(postService.getJobSearch(pageIndex,10,area,keyword,paymentType,sub_career_id,acc.getUser().getIsMemberShip()), HttpStatus.OK);
 
-            }
-            int pageSize = 5;
-            if (sub_career_id != -1) {
-                APIResponse fas = postService.getJobSearch(pageIndex, pageSize, area, budget, keyword, is_top, sub_career_id, null);
-                if (fas.getTotalPages() >= pageIndex - 1) {
-                    return new ResponseEntity<>(fas, HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
-                }
-            } else {
-                APIResponse fas = postService.getJobSearch(pageIndex, pageSize, area, budget, keyword, is_top, null);
-                if (fas.getTotalPages() >= pageIndex - 1) {
-                    return new ResponseEntity<>(fas, HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
-                }
-
-            }
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
@@ -100,11 +82,10 @@ public class FreelancerController {
     }
     @PostMapping("/addJobSaved")
     public ResponseEntity<?> addJobSaved(@RequestHeader(name = "Authorization") String token,
-                                         @NotEmpty @RequestParam(name = "freelancer_id") Integer freelancer_id,
-                                         @NotEmpty @RequestParam(name = "job_id") Integer job_id
+                                         @NotEmpty @RequestParam(name = "freelancerId") String freelancer_id,
+                                         @NotEmpty @RequestParam(name = "jobId") Integer job_id
     ) {
         try {
-
             jobSavedRepository.insert(job_id, freelancer_id);
             return new ResponseEntity<>("Thêm mới jobSaved thành công", HttpStatus.CREATED);
         } catch (Exception e) {
@@ -114,12 +95,11 @@ public class FreelancerController {
         }
     @PostMapping("/addJobRequest")
     public ResponseEntity<?> addJobRequest(@RequestHeader(name = "Authorization") String token,
-                                         @NotEmpty @RequestParam(name = "freelancer_id") int freelancer_id,
-                                         @NotEmpty   @RequestParam(name = "job_id") int job_id
+                                         @NotEmpty @RequestParam(name = "freelancerId") String freelancer_id,
+                                         @NotEmpty   @RequestParam(name = "jobId") int job_id
     ) {
         try {
-
-            jobRequestRepository.insert(job_id,freelancer_id);
+            jobRequestRepository.insert(job_id,freelancer_id,0, LocalDateTime.now());
             return new ResponseEntity<>("Thêm mới jobRequest thành công", HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);

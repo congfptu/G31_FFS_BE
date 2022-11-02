@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +25,9 @@ import java.util.Set;
 @DynamicInsert
 public class Job {
     @Id
-    @Size(max = 45)
-    @Column(name = "id", nullable = false, length = 45)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+     Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "create_by")
@@ -48,9 +49,8 @@ public class Job {
     @Column(name = "attach")
     private String attach;
 
-    @Size(max = 255)
     @Column(name = "payment_type")
-    private String paymentType;
+    private int paymentType;
 
     @Column(name = "budget")
     private Double budget;
@@ -72,9 +72,6 @@ public class Job {
     private Staff approvedBy;
 
     @OneToMany(mappedBy = "job")
-    private Set<JobRequest> jobRequests = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "job")
     private Set<JobSaved> jobSaveds = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "job")
@@ -82,13 +79,19 @@ public class Job {
 
     @ManyToMany
     @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
-    private Set<Skill> listSkills;
+    private Set<Skill> skills;
 
-
-    @Column(name = "is_top")
-    private Boolean isTop;
 
     @Column(name = "fee")
     private Double fee;
+
+    @Column(name = "top_time")
+    private LocalDateTime topTime;
+
+    @OneToMany(mappedBy = "job")
+    @JsonIgnore
+    private Set<JobRequest> jobRequests = new LinkedHashSet<>();
+
+
 
 }

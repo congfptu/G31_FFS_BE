@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Data
 public class PostDetailDTO {
-    String postID;
+    int postID;
     RecruiterDto createBy;
     String jobTitle;
     String subCareer;

@@ -32,11 +32,13 @@ public class Skill {
 
     @Column(name = "name")
     private String name;
+
+   @ManyToMany
    @JsonIgnore
-    @ManyToMany(mappedBy = "listSkills")
+   @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "skill_id"), inverseJoinColumns = @JoinColumn(name = "job_id"))
     private Set<Job> jobs;
-    @OneToMany
-    @JoinTable(name = "freelancer_id",
+    @ManyToMany
+    @JoinTable(name = "freelancer_skill",
             joinColumns = @JoinColumn(name = "skill_id"),
             inverseJoinColumns = @JoinColumn(name = "freelancer_id"))
     @JsonIgnore

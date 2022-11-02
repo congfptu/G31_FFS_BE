@@ -30,4 +30,10 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
             "order by b.id asc")
     Service getBenefitByServiceID(int id);
 
+    @Query(value = "SELECT distinct s FROM Service s "+
+            "LEFT JOIN fetch s.benefits b "+
+            "LEFT JOIN fetch s.role r where r.roleName=:roleName"
+    )
+    List<Service> getAllService(String roleName);
+
 }
