@@ -74,9 +74,19 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String>, 
           " LEFT join fetch a.user f"+
           " LEFT join fetch f.account g"+
           " LEFT join fetch f.feedbackTos h"+
-          " where f.address like CONCAT('%',:address,'%') and c.name like CONCAT('%',:skill,'%') and b.name like CONCAT('%',:subCareer,'%')   "
+          " where f.address like CONCAT('%',:address,'%') and c.name like CONCAT('%',:skill,'%') and b.name like CONCAT('%',:subCareer,'%') ",
+           countQuery = "select count(a) from Freelancer a"+
+                   " LEFT join  a.subCareer b" +
+                   " LEFT join  a.skills c" +
+                   " LEFT join  a.educations d"+
+                   " LEFT join  a.workExperiences e"+
+                   " LEFT join  a.user f"+
+                   " LEFT join  f.account g"+
+                   " LEFT join  f.feedbackTos h"+
+                   " where f.address like CONCAT('%',:address,'%') and c.name like CONCAT('%',:skill,'%') and b.name like CONCAT('%',:subCareer,'%') "
+
   )
-  Page<Freelancer> getAllFreelancer(String address,String skill,double costPerHour,String subCareer);
+  Page<Freelancer> getAllFreelancer(String address,String skill,String subCareer,Pageable pageable);
 
 
 
