@@ -13,4 +13,5 @@ public interface RecruiterService {
     APIResponse<RecruiterAdminDto> getRecruiterByName(String name, int pageNo, int pageSize);
     RecruiterDetailDTO getDetailRecruiter(String id);
     List<RecruiterAdminDto> getTop5RecruiterByName(String name);
+
 }

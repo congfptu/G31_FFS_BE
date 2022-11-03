@@ -22,4 +22,5 @@ public class PostFindingDTO {
     String area;
     Boolean isActive;
     Set<Skill> listSkills;
+    int isApproved;
 }

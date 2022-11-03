@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -75,11 +77,11 @@ public class User {
     @Column(name = "is_banned")
     private Boolean isBanned;
 
-    @OneToMany(mappedBy = "to")
+    @OneToMany(mappedBy = "to", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Feedback> feedbackTos = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "from")
+    @OneToMany(mappedBy = "from",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Feedback> feedbackFroms = new LinkedHashSet<>();
 
@@ -103,5 +105,20 @@ public class User {
 
     public User(String id) {
         this.id = id;
+    }
+
+    @Transient
+    private double star;
+
+    public double getStar() {
+        double result = 0;
+        for (Feedback feedback : feedbackTos)
+            result += feedback.getStar();
+        result = result / feedbackTos.size();
+        return result;
+    }
+
+    public void setStar(double star) {
+        this.star = star;
     }
 }

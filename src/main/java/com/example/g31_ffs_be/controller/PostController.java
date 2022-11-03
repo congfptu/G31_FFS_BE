@@ -79,10 +79,11 @@ public class    PostController {
 
     @GetMapping("/postDetail")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
+                                           @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId,
                                            @RequestParam(name = "id", defaultValue = "") int id) {
 
         try {
-            return new ResponseEntity<>(postService.getPostDetail(id), HttpStatus.OK);
+            return new ResponseEntity<>(postService.getPostDetail(freelancerId,id), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

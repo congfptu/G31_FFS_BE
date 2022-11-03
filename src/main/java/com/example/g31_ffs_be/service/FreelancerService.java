@@ -27,4 +27,6 @@ public interface FreelancerService {
     void updateProfile(RegisterDto registerDto);
     APIResponse<PostFindingDTO> getJobSaved(String freelancerId,int pageNo,int pageSize);
     APIResponse<PostFindingDTO> getJobRequest(String freelancerId,int status,int pageNo,int pageSize);
+    APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String address,int costOption,String subCareer,String skill,int pageNo,int pageSize);
+
 }

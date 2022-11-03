@@ -25,9 +25,7 @@ public class Notification {
     @Column(name = "id", nullable = false, length = 45)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_id")
-    private Job job;
+
 
     @Size(max = 255)
     @Column(name = "link")

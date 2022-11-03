@@ -5,7 +5,9 @@ import com.example.g31_ffs_be.model.Freelancer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
+public interface FreelancerRepository extends JpaRepository<Freelancer,String>, JpaSpecificationExecutor<Freelancer> {
   @Query(value = "SELECT f FROM Freelancer f "+
           "LEFT JOIN FETCH f.user b " +
           "LEFT JOIN FETCH b.account a " +
@@ -62,6 +64,23 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
           " LEFT join f.account g"+
           " where a.id= :id")
   Freelancer getProfileFreelancer(String id);
+
+
+  @Query(value = "select distinct a from Freelancer a"+
+          " LEFT join fetch a.subCareer b" +
+          " LEFT join fetch a.skills c" +
+          " LEFT join fetch a.educations d"+
+          " LEFT join fetch a.workExperiences e"+
+          " LEFT join fetch a.user f"+
+          " LEFT join fetch f.account g"+
+          " LEFT join fetch f.feedbackTos h"+
+          " where f.address like CONCAT('%',:address,'%') and c.name like CONCAT('%',:skill,'%') and b.name like CONCAT('%',:subCareer,'%')   "
+  )
+  Page<Freelancer> getAllFreelancer(String address,String skill,double costPerHour,String subCareer);
+
+
+
+
 
 }
 

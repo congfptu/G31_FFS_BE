@@ -75,9 +75,7 @@ public class Job {
     private Staff approvedBy;
 
 
-    @OneToMany(mappedBy = "job")
-    @JsonIgnore
-    private Set<Notification> notifications = new LinkedHashSet<>();
+
 
     @ManyToMany
     @JsonIgnore
@@ -100,6 +98,7 @@ public class Job {
 
 
     @OneToMany(mappedBy = "job")
+    @Fetch(FetchMode.SUBSELECT)
     private Set<JobRequest> jobRequests = new LinkedHashSet<>();
 
 }

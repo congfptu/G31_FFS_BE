@@ -26,6 +26,8 @@ public class PostDetailDTO {
     String area;
     Boolean isActive;
     Integer isApproved;
+    Boolean isApply;
+    Boolean isSave;
     String approvedBy;
     Set<Skill> listSkills;
 }

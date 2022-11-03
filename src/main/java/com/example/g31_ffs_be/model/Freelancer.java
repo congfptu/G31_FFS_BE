@@ -1,11 +1,14 @@
 package com.example.g31_ffs_be.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -40,10 +43,12 @@ public class Freelancer {
     private String cv;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "freelancer_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_career_id")
+    @JsonIgnore
     private Subcareer subCareer;
 
     @OneToMany(mappedBy = "freelancer",fetch = FetchType.LAZY)
@@ -66,5 +71,6 @@ public class Freelancer {
 
     @OneToMany(mappedBy = "freelancer")
     private Set<JobRequest> jobRequests = new LinkedHashSet<>();
+
 
 }

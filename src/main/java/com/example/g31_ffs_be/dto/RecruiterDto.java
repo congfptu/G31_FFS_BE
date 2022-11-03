@@ -10,4 +10,6 @@ public class RecruiterDto {
     double star;
     Integer numberOfFeedback;
     Integer totalPosted;
+    String phone;
+    String email;
 }

@@ -24,8 +24,12 @@ public interface PostRepository extends JpaRepository<Job, String> {
     @Query(value = " SELECT j FROM Job j" +
             " LEFT JOIN FETCH j.skills " +
             " LEFT JOIN FETCH j.subCareer " +
-            " LEFT JOIN FETCH j.createBy " +
-            "WHERE j.id=:id "
+            " LEFT JOIN FETCH j.createBy cre" +
+            " LEFT JOIN FETCH cre.user u " +
+            " LEFT JOIN FETCH j.jobRequests rq" +
+            " LEFT JOIN FETCH j.approvedBy staff" +
+            " LEFT JOIN FETCH j.freelancers free" +
+            " WHERE (j.id=:id)  "
             )
     Job getJobDetail(int id);
 @Query(value = " SELECT DISTINCT j FROM Job j " +

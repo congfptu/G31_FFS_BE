@@ -80,17 +80,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDetailDTO getPostDetail(int id) {
+    public PostDetailDTO getPostDetail(String freelancerId,int id) {
         Job job= postRepository.getJobDetail(id);
         PostDetailDTO postDetailDTO=new PostDetailDTO();
         postDetailDTO.setPostID(job.getId());
+        Recruiter createdBy=job.getCreateBy();
         RecruiterDto recruiterDto= new RecruiterDto();
-        recruiterDto.setId(job.getCreateBy().getId());
-        recruiterDto.setCompanyName(job.getCreateBy().getCompanyName());
-        recruiterDto.setWebsite(job.getCreateBy().getWebsite());
-        recruiterDto.setNumberOfFeedback(job.getCreateBy().getUser().getFeedbackTos().size());
-        recruiterDto.setTotalPosted(job.getCreateBy().getJobs().size());
-
+        recruiterDto.setPhone(createdBy.getUser().getPhone());
+        recruiterDto.setId(createdBy.getId());
+        recruiterDto.setCompanyName(createdBy.getCompanyName());
+        recruiterDto.setWebsite(createdBy.getWebsite());
+        recruiterDto.setNumberOfFeedback(createdBy.getUser().getFeedbackTos().size());
+        recruiterDto.setTotalPosted(createdBy.getJobs().size());
         double star = 0;
         User u = job.getCreateBy().getUser();
         for (Feedback feedback : u.getFeedbackTos())
@@ -103,6 +104,18 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setDescription(job.getDescription());
         postDetailDTO.setAttach(job.getAttach());
         postDetailDTO.setArea(job.getArea());
+        boolean isApply=false;
+        for(JobRequest j:job.getJobRequests()){
+            if(j.getFreelancer().getId().equals(freelancerId))
+                isApply=true;
+        }
+        boolean isSaved=false;
+        for(Freelancer freelancer: job.getFreelancers()){
+            if(freelancer.getId().equals(freelancerId))
+                isSaved=true;
+        }
+        postDetailDTO.setIsApply(isApply);
+        postDetailDTO.setIsSave(isSaved);
         postDetailDTO.setPaymentType(job.getPaymentType()==1?"Trả theo giờ":"Trả theo dự án");
         String message="Đã đăng cách đây ";
         long count=ChronoUnit.HOURS.between(job.getTime(), LocalDateTime.now());
@@ -116,10 +129,9 @@ public class PostServiceImpl implements PostService {
             message+=count/(24*30)+" tháng";
         }
         postDetailDTO.setTimeCount(message);
-        Locale vn = new Locale("en", "VN");
-        NumberFormat vnFormat = NumberFormat.getCurrencyInstance(vn);
-        /*  request.setAttribute("total", vnFormat.format(total).substring(3) + " VNĐ");*/
-        postDetailDTO.setBudget(vnFormat.format(job.getBudget()).substring(1) + " VNĐ");
+        Locale localeVN = new Locale("vi", "VN");
+        NumberFormat vnFormat = NumberFormat.getInstance(localeVN);
+        postDetailDTO.setBudget(vnFormat.format(job.getBudget()) + " VNĐ");
 //        String formatDate= time.
         postDetailDTO.setTime(job.getTime());
         postDetailDTO.setIsActive(job.getIsActive());
@@ -193,10 +205,9 @@ public class PostServiceImpl implements PostService {
              }
 
             post.setTimeCount(message);
-            Locale vn = new Locale("en", "VN");
-            NumberFormat vnFormat = NumberFormat.getCurrencyInstance(vn);
-          /*  request.setAttribute("total", vnFormat.format(total).substring(3) + " VNĐ");*/
-            post.setBudget(vnFormat.format(j.getBudget()).substring(3) + " VNĐ");
+            Locale localeVN = new Locale("vi", "VN");
+            NumberFormat vnFormat = NumberFormat.getInstance(localeVN);
+            post.setBudget(vnFormat.format(j.getBudget()) + " VNĐ");
             post.setCreatedDate(j.getTime());
             post.setArea(j.getArea());
             post.setIsActive(j.getIsActive());
