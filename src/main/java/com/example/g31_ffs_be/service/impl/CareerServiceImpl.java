@@ -36,7 +36,7 @@ public class CareerServiceImpl implements CareerService {
     public void updateCareer(Career career) {
     try{
         Optional<Career> careerOptional = careerRepository.findById(career.getId());
-        if(careerOptional!=null){
+        if(careerOptional.isPresent()){
             careerRepository.save(career);
         }
     }
@@ -49,7 +49,7 @@ public class CareerServiceImpl implements CareerService {
     public void deleteCareer(Integer id) {
         try{
             Optional<Career> careerOptional = careerRepository.findById(id);
-            if(careerOptional!=null){
+            if(careerOptional.isPresent()){
             careerRepository.deleteById(id);}
         }catch (Exception e){
             System.out.println(e);

@@ -36,6 +36,5 @@ public interface JobSavedRepository extends JpaRepository<Job,String> {
                     " LEFT JOIN  f.jobSaves job" +
                     " LEFT JOIN  job.subCareer" +
                     " WHERE f.id=:freelancer_id")
-
     Page<Job> getAllJobSaved(String freelancer_id, Pageable pageable);
 }

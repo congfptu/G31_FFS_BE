@@ -32,7 +32,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
             " WHERE (j.id=:id)  "
             )
     Job getJobDetail(int id);
-@Query(value = " SELECT DISTINCT j FROM Job j " +
+/*@Query(value = " SELECT DISTINCT j FROM Job j " +
         " LEFT JOIN  j.skills s "+
         " LEFT JOIN FETCH j.subCareer sub "+
         " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
@@ -137,7 +137,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
             " and (j.paymentType=:paymentType)"
             + "Order by j.topTime desc,j.budget desc"
     )
-    Page<Job> getAllJobMemberShipWithPaymentType(String area,String keyword,int paymentType,Pageable pageable);
+    Page<Job> getAllJobMemberShipWithPaymentType(String area,String keyword,int paymentType,Pageable pageable);*/
 
 
     @Query(value = " SELECT DISTINCT j FROM Job j " +
@@ -145,8 +145,8 @@ public interface PostRepository extends JpaRepository<Job, String> {
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
-            " and (j.paymentType=:paymentType)"+
-            " and (sub.id=:subCareerId)"+
+            " and (j.paymentType=:paymentType or :paymentType=-1)"+
+            " and (sub.id=:subCareerId or :subCareerId=-1)"+
             " and ((j.budget <400000.0 and j.paymentType=1) or (j.budget <20000000.0 and j.paymentType=2))"
             + "Order by j.topTime desc,j.budget desc"
 
@@ -167,8 +167,8 @@ public interface PostRepository extends JpaRepository<Job, String> {
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
-            " and (j.paymentType=:paymentType)"+
-            " and (sub.id=:subCareerId)"
+            " and (j.paymentType=:paymentType or :paymentType=-1)"+
+            " and (sub.id=:subCareerId or :subCareerId=-1)"
             + "Order by j.topTime desc,j.budget desc"
 
             , countQuery = " SELECT count( distinct j.id) FROM Job j " +
@@ -176,8 +176,8 @@ public interface PostRepository extends JpaRepository<Job, String> {
             " LEFT JOIN  j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
-            " and (j.paymentType=:paymentType)"+
-            " and (sub.id=:subCareerId)"+
+            " and (j.paymentType=:paymentType or :paymentType=-1)"+
+            " and (sub.id=:subCareerId or :subCareerId=-1)"+
             "Order by j.topTime desc,j.budget desc"
     )
     Page<Job> getAllJobMemberShipSearchAll(String area,String keyword,int paymentType,int subCareerId,Pageable pageable);

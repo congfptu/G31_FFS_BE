@@ -17,6 +17,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -316,22 +317,11 @@ public class FreelancerServiceImpl implements FreelancerService {
     @Override
     public APIResponse<PostFindingDTO> getJobRequest(String freelancerId, int status, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
+        APIResponse<PostFindingDTO> postFindingDTOAPIResponse = new APIResponse<>();
         Page<Job> jobs = null;
-        switch (status) {
-            case 0:
-                jobs = jobRequestRepository.getJobRequestWithStatus(freelancerId, 0, pageable);
-                break;
-            case 1:
-                jobs = jobRequestRepository.getJobRequestWithStatus(freelancerId, 1, pageable);
-                break;
-            case 2:
-                jobs = jobRequestRepository.getJobRequestWithStatus(freelancerId, 2, pageable);
-                break;
-            case -1:
-                jobs = jobRequestRepository.getAllJobRequest(freelancerId, pageable);
-                break;
-        }
-
+                jobs = jobRequestRepository.getJobRequestWithStatus(freelancerId, status, pageable);
+       if (jobs!=null)
+       {
         List<Job> paymentDTOResponseList = jobs.getContent();
         List<PostFindingDTO> listJobs = new ArrayList<>();
         for (Job j : paymentDTOResponseList) {
@@ -365,48 +355,77 @@ public class FreelancerServiceImpl implements FreelancerService {
             post.setCreatedDate(j.getTime());
             post.setArea(j.getArea());
             post.setIsActive(j.getIsActive());
-            if(status==-1) {
+            if (status == -1) {
                 for (JobRequest jobRequest : j.getJobRequests()) {
-                    if (jobRequest.getFreelancer().getId().equals(freelancerId)&& jobRequest.getJob().getId().equals(j.getId()))
+                    if (jobRequest.getFreelancer().getId().equals(freelancerId) && jobRequest.getJob().getId().equals(j.getId()))
                         post.setIsApproved(jobRequest.getStatus());
                 }
-            }else{
+            } else {
                 post.setIsApproved(status);
             }
 
             post.setListSkills(j.getSkills());
             listJobs.add(post);
         }
-        APIResponse<PostFindingDTO> postFindingDTOAPIResponse = new APIResponse();
+
         postFindingDTOAPIResponse.setResults(listJobs);
         postFindingDTOAPIResponse.setPageIndex(pageNo + 1);
         postFindingDTOAPIResponse.setTotalPages(jobs.getTotalPages());
         postFindingDTOAPIResponse.setTotalResults(jobs.getTotalElements());
+    }
         return postFindingDTOAPIResponse;
     }
 
     @Override
-    public APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String address, int costOption, String subCareer, String skill, int pageNo, int pageSize) {
-        Page<Freelancer> page=null;
+    public APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String address, int costOption, int subCareer, int skill, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Freelancer> page = null;
+        switch (costOption) {
+            case 1:
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 0, -1, subCareer, pageable);
+                break;
+            case 2:
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 0, 100000, subCareer, pageable);
+                break;
+            case 3:
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 100000, 200000, subCareer, pageable);
+                break;
+            case 4:
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 200000, 500000, subCareer, pageable);
+                break;
+            case 5:
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 500000, -1, subCareer, pageable);
+                break;
+        }
         APIResponse<FreelancerFilterDto> apiResponse = new APIResponse<>();
         List<FreelancerFilterDto> filterDTOs = new ArrayList<>();
-        for (Freelancer f : page.getContent()) {
-            FreelancerFilterDto filterDto = new FreelancerFilterDto();
-            filterDto.setSkills(f.getSkills());
-            filterDto.setAvatar(f.getUser().getAvatar());
-            filterDto.setAddress(f.getUser().getAddress());
-            filterDto.setFullName(f.getUser().getFullName());
-         /*   filterDto.setSubCareer(f.getSubCareer().getName());
-            filterDto.setStar(f.getUser().getStar());*/
-            Locale vn = new Locale("vi", "VN");
-            NumberFormat vnFormat = NumberFormat.getInstance(vn);
-            filterDto.setCostPerHour(f.getCostPerHour()==null?"0":vnFormat.format(f.getCostPerHour())+"VNĐ");
-            filterDto.setDescription(f.getDescription());
-            filterDTOs.add(filterDto);
-
+        if (page != null) {
+            {
+                for (Freelancer f : page.getContent()) {
+                    FreelancerFilterDto filterDto = new FreelancerFilterDto();
+                    filterDto.setSkills(f.getSkills());
+                    filterDto.setAvatar(f.getUser().getAvatar());
+                    filterDto.setAddress(f.getUser().getAddress());
+                    filterDto.setFullName(f.getUser().getFullName());
+                    filterDto.setSubCareer(f.getSubCareer().getName());
+                    NumberFormat formatter = new DecimalFormat("#0.0");
+                    Double star = f.getUser().getStar();
+                    if (star == 0)
+                        filterDto.setStar("0");
+                    else
+                        filterDto.setStar(formatter.format(star));
+                    Locale vn = new Locale("vi", "VN");
+                    NumberFormat vnFormat = NumberFormat.getInstance(vn);
+                    filterDto.setCostPerHour(f.getCostPerHour() == null ? "0" : vnFormat.format(f.getCostPerHour()) + "VNĐ");
+                    filterDto.setDescription(f.getDescription());
+                    filterDTOs.add(filterDto);
+                }
+                apiResponse.setResults(filterDTOs);
+                apiResponse.setPageIndex(pageNo + 1);
+                apiResponse.setTotalPages(page.getTotalPages());
+                apiResponse.setTotalResults(page.getTotalElements());
+            }
         }
-        apiResponse.setResults(filterDTOs);
-
         return apiResponse;
     }
 }

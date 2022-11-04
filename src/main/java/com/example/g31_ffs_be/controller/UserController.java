@@ -59,19 +59,7 @@ public class UserController {
     JobRequestRepository jobRequestRepository;
     @Autowired ServiceRepository serviceRepository;
     @Autowired UserServiceRepository userServiceRepository;
-    @GetMapping("/transaction-history")
-    public ResponseEntity<?> transactionHistory(@RequestHeader(name = "Authorization") String token,
-                                                @RequestParam(name = "userId", defaultValue = "") String userId,
-                                                @RequestParam(name = "pageNo", defaultValue = "0") String pageNo ) {
-        try {
-            int pageIndex=Integer.parseInt(pageNo);
-            return new ResponseEntity<>(userService.getTransactionHistoryById(userId,pageIndex,10), HttpStatus.OK);
-        }
-        catch (Exception e){
-            System.out.println(e);
-            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
-        }
-    }
+
     @GetMapping("/searchTransaction")
     public ResponseEntity<?> searchTransaction(
             @RequestParam(name = "userId", defaultValue = "") String userId ,

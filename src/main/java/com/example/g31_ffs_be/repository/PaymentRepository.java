@@ -27,34 +27,10 @@ public interface PaymentRepository extends JpaRepository<RequestPayment,String> 
             , nativeQuery = true)
     Page<RequestPayment> getRequestPaymentPaging(String keyword,Pageable pageable);
     @Query(value = " SELECT * FROM request_payment " +
-            " WHERE payment_code =:keyword"
-            , nativeQuery = true)
-    RequestPayment getRequestPaymentByCode(String keyword);
-
-    @Query(value = " SELECT * FROM request_payment " +
-            " WHERE user_id =:userId"
-            , nativeQuery = true)
-    Page<RequestPayment> getRequestPaymentByUserId(String userId, Pageable pageable);
-    @Query(value = " SELECT * FROM request_payment " +
-            " WHERE (date_request between :from and :to) and user_id=:userId " +
+            " WHERE ( :from='' or date_request >=:from ) and (:to='' or date_request <=:to  ) and user_id=:userId " +
             "order by date_request desc"
             , nativeQuery = true)
-    Page<RequestPayment> getRequestPaymentByFromTo(LocalDateTime from, LocalDateTime to, String userId,Pageable pageable);
-    @Query(value = " SELECT * FROM request_payment " +
-            " WHERE date_request >= :from  and user_id=:userId " +
-            "order by date_request desc"
-            , nativeQuery = true)
-    Page<RequestPayment> getRequestPaymentByFrom(LocalDateTime from, String userId,Pageable pageable);
-    @Query(value = " SELECT * FROM request_payment " +
-            " WHERE date_request <= :todate  and user_id=:userId " +
-            "order by date_request desc"
-            , nativeQuery = true)
-    Page<RequestPayment> getRequestPaymentByTo(LocalDateTime todate, String userId,Pageable pageable);
-    @Query(value = " SELECT * FROM request_payment " +
-            " WHERE user_id=:userId " +
-            "order by date_request desc"
-            , nativeQuery = true)
-    Page<RequestPayment> getAllRequestPayment(String userId,Pageable pageable);
+    Page<RequestPayment> getRequestPaymentByFromTo(String from, String to, String userId,Pageable pageable);
 
     Optional<RequestPayment> findByPaymentCode(String paymentCode);
 

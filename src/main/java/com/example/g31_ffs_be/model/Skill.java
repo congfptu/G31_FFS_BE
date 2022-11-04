@@ -38,6 +38,7 @@ public class Skill {
    @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "skill_id"), inverseJoinColumns = @JoinColumn(name = "job_id"))
     private Set<Job> jobs;
     @ManyToMany
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "freelancer_skill",
             joinColumns = @JoinColumn(name = "skill_id"),
             inverseJoinColumns = @JoinColumn(name = "freelancer_id"))

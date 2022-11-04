@@ -41,7 +41,7 @@ public class Freelancer {
 
     @Column(name = "cv")
     private String cv;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "freelancer_id", nullable = false)
     @JsonIgnore
     private User user;
@@ -57,6 +57,7 @@ public class Freelancer {
     @OneToMany(mappedBy = "freelancer")
     private Set<WorkExperience> workExperiences = new LinkedHashSet<>();
     @ManyToMany
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "freelancer_skill",
             joinColumns = @JoinColumn(name = "freelancer_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))

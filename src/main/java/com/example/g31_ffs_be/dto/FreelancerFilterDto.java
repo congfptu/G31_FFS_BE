@@ -12,7 +12,7 @@ public class FreelancerFilterDto {
     private  String subCareer;
     private  String address;
     private Set<Skill> skills;
-    private  double star;
+    private  String star;
     private  String costPerHour;
     private  String description;
 

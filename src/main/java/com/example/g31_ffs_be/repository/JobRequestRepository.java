@@ -22,27 +22,13 @@ public interface JobRequestRepository extends JpaRepository<Job,String> {
             " LEFT JOIN  f.jobRequests jrq" +
             " LEFT JOIN  jrq.job job" +
             " LEFT JOIN fetch job.subCareer sub" +
-            " WHERE f.id=:freelancer_id and jrq.status=:status",
+            " WHERE f.id=:freelancer_id and (jrq.status=:status or :status=-1 )",
             countQuery = " SELECT count(job.id)  FROM Freelancer f" +
                     " LEFT JOIN  f.jobRequests jrq" +
                     " LEFT JOIN  jrq.job job " +
                     " LEFT JOIN  job.subCareer sub" +
-                    " WHERE f.id=:freelancer_id and jrq.status=:status")
+                    " WHERE f.id=:freelancer_id and (jrq.status=:status or :status=-1 )")
     Page<Job> getJobRequestWithStatus(String freelancer_id,int status,Pageable pageable);
-    @Query(value = " SELECT DISTINCT job FROM Freelancer f" +
-            " LEFT JOIN   f.jobRequests jrq" +
-            " LEFT JOIN  jrq.freelancer free" +
-            " LEFT JOIN  jrq.job job" +
-            " LEFT JOIN  job.jobRequests " +
-            " LEFT JOIN fetch job.subCareer sub" +
-            " WHERE f.id=:freelancer_id",
-            countQuery = " SELECT count(job.id)  FROM Freelancer f" +
-                    " LEFT JOIN  f.jobRequests jrq" +
-                    " LEFT JOIN  jrq.freelancer free" +
-                    " LEFT JOIN  jrq.job job " +
-                    " LEFT JOIN  job.subCareer sub" +
-                    " WHERE f.id=:freelancer_id")
-    Page<Job> getAllJobRequest(String freelancer_id,Pageable pageable);
 
 
 

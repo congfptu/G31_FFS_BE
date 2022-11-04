@@ -144,81 +144,55 @@ public class PostServiceImpl implements PostService {
     @Override
     public APIResponse<PostFindingDTO> getJobSearch(int pageNumber, int pageSize, String area,String keyword,int paymentType,int sub_career_id,Boolean isMemberShip) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        APIResponse<PostFindingDTO> paymentDTOResponse = new APIResponse<>();
+        Page<Job> jobs;
 
-
-        Page<Job> jobs=null;
-
-
-        if(isMemberShip){
-            if(paymentType==-1&&sub_career_id==-1){
-                jobs=postRepository.getAllJobMemberShip(area,keyword,pageable);
-            }
-            else  if(paymentType>-1&&sub_career_id==-1){
-                jobs=postRepository.getAllJobMemberShipWithPaymentType(area,keyword,paymentType,pageable);
-            }
-            else  if(paymentType == -1){
-                jobs=postRepository.getAllJobMemberShipWithSub(area,keyword,sub_career_id,pageable);
-            }
-            else{
+        if(isMemberShip)
                 jobs=postRepository.getAllJobMemberShipSearchAll(area,keyword,paymentType,sub_career_id,pageable);
-            }
-        }
-        else {
-                if(paymentType==-1&&sub_career_id==-1){
-                    jobs=postRepository.getAllJobNormal(area,keyword,pageable);
-                }
-                else  if(paymentType>-1&&sub_career_id==-1){
-                    jobs=postRepository.getAllJobNormalWithPaymentType(area,keyword,paymentType,pageable);
-                }
-                else  if(paymentType == -1){
-                    jobs=postRepository.getAllJobNormalWithSub(area,keyword,sub_career_id,pageable);
-                }
-                else{
+        else
                     jobs=postRepository.getAllJobNormalSearchAll(area,keyword,paymentType,sub_career_id,pageable);
+        if(jobs!=null) {
+            List<Job> paymentDTOResponseList = jobs.getContent();
+            List<PostFindingDTO> listJobs = new ArrayList<>();
+            for (Job j : paymentDTOResponseList) {
+                PostFindingDTO post = new PostFindingDTO();
+                post.setPostID(j.getId());
+                post.setJobTitle(j.getJobTitle());
+                post.setSubCareer(j.getSubCareer().getName());
+                String des = j.getDescription();
+                if (des.length() >= 100)
+                    des = des.substring(0, 99);
+                post.setDescription(des);
+                post.setAttach(j.getAttach());
+                post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
+                String message = "Đã đăng cách đây ";
+                long count = ChronoUnit.HOURS.between(j.getTime(), LocalDateTime.now());
+                if (count < 24)
+                    message += count + " giờ";
+                else if (count < 24 * 7)
+                    message += count / 24 + " ngày";
+                else if (count < 24 * 30)
+                    message += count / (24 * 7) + " tuần";
+                else {
+                    message += count / (24 * 30) + " tháng";
                 }
+
+                post.setTimeCount(message);
+                Locale localeVN = new Locale("vi", "VN");
+                NumberFormat vnFormat = NumberFormat.getInstance(localeVN);
+                post.setBudget(vnFormat.format(j.getBudget()) + " VNĐ");
+                post.setCreatedDate(j.getTime());
+                post.setArea(j.getArea());
+                post.setIsActive(j.getIsActive());
+                post.setListSkills(j.getSkills());
+                listJobs.add(post);
+            }
+
+            paymentDTOResponse.setResults(listJobs);
+            paymentDTOResponse.setPageIndex(pageNumber + 1);
+            paymentDTOResponse.setTotalPages(jobs.getTotalPages());
+            paymentDTOResponse.setTotalResults(jobs.getTotalElements());
         }
-
-
-        List<Job> paymentDTOResponseList=jobs.getContent();
-        List<PostFindingDTO> listJobs=new ArrayList<>();
-        for (Job j: paymentDTOResponseList){
-            PostFindingDTO post=new PostFindingDTO();
-            post.setPostID(j.getId());
-            post.setJobTitle(j.getJobTitle());
-            post.setSubCareer(j.getSubCareer().getName());
-            String des=j.getDescription();
-            if(des.length()>=100)
-                des=des.substring(0,99);
-            post.setDescription(des);
-            post.setAttach(j.getAttach());
-            post.setPaymentType(j.getPaymentType()==1?"Trả theo giờ":"Trả theo dự án");
-            String message="Đã đăng cách đây ";
-             long count=ChronoUnit.HOURS.between(j.getTime(), LocalDateTime.now());
-             if(count<24)
-                 message+=count+" giờ";
-            else if(count<24*7)
-                message+=count/24+" ngày";
-             else if(count<24*30)
-                 message+=count/(24*7)+" tuần";
-             else{
-                 message+=count/(24*30)+" tháng";
-             }
-
-            post.setTimeCount(message);
-            Locale localeVN = new Locale("vi", "VN");
-            NumberFormat vnFormat = NumberFormat.getInstance(localeVN);
-            post.setBudget(vnFormat.format(j.getBudget()) + " VNĐ");
-            post.setCreatedDate(j.getTime());
-            post.setArea(j.getArea());
-            post.setIsActive(j.getIsActive());
-            post.setListSkills(j.getSkills());
-            listJobs.add(post);
-        }
-        APIResponse<PostFindingDTO> paymentDTOResponse= new APIResponse();
-        paymentDTOResponse.setResults(listJobs);
-        paymentDTOResponse.setPageIndex(pageNumber+1);
-        paymentDTOResponse.setTotalPages(jobs.getTotalPages());
-        paymentDTOResponse.setTotalResults(jobs.getTotalElements());
         return  paymentDTOResponse;
     }
 

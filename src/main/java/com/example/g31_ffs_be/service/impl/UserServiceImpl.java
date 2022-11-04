@@ -54,47 +54,23 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    @Override
-    public APIResponse<RequestPayment> getTransactionHistoryById(String userId, int pageNo, int pageSize) {
-        APIResponse<RequestPayment> apiResponse = new APIResponse<>();
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<RequestPayment> page = paymentRepository.getRequestPaymentByUserId(userId, pageable);
-        apiResponse.setResults(page.getContent());
-        apiResponse.setPageIndex(pageNo + 1);
-        apiResponse.setTotalResults(page.getTotalElements());
-        apiResponse.setTotalPages(page.getTotalPages());
-        return apiResponse;
-    }
 
     @Override
     public APIResponse<RequestPayment> searchTransactionHistoryByTime(String from, String to, String userId, int pageNo, int pageSize) {
         APIResponse<RequestPayment> apiResponse = new APIResponse<>();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<RequestPayment> page=null;
-        if(from.equals("")&&to.equals("")){
-             page = paymentRepository.getAllRequestPayment(userId, pageable);
-        }
-        else if(!from.equals("")&&to.equals("")) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate from_date = LocalDate.parse(from, formatter);
-            LocalDateTime fromDate= from_date.atTime(0,0);
-            page = paymentRepository.getRequestPaymentByFrom(fromDate,userId, pageable);
-        }
-        else if(from.equals("")){
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate to_date = LocalDate.parse(to, formatter);
-            LocalDateTime toDate= to_date.atTime(23,59);
-           page = paymentRepository.getRequestPaymentByTo(toDate,userId, pageable);
-        }
-        else{
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate from_date = LocalDate.parse(from, formatter);
-            LocalDate to_date = LocalDate.parse(to, formatter);
-            LocalDateTime fromDate= from_date.atTime(0,0);
-            LocalDateTime toDate=to_date.atTime(23,59);
-             page = paymentRepository.getRequestPaymentByFromTo(fromDate,toDate,userId, pageable);
 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            if(!from.equals("")) {
+                LocalDate from_date = LocalDate.parse(from, formatter);
+                from= from_date.atTime(0,0).toString();
+            }
+        if(!to.equals("")) {
+            LocalDate to_date = LocalDate.parse(to, formatter);
+            to= to_date.atTime(23, 59).toString();
         }
+             page = paymentRepository.getRequestPaymentByFromTo(from,to,userId, pageable);
         apiResponse.setResults(page.getContent());
         apiResponse.setPageIndex(pageNo + 1);
         apiResponse.setTotalResults(page.getTotalElements());

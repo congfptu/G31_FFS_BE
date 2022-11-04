@@ -78,6 +78,7 @@ public class User {
     private Boolean isBanned;
 
     @OneToMany(mappedBy = "to", fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
     @JsonIgnore
     private Set<Feedback> feedbackTos = new LinkedHashSet<>();
 
@@ -112,9 +113,12 @@ public class User {
 
     public double getStar() {
         double result = 0;
-        for (Feedback feedback : feedbackTos)
-            result += feedback.getStar();
-        result = result / feedbackTos.size();
+        Set<Feedback> feedbacks=feedbackTos;
+        if(feedbacks.size()>0) {
+            for (Feedback feedback : feedbacks)
+                result += feedback.getStar();
+            result = result / feedbacks.size();
+        }
         return result;
     }
 

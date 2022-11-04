@@ -42,52 +42,40 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String>, 
           "LEFT JOIN FETCH b.account a " +
           "LEFT JOIN FETCH f.skills s " +
           "LEFT JOIN FETCH f.subCareer sub " +
-          "LEFT JOIN FETCH a.role "+
           "LEFT JOIN FETCH b.feedbackTos fb "+
           "where f.id like :id ")
   Freelancer getDetailFreelancer(String id);
 
-  @Query(value = "select a from Freelancer a"+
+  @Query(value = "select distinct a from Freelancer a"+
           " LEFT join fetch a.subCareer b" +
           " LEFT join fetch a.skills c" +
-          " LEFT join fetch a.educations d"+
-          " LEFT join fetch a.workExperiences e"+
           " LEFT join fetch a.user f"+
           " LEFT join fetch f.account g"+
           " where a.id= :id"
-          , countQuery = "select count(a) from Freelancer a"+
+          , countQuery = "select count(distinct a.id) from Freelancer a"+
           " LEFT join  a.subCareer b" +
           " LEFT join  a.skills c" +
-          " LEFT join  a.educations d"+
-          " LEFT join a.workExperiences e"+
           " LEFT join a.user f"+
           " LEFT join f.account g"+
           " where a.id= :id")
   Freelancer getProfileFreelancer(String id);
 
 
-  @Query(value = "select distinct a from Freelancer a"+
-          " LEFT join fetch a.subCareer b" +
-          " LEFT join fetch a.skills c" +
-          " LEFT join fetch a.educations d"+
-          " LEFT join fetch a.workExperiences e"+
-          " LEFT join fetch a.user f"+
-          " LEFT join fetch f.account g"+
-          " LEFT join fetch f.feedbackTos h"+
-          " where f.address like CONCAT('%',:address,'%') and c.name like CONCAT('%',:skill,'%') and b.name like CONCAT('%',:subCareer,'%') ",
-           countQuery = "select count(a) from Freelancer a"+
-                   " LEFT join  a.subCareer b" +
-                   " LEFT join  a.skills c" +
-                   " LEFT join  a.educations d"+
-                   " LEFT join  a.workExperiences e"+
-                   " LEFT join  a.user f"+
-                   " LEFT join  f.account g"+
-                   " LEFT join  f.feedbackTos h"+
-                   " where f.address like CONCAT('%',:address,'%') and c.name like CONCAT('%',:skill,'%') and b.name like CONCAT('%',:subCareer,'%') "
-
+  @Query(value = "select  distinct a from Freelancer a"+
+          " LEFT JOIN fetch a.subCareer b" +
+          " LEFT JOIN  a.skills c" +
+          " LEFT JOIN fetch a.user f"+
+          " WHERE (f.address like :address or :address='') and (c.id =:skill or :skill=-1)and (b.id =:subCareer or :subCareer=-1)"+
+          " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "
+          ,
+           countQuery = "select count(distinct a.id) from Freelancer a"+
+                   " LEFT JOIN  a.subCareer b" +
+                   " LEFT JOIN  a.skills c" +
+                   " LEFT JOIN  a.user f"+
+                   " WHERE (f.address like :address or :address='') and (c.id =:skill or :skill=-1)and (b.id =:subCareer or :subCareer=-1)"+
+                   " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "
   )
-  Page<Freelancer> getAllFreelancer(String address,String skill,String subCareer,Pageable pageable);
-
+  Page<Freelancer> getAllFreelancerWithCostPerHourBetween(String address,int skill,double costFrom,double costTo,int subCareer,Pageable pageable);
 
 
 
