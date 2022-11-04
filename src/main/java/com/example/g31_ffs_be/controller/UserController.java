@@ -169,11 +169,11 @@ public class UserController {
     ) {
         try {
             reportRepository.insert(reportDTO.getCreatedBy(),reportDTO.getTitle(),reportDTO.getContent(),LocalDateTime.now());
-            return new ResponseEntity<>("Create Report Success", HttpStatus.CREATED);
+            return new ResponseEntity<>(true, HttpStatus.CREATED);
         }
         catch (Exception e){
             System.out.println(e);
-            return new ResponseEntity<>("Failed to create report", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
 }
