@@ -92,6 +92,7 @@ public class PostServiceImpl implements PostService {
         recruiterDto.setWebsite(createdBy.getWebsite());
         recruiterDto.setNumberOfFeedback(createdBy.getUser().getFeedbackTos().size());
         recruiterDto.setTotalPosted(createdBy.getJobs().size());
+
         double star = 0;
         User u = job.getCreateBy().getUser();
         for (Feedback feedback : u.getFeedbackTos())
@@ -99,15 +100,16 @@ public class PostServiceImpl implements PostService {
         star = star / u.getFeedbackTos().size();
         recruiterDto.setStar(star);
         postDetailDTO.setCreateBy(recruiterDto);
+        postDetailDTO.setTotalApplied(postRepository.getTotalAppliedById(createdBy.getId()));
         postDetailDTO.setJobTitle(job.getJobTitle());
         postDetailDTO.setSubCareer(job.getSubCareer().getName());
         postDetailDTO.setDescription(job.getDescription());
         postDetailDTO.setAttach(job.getAttach());
         postDetailDTO.setArea(job.getArea());
-        boolean isApply=false;
+        int isApply=-1;
         for(JobRequest j:job.getJobRequests()){
             if(j.getFreelancer().getId().equals(freelancerId))
-                isApply=true;
+                isApply=j.getStatus();
         }
         boolean isSaved=false;
         for(Freelancer freelancer: job.getFreelancers()){
