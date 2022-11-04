@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 public interface JobRequestRepository extends JpaRepository<Job,String> {
     @Modifying
     @Transactional
-    @Query(value = " insert into job_request (job_id,freelancer_id,status,apply_date) values (:job_id,:freelancer_id,:status,:date)"
+    @Query(value = " insert into job_request (job_id,freelancer_id,status,apply_date,fee) values (:job_id,:freelancer_id,:status,:date,:fee)"
             , nativeQuery = true)
-    Integer insert(Integer job_id, String freelancer_id, int status, LocalDateTime date);
+    Integer insert(Integer job_id, String freelancer_id, int status, LocalDateTime date,double fee);
     @Query(value = " SELECT DISTINCT job FROM Freelancer f" +
             " LEFT JOIN  f.jobRequests jrq" +
             " LEFT JOIN  jrq.job job" +

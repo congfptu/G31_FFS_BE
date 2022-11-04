@@ -59,6 +59,8 @@ public class UserController {
     JobRequestRepository jobRequestRepository;
     @Autowired ServiceRepository serviceRepository;
     @Autowired UserServiceRepository userServiceRepository;
+    @Autowired ReportRepository reportRepository;
+    @Autowired RecruiterRepository recruiterRepository;
 
     @GetMapping("/searchTransaction")
     public ResponseEntity<?> searchTransaction(
@@ -135,7 +137,7 @@ public class UserController {
     @GetMapping ("/getAllService")
     public ResponseEntity<?> insertFeedBack( @RequestParam(name = "role", defaultValue = "") String roleName) {
         try {
-            return new ResponseEntity<>( serviceService.getAllService(roleName), HttpStatus.OK);
+            return new ResponseEntity<>( serviceService.getAllService(roleName), HttpStatus.CREATED);
         }
         catch (Exception e){
             System.out.println(e);
@@ -154,11 +156,24 @@ public class UserController {
             user.setAccountBalance(user.getAccountBalance()-service.getPrice());
             user.setIsMemberShip(true);
             userRepository.save(user);
-            return new ResponseEntity<>(true, HttpStatus.OK);
+            return new ResponseEntity<>(true, HttpStatus.CREATED);
         }
         catch (Exception e){
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping ("/addReport")
+    public ResponseEntity<?> addReport(@RequestHeader(name = "Authorization") String token,
+                                            @RequestBody ReportDTO reportDTO
+    ) {
+        try {
+            reportRepository.insert(reportDTO.getCreatedBy(),reportDTO.getTitle(),reportDTO.getContent(),LocalDateTime.now());
+            return new ResponseEntity<>("Create Report Success", HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>("Failed to create report", HttpStatus.BAD_REQUEST);
         }
     }
 }

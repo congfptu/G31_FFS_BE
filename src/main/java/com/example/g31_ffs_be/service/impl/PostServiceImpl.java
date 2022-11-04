@@ -88,6 +88,7 @@ public class PostServiceImpl implements PostService {
         RecruiterDto recruiterDto= new RecruiterDto();
         recruiterDto.setPhone(createdBy.getUser().getPhone());
         recruiterDto.setId(createdBy.getId());
+        recruiterDto.setEmail(createdBy.getUser().getAccount().getEmail());
         recruiterDto.setCompanyName(createdBy.getCompanyName());
         recruiterDto.setWebsite(createdBy.getWebsite());
         recruiterDto.setNumberOfFeedback(createdBy.getUser().getFeedbackTos().size());

@@ -135,7 +135,11 @@ public class FreelancerController {
                                          @NotEmpty   @RequestParam(name = "jobId") int job_id
     ) {
         try {
-            jobRequestRepository.insert(job_id,freelancer_id,0, LocalDateTime.now());
+            User user=userRepository.getReferenceById(freelancer_id);
+            if(user.getIsMemberShip())
+            jobRequestRepository.insert(job_id,freelancer_id,0, LocalDateTime.now(),0);
+            else
+                jobRequestRepository.insert(job_id,freelancer_id,0, LocalDateTime.now(),0.5);
             return new ResponseEntity<>("Thêm mới jobRequest thành công", HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);

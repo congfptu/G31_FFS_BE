@@ -7,9 +7,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class ReportDTO {
-    Integer id;
    String createdBy;
    String title;
-   String detail;
+   String content;
    LocalDateTime createdDate;
 }

@@ -38,10 +38,10 @@ public class ReportServiceImpl implements ReportService {
         for (Report f: paymentDTOResponseList){
             ReportDTO fa=new ReportDTO();
             fa=mapToReportDTO(f);
-            fa.setId(f.getId());
+            fa.setCreatedBy(f.getFrom().getId());
             fa.setCreatedBy(f.getFrom().getFullName());
             fa.setTitle(f.getTitle());
-            fa.setDetail(f.getContent());
+            fa.setContent(f.getContent());
             fa.setCreatedDate(f.getDateCreated());
             fas.add(fa);
         }

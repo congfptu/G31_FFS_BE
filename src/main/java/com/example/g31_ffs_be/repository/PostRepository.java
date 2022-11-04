@@ -30,6 +30,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
             " LEFT JOIN FETCH j.approvedBy staff" +
             " LEFT JOIN FETCH j.freelancers fre" +
             " LEFT JOIN FETCH cre.jobs applyJob" +
+            " LEFT JOIN FETCH u.account acc" +
             " WHERE (j.id=:id)  "
             )
     Job getJobDetail(int id);
@@ -182,7 +183,7 @@ public interface PostRepository extends JpaRepository<Job, String> {
             "Order by j.topTime desc,j.budget desc"
     )
     Page<Job> getAllJobMemberShipSearchAll(String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
-    @Query(value = " select count(b.id) from jobs a " +
+    @Query(value = " select count(*) from jobs a " +
             "inner join job_request b on a.id=b.job_id " +
             "inner join recruiter c on c.recruiter_id=a.create_by " +
             "where c.recruiter_id=:recruiterId",nativeQuery = true)
