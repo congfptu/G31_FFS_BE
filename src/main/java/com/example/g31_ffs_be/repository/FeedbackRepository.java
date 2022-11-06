@@ -17,12 +17,12 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
     @Query(value = "select f from Feedback f"
             +" left join fetch f.from fr"
             +" left join fetch f.to ft"
-            +" where ft.id=:fromId"
-            , countQuery = "select count(f) from Feedback f"
+            +" where ft.id=:toId"
+            , countQuery = "select count(f.id) from Feedback f"
                     +" left join  f.from fr"
                     +" left join  f.to ft"
-                    +" where ft.id=:fromId")
-    Page<Feedback> getFeedbacksByFromId(String fromId,Pageable pageable);
+                    +" where ft.id=:toId")
+    Page<Feedback> getFeedbacksFromId(String toId,Pageable pageable);
     @Modifying
     @Transactional
     @Query(value = " insert into feedback (from_id,to_id,star,content,date) values (:from_id,:to_id,:star,:content,:date)"

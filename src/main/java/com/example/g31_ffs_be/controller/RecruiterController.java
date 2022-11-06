@@ -3,12 +3,14 @@ package com.example.g31_ffs_be.controller;
 import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.FreelancerFilterDto;
 import com.example.g31_ffs_be.dto.PostCreateDto;
+import com.example.g31_ffs_be.dto.RecruiterDetailDTO;
 import com.example.g31_ffs_be.model.Freelancer;
 import com.example.g31_ffs_be.model.Job;
 import com.example.g31_ffs_be.model.Subcareer;
 import com.example.g31_ffs_be.repository.PostRepository;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
+import com.example.g31_ffs_be.service.RecruiterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class RecruiterController {
     PostService postService;
   @Autowired
     PostRepository postRepository;
+  @Autowired
+    RecruiterService recruiterService;
     @GetMapping("/findFreelancer")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
                                            @RequestParam(name = "address", defaultValue = "") String address,
@@ -136,6 +140,19 @@ public class RecruiterController {
         try {
             APIResponse<FreelancerFilterDto>freelancerApplied=freelancerService.getFreelancerApplied(jobId, recruiterId, pageIndex, 10);
             return new ResponseEntity<>(freelancerApplied==null?false:freelancerApplied, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    @GetMapping("/getProfileRecruiter")
+    public ResponseEntity<?> getRecruiterProfile(@RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId) {
+
+        try {
+            RecruiterDetailDTO recruiterDetailDTO =recruiterService.getDetailRecruiter( recruiterId);
+            return new ResponseEntity<>(recruiterDetailDTO==null?false:recruiterDetailDTO, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

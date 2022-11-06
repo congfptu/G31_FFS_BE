@@ -23,30 +23,30 @@ public class FeedbackServiceImpl implements FeedbackService {
     private FeedbackRepository feedbackRepository;
 
     @Override
-    public FeedbackDTOResponse getFeedbackByFromUser(int pageNumber, int pageSize, String fromId) {
+    public FeedbackDTOResponse getFeedbackByFromUser(int pageNumber, int pageSize, String toId) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Feedback> feedbackDTOPage = feedbackRepository.getFeedbacksByFromId(fromId, pageable);
+        Page<Feedback> feedbackDTOPage = feedbackRepository.getFeedbacksFromId(toId, pageable);
         List<Feedback> feedbackDTOS = feedbackDTOPage.getContent();
         List<FeedbackDTO> feedbackDTOS1 = new ArrayList<>();
-        double star = 0;
+
         for (Feedback f:feedbackDTOS) {
             FeedbackDTO feedbackDTO= new FeedbackDTO();
             feedbackDTO.setId(f.getId());
             feedbackDTO.setDate(f.getDate());
             feedbackDTO.setFromUserId(f.getFrom().getId());
             feedbackDTO.setContent(f.getContent());
-            star += f.getStar();
+
             feedbackDTO.setStar(f.getStar());
             feedbackDTO.setFromAvatar(f.getFrom().getAvatar());
             feedbackDTO.setFromFullName(f.getFrom().getFullName());
             feedbackDTOS1.add(feedbackDTO);
         }
-        star = star / feedbackDTOS.size();
+
         FeedbackDTOResponse feedbackDTOResponse = new FeedbackDTOResponse();
         feedbackDTOResponse.setTotalFeedback(feedbackDTOS.size());
         feedbackDTOResponse.setComments(feedbackDTOS1);
         feedbackDTOResponse.setPageIndex(pageNumber + 1);
-        feedbackDTOResponse.setStarAverage(star);
+        feedbackDTOResponse.setStarAverage(feedbackDTOS.get(0).getTo().getStar());
         feedbackDTOResponse.setTotalPages(feedbackDTOPage.getTotalPages());
         feedbackDTOResponse.setTotalResults(feedbackDTOPage.getTotalElements());
         return feedbackDTOResponse;

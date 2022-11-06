@@ -90,9 +90,9 @@ public class AccountServiceImpl implements AccountService {
             else{
                 Recruiter recruiter=new Recruiter();
                 recruiter.setId(id);
-                recruiter.setTaxNumber(registerDto.getTaxNumber());
-                recruiter.setCompanyName(registerDto.getCompanyName());
-                recruiter.setWebsite(registerDto.getWebsite());
+                recruiter.setTaxNumber("");
+                recruiter.setCompanyName("");
+                recruiter.setWebsite("");
                 user.setRecruiter(recruiter);
                 acc.setUser(user);
                 accountRepository.save(acc);

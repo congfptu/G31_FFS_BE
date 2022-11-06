@@ -70,10 +70,8 @@ public class RecruiterServiceImpl implements RecruiterService {
             RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
             double star = 0;
             User u = r.getUser();
-            for (Feedback feedback : u.getFeedbackTos())
-                star += feedback.getStar();
-            star = star / u.getFeedbackTos().size();
-            rd.setStar(star);
+
+            rd.setStar(u.getStar());
             rd.setAddress(u.getAddress());
             rd.setPhone(u.getPhone());
             rd.setEmail(u.getAccount().getEmail());

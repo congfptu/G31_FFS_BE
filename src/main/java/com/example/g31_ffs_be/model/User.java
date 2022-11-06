@@ -14,6 +14,8 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -119,7 +121,10 @@ public class User {
                 result += feedback.getStar();
             result = result / feedbacks.size();
         }
-        return result;
+        NumberFormat formatter = new DecimalFormat("#0.0");
+        String avgStar=formatter.format(result);
+
+        return Double.parseDouble(avgStar);
     }
 
     public void setStar(double star) {
