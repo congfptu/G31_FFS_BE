@@ -68,7 +68,7 @@ public class GuestController {
         Account acc=accountRepository.findByResetPasswordToken(resetPasswordToken);
         User u=acc.getUser();
         Instant timeReset=u.getResetPasswordTime();
-        if(acc==null ||(Instant.now().minus(2, ChronoUnit.MINUTES).compareTo(timeReset)>=0))
+        if(Instant.now().minus(2, ChronoUnit.MINUTES).compareTo(timeReset)>=0)
             return new ResponseEntity<>("Token quá hạn hoặc không hợp lệ!", HttpStatus.OK);
         else{
             return new ResponseEntity<>(acc.getEmail(), HttpStatus.OK);
@@ -97,7 +97,7 @@ public class GuestController {
             if(account==null){
                 return new ResponseEntity<>("Email không đúng!", HttpStatus.BAD_REQUEST);
             }
-            if(account.getUser().getIsBanned() == false){
+            if(!account.getUser().getIsBanned()){
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(), loginDTO.getPassword()
                 ));

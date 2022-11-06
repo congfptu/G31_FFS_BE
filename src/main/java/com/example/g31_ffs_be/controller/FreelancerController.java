@@ -2,6 +2,7 @@ package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.CareerResponse;
+import com.example.g31_ffs_be.dto.FreelancerProfileDTO;
 import com.example.g31_ffs_be.dto.RegisterDto;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
@@ -50,9 +51,10 @@ public class FreelancerController {
     @GetMapping("/getProfileFreelancer")
     public ResponseEntity<?> getProfileFreelancer(@RequestHeader(name = "Authorization") String token,
                                           @RequestParam(name = "id", defaultValue = "") String id) {
+        FreelancerProfileDTO f=freelancerService.getFreelancerProfile(id);
         try{
-            if (freelancerService.getFreelancerProfile(id) != null) {
-                return new ResponseEntity<>(freelancerService.getFreelancerProfile(id), HttpStatus.OK);
+            if (f != null) {
+                return new ResponseEntity<>(f, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
             }
@@ -71,8 +73,8 @@ public class FreelancerController {
                                      @RequestParam(name = "sub_career_id", defaultValue = "-1") int sub_career_id
     ) {
         try {
-            Account acc=accountRepository.findByUserId(userId);
-            return new ResponseEntity<>(postService.getJobSearch(pageIndex,10,area,keyword,paymentType,sub_career_id,acc.getUser().getIsMemberShip()), HttpStatus.OK);
+            User user=userRepository.findByUserId(userId);
+            return new ResponseEntity<>(postService.getJobSearch(pageIndex,10,area,keyword,paymentType,sub_career_id,user.getIsMemberShip()), HttpStatus.OK);
 
         } catch (Exception e) {
             System.out.println(e);
@@ -263,9 +265,7 @@ public class FreelancerController {
                                          @RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
                                          @RequestParam(name = "skillId", defaultValue = "0") int skillId ) {
         try {
-            Skill skill=new Skill();
-            skill.setId(skillId);
-            freelancerService.deleteSkill(skill, freelancerId);
+            freelancerService.deleteSkill(freelancerId,skillId );
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);

@@ -76,7 +76,7 @@ public class CareerServiceImpl implements CareerService {
     @Override
     public List<CareerTitleDTO> getCareerTitle() {
         try {
-            List<Career> careers=careerRepository.findAll();
+            List<Career> careers=careerRepository.getAllCareer();
             List<CareerTitleDTO> list= new ArrayList<>();
             for (Career c:careers) {
                 CareerTitleDTO careerTitleDTO= new CareerTitleDTO();

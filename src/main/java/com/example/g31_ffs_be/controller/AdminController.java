@@ -7,20 +7,15 @@ import com.example.g31_ffs_be.security.CustomUserDetailService;
 import com.example.g31_ffs_be.service.ServiceService;
 import com.example.g31_ffs_be.service.impl.*;
 import net.bytebuddy.utility.RandomString;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -30,8 +25,7 @@ import java.util.*;
 public class AdminController {
     @Autowired
     StaffServiceImpl staffService;
-    /* @Autowired
-     PasswordEncoder passwordEncoder;*/
+
     @Autowired
     ReportServiceImpl reportService;
     @Autowired
@@ -117,6 +111,7 @@ public class AdminController {
                 acc.setId(id);
                 acc.setEmail(staffDto.getEmail());
                 acc.setPassword(passwordEncoder.encode(staffDto.getPassword()));
+                acc.setCreatedDate(LocalDateTime.now());
                 Staff s = new Staff();
                 s.setId(id);
                 s.setFullName(staffDto.getFullName());
@@ -169,8 +164,8 @@ public class AdminController {
     @GetMapping("/detail-freelancer")
     public ResponseEntity<?> getDetailFreelancer(@RequestHeader(name = "Authorization") String token,
                                                  @RequestParam(name = "id", defaultValue = "") String id) {
-        FreelancerDetailDto freelancerDetailDto = freelancerService.getDetailFreelancer(id);
 
+        FreelancerDetailDto freelancerDetailDto = freelancerService.getFreelancerInfo(id);
         return new ResponseEntity<>(freelancerDetailDto != null ? freelancerDetailDto : "Không có thông tin người dùng này", HttpStatus.OK);
     }
 
@@ -269,7 +264,7 @@ public class AdminController {
             , @RequestBody ServiceDto serviceDto
     ) {
         if (serviceService.checkServiceNameUnique(serviceDto.getServiceName())) {
-            return new ResponseEntity<>("tên service đã tồn tại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Tên service đã tồn tại", HttpStatus.BAD_REQUEST);
         } else {
             serviceService.saveService(serviceDto);
             return new ResponseEntity<>(serviceDto, HttpStatus.CREATED);
@@ -282,9 +277,9 @@ public class AdminController {
         try {
             int serviceId = Integer.parseInt(id);
             serviceRepository.deleteById(serviceId);
-            return new ResponseEntity<>("Bạn đã xóa thành công", HttpStatus.CREATED);
+            return new ResponseEntity<>(true, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Không tìm thấy service cần xóa", HttpStatus.CREATED);
+            return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
         }
     }
 

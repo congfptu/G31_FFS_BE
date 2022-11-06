@@ -213,4 +213,20 @@ public class AccountServiceImpl implements AccountService {
         return acc;
 
     }
+
+    @Override
+    public Boolean changePasswordUser(AccountDto account) {
+        try {
+            Account acc = accountRepository.findByEmail(account.getEmail());
+            if(acc.getPassword().equals(passwordEncoder.encode(account.getOldPassword()))) {
+                acc.setPassword(passwordEncoder.encode(account.getPassword()));
+                accountRepository.save(acc);
+                return true;
+            }
+            else
+                return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

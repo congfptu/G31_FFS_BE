@@ -17,5 +17,6 @@ import java.util.Set;
 public class AccountDto {
     String id;
     String email;
+    String oldPassword;
     String password;
 }

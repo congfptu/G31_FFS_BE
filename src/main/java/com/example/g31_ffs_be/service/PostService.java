@@ -1,9 +1,6 @@
 package com.example.g31_ffs_be.service;
 
-import com.example.g31_ffs_be.dto.APIResponse;
-import com.example.g31_ffs_be.dto.PostDTOResponse;
-import com.example.g31_ffs_be.dto.PostDetailDTO;
-import com.example.g31_ffs_be.dto.PostFindingDTO;
+import com.example.g31_ffs_be.dto.*;
 
 public interface PostService {
     PostDTOResponse getAllPostByNameAndStatusPaging(int pageNumber, int pageSize, String keyword, String isApproved, String sortValue);
@@ -11,4 +8,8 @@ public interface PostService {
     PostDetailDTO getPostDetail(String freelancerId,int id);
 
     APIResponse<PostFindingDTO> getJobSearch(int pageNumber, int pageSize, String area, String keyword, int paymentType, int sub_career_id,Boolean isMemberShip);
+    void createPost(PostCreateDto postCreateDto);
+    APIResponse<PostHistoryDto> getAllJobPosted(String recruiterId,int status,int pageNumber,int pageSize);
+
+
 }

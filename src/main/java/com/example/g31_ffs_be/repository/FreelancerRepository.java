@@ -8,10 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -46,6 +48,7 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String>, 
           "where f.id like :id ")
   Freelancer getDetailFreelancer(String id);
 
+/*
   @Query(value = "select distinct a from Freelancer a"+
           " LEFT join fetch a.subCareer b" +
           " LEFT join fetch a.skills c" +
@@ -59,6 +62,7 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String>, 
           " LEFT join f.account g"+
           " where a.id= :id")
   Freelancer getProfileFreelancer(String id);
+*/
 
 
   @Query(value = "select  distinct a from Freelancer a"+
@@ -76,6 +80,47 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String>, 
                    " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "
   )
   Page<Freelancer> getAllFreelancerWithCostPerHourBetween(String address,int skill,double costFrom,double costTo,int subCareer,Pageable pageable);
+
+  @Query(value = "select distinct fre from Job j"+
+          " LEFT JOIN   j.jobRequests rq" +
+          " LEFT JOIN  rq.freelancer fre" +
+          " LEFT JOIN fetch fre.subCareer "+
+          " LEFT JOIN  fre.skills "+
+          " LEFT JOIN fetch fre.user u "+
+          " WHERE j.id=:jobId "+
+          " order by rq.applyDate desc"
+
+          ,
+          countQuery = "select  count(distinct fre.id) from Job j"+
+                  " LEFT JOIN  j.jobRequests rq" +
+                  " LEFT JOIN  rq.freelancer fre" +
+                  " LEFT JOIN  fre.subCareer "+
+                  " LEFT JOIN  fre.skills "+
+                  " LEFT JOIN  fre.user u "+
+                  " WHERE j.id=:jobId "+
+                  " order by rq.applyDate desc"
+  )
+  Page<Freelancer> getFreelancerAppliedJob(int jobId,Pageable pageable);
+
+
+
+
+  @Modifying
+  @Transactional
+  @Query(value = " delete from freelancer_skill  where freelancer_id=:freelancerId and skill_id=:skillId"
+          , nativeQuery = true)
+  Integer deleteFreelancerSkill(String freelancerId, int skillId);
+
+  @Modifying
+  @Transactional
+  @Query(value = " insert into freelancer_skill (freelancer_id,skill_id) values (:freelancerId,:skillId)"
+          , nativeQuery = true)
+  Integer insertFreelancerSkill(String freelancerId, int skillId);
+
+
+  @Query(value = " select freelancer_id from freelancer_skill where freelancer_id=:freelancerId and skill_id=:skillId"
+          , nativeQuery = true)
+  String checkSkillExist(String freelancerId, int skillId);
 
 
 

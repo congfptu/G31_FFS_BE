@@ -56,7 +56,7 @@ public class    PostController {
     }
     @PutMapping("/post/update")
     public ResponseEntity<?> updateStatus(@RequestHeader(name = "Authorization") String token,
-                                          @NotEmpty @RequestParam(name = "id", defaultValue = "") String id,
+                                          @NotEmpty @RequestParam(name = "id", defaultValue = "") int id,
                                           @NotEmpty @RequestParam(name = "status", defaultValue = "") Integer status,
                                           @NotEmpty @RequestParam(name = "approveBy", defaultValue = "") String approveBy
 
@@ -88,7 +88,5 @@ public class    PostController {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
-
-
     }
 }

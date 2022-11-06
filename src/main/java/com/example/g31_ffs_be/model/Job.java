@@ -36,7 +36,6 @@ public class Job {
     @JoinColumn(name = "create_by")
     private Recruiter createBy;
 
-    @Size(max = 255)
     @Column(name = "job_title")
     private String jobTitle;
 
@@ -71,11 +70,8 @@ public class Job {
     @Column(name = "is_approved")
     private Integer isApproved;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "approved_by")
+    @JoinColumn(name = "approved_by",updatable = false,insertable = false)
     private Staff approvedBy;
-
-
-
 
     @ManyToMany
     @JsonIgnore
@@ -93,7 +89,7 @@ public class Job {
     @Column(name = "fee")
     private Double fee;
 
-    @Column(name = "top_time")
+    @Column(name = "top_time",updatable = false,insertable = false)
     private LocalDateTime topTime;
 
 

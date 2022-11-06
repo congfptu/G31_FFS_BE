@@ -16,5 +16,6 @@ public interface AccountService {
     public Boolean changePassword(AccountDto account);
     public Boolean forgotPassword(Account account);
      Account getAccountFromToken(String token);
+    public Boolean changePasswordUser(AccountDto account);
 
 }

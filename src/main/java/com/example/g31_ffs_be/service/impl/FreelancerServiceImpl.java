@@ -41,6 +41,7 @@ public class FreelancerServiceImpl implements FreelancerService {
     PaymentRepository paymentRepository;
     @Autowired
     JobRequestRepository jobRequestRepository;
+    @Autowired  PostRepository postRepository;
 
     @Override
     public void addFreelancer(Freelancer f) {
@@ -53,8 +54,7 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     private FreelancerDetailDto mapToFreelancerDetailDTO(Freelancer freelancer) {
-        FreelancerDetailDto freelancerDetailDTO = mapper.map(freelancer, FreelancerDetailDto.class);
-        return freelancerDetailDTO;
+        return mapper.map(freelancer, FreelancerDetailDto.class);
     }
 
     private List<FreelancerAdminDto> convertListFreelancerDto(List<Freelancer> freelancers) {
@@ -76,7 +76,7 @@ public class FreelancerServiceImpl implements FreelancerService {
     @Override
     public APIResponse<FreelancerAdminDto> getFreelancerByName(String name, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        APIResponse apiResponse = new APIResponse();
+        APIResponse<FreelancerAdminDto> apiResponse = new APIResponse<>();
         Page<Freelancer> page = freelancerRepository.getFreelancerByName(name, pageable);
         apiResponse.setTotalPages(page.getTotalPages());
         apiResponse.setResults(convertListFreelancerDto(page.getContent()));
@@ -86,18 +86,16 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public FreelancerDetailDto getDetailFreelancer(String id) {
+    public FreelancerDetailDto getFreelancerInfo(String id) {
         try {
             Freelancer f = freelancerRepository.getDetailFreelancer(id);
             FreelancerDetailDto fd = mapToFreelancerDetailDTO(f);
             double star = 0;
             User u = f.getUser();
             Set<Feedback> feedbacks = u.getFeedbackTos();
-            for (Feedback feedback : feedbacks)
-                star += feedback.getStar();
-            star = star / feedbacks.size();
+
             fd.setFeedbackTos(feedbacks);
-            fd.setStar(star);
+            fd.setStar(u.getStar());
             fd.setSubCareer(f.getSubCareer().getName());
             fd.setFullName(u.getFullName());
             fd.setAddress(u.getAddress());
@@ -120,7 +118,7 @@ public class FreelancerServiceImpl implements FreelancerService {
     @Override
     public FreelancerProfileDTO getFreelancerProfile(String id) {
         try {
-            Freelancer freelancer = freelancerRepository.getProfileFreelancer(id);
+            Freelancer freelancer = freelancerRepository.getDetailFreelancer(id);
 
             FreelancerProfileDTO freelancerProfileDTO = new FreelancerProfileDTO();
             freelancerProfileDTO.setId(id);
@@ -173,12 +171,8 @@ public class FreelancerServiceImpl implements FreelancerService {
             freelancerProfileDTO.setWorkExps(workExperienceDTOS);
             freelancerProfileDTO.setBirthDate(freelancer.getBirthdate());
             freelancerProfileDTO.setSubCareer(freelancer.getSubCareer().getName());
-            double star = 0;
-            User u = freelancer.getUser();
-            for (Feedback feedback : u.getFeedbackTos())
-                star += feedback.getStar();
-            star = star / u.getFeedbackTos().size();
-            freelancerProfileDTO.setStar(star);
+
+            freelancerProfileDTO.setStar(freelancer.getUser().getStar());
             return freelancerProfileDTO;
         } catch (Exception e) {
             System.out.println(e);
@@ -224,25 +218,17 @@ public class FreelancerServiceImpl implements FreelancerService {
 
     @Override
     public void addSkill(List<Skill> skill, String freelancerId) {
-        Freelancer freelancer = freelancerRepository.findById(freelancerId).get();
-        freelancer.getSkills().addAll(skill);
-        freelancerRepository.save(freelancer);
+        for (Skill s : skill) {
+            if (freelancerRepository.checkSkillExist(freelancerId, s.getId()) == null)
+                freelancerRepository.insertFreelancerSkill(freelancerId, s.getId());
+        }
     }
 
     @Override
-    public void deleteSkill(Skill skill, String freelancerId) {
-        Freelancer freelancer = freelancerRepository.findById(freelancerId).get();
-        Set<Skill> skills = new LinkedHashSet<>();
-        skills = freelancer.getSkills();
-        for (Skill s : skills) {
-            if (s.getId() == skill.getId()) {
-                skills.remove(s);
-                freelancerRepository.save(freelancer);
-                break;
-            }
-        }
-
+    public int deleteSkill(String freelancerId, int skillId) {
+        return freelancerRepository.deleteFreelancerSkill(freelancerId, skillId);
     }
+
 
     @Override
     public void updateProfile(RegisterDto registerDto) {
@@ -285,16 +271,28 @@ public class FreelancerServiceImpl implements FreelancerService {
             post.setAttach(j.getAttach());
             post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
             String message = "Đã đăng cách đây ";
-            long count = ChronoUnit.HOURS.between(j.getTime(), LocalDateTime.now());
-            if (count < 24)
-                message += count + " giờ";
-            else if (count < 24 * 7)
-                message += count / 24 + " ngày";
-            else if (count < 24 * 30)
-                message += count / (24 * 7) + " tuần";
-            else {
-                message += count / (24 * 30) + " tháng";
+            LocalDateTime time=j.getTime();
+            long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+            long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+            long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+            long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+            long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
+            long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
+            if (minutes < 60)
+                message += minutes + " phút";
+            else if (hours<24)
+                message += hours+ " giờ";
+            else if (days<7)
+                message += days +" ngày";
+            else if (weeks < 5)
+                message += weeks + " tuần";
+            else if (months < 12) {
+                message += months+ " tháng";
             }
+            else{
+                message += year+ "năm";
+            }
+
 
             post.setTimeCount(message);
             Locale localeVN = new Locale("vi", "VN");
@@ -319,60 +317,69 @@ public class FreelancerServiceImpl implements FreelancerService {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         APIResponse<PostFindingDTO> postFindingDTOAPIResponse = new APIResponse<>();
         Page<Job> jobs = null;
-                jobs = jobRequestRepository.getJobRequestWithStatus(freelancerId, status, pageable);
-       if (jobs!=null)
-       {
-        List<Job> paymentDTOResponseList = jobs.getContent();
-        List<PostFindingDTO> listJobs = new ArrayList<>();
-        for (Job j : paymentDTOResponseList) {
-            PostFindingDTO post = new PostFindingDTO();
-            post.setPostID(j.getId());
-            post.setJobTitle(j.getJobTitle());
-            post.setSubCareer(j.getSubCareer().getName());
-            String des = j.getDescription();
-            if (des.length() >= 100)
-                des = des.substring(0, 99);
-            post.setDescription(des);
-            post.setAttach(j.getAttach());
-            post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
-            String message = "Đã đăng cách đây ";
-            long count = ChronoUnit.HOURS.between(j.getTime(), LocalDateTime.now());
-            if (count < 24)
-                message += count + " giờ";
-            else if (count < 24 * 7)
-                message += count / 24 + " ngày";
-            else if (count < 24 * 30)
-                message += count / (24 * 7) + " tuần";
-            else {
-                message += count / (24 * 30) + " tháng";
-            }
-
-            post.setTimeCount(message);
-            Locale vn = new Locale("vi", "VN");
-            NumberFormat vnFormat = NumberFormat.getInstance(vn);
-            /*  request.setAttribute("total", vnFormat.format(total).substring(3) + " VNĐ");*/
-            post.setBudget(vnFormat.format(j.getBudget()) + " VNĐ");
-            post.setCreatedDate(j.getTime());
-            post.setArea(j.getArea());
-            post.setIsActive(j.getIsActive());
-            if (status == -1) {
-                for (JobRequest jobRequest : j.getJobRequests()) {
-                    if (jobRequest.getFreelancer().getId().equals(freelancerId) && jobRequest.getJob().getId().equals(j.getId()))
-                        post.setIsApproved(jobRequest.getStatus());
+        jobs = jobRequestRepository.getJobRequestWithStatus(freelancerId, status, pageable);
+        if (jobs != null) {
+            List<Job> paymentDTOResponseList = jobs.getContent();
+            List<PostFindingDTO> listJobs = new ArrayList<>();
+            for (Job j : paymentDTOResponseList) {
+                PostFindingDTO post = new PostFindingDTO();
+                post.setPostID(j.getId());
+                post.setJobTitle(j.getJobTitle());
+                post.setSubCareer(j.getSubCareer().getName());
+                String des = j.getDescription();
+                if (des.length() >= 100)
+                    des = des.substring(0, 99);
+                post.setDescription(des);
+                post.setAttach(j.getAttach());
+                post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
+                String message = "Đã đăng cách đây ";
+                LocalDateTime time=j.getTime();
+                long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+                long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+                long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+                long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+                long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
+                long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
+                if (minutes < 60)
+                    message += minutes + " phút";
+                else if (hours<24)
+                    message += hours+ " giờ";
+                else if (days<7)
+                    message += days +" ngày";
+                else if (weeks < 5)
+                    message += weeks + " tuần";
+                else if (months < 12) {
+                    message += months+ " tháng";
                 }
-            } else {
-                post.setIsApproved(status);
+                else{
+                    message += year+ "năm";
+                }
+                post.setTimeCount(message);
+                Locale vn = new Locale("vi", "VN");
+                NumberFormat vnFormat = NumberFormat.getInstance(vn);
+                /*  request.setAttribute("total", vnFormat.format(total).substring(3) + " VNĐ");*/
+                post.setBudget(vnFormat.format(j.getBudget()) + " VNĐ");
+                post.setCreatedDate(j.getTime());
+                post.setArea(j.getArea());
+                post.setIsActive(j.getIsActive());
+                if (status == -1) {
+                    for (JobRequest jobRequest : j.getJobRequests()) {
+                        if (jobRequest.getFreelancer().getId().equals(freelancerId) && jobRequest.getJob().getId().equals(j.getId()))
+                            post.setIsApproved(jobRequest.getStatus());
+                    }
+                } else {
+                    post.setIsApproved(status);
+                }
+
+                post.setListSkills(j.getSkills());
+                listJobs.add(post);
             }
 
-            post.setListSkills(j.getSkills());
-            listJobs.add(post);
+            postFindingDTOAPIResponse.setResults(listJobs);
+            postFindingDTOAPIResponse.setPageIndex(pageNo + 1);
+            postFindingDTOAPIResponse.setTotalPages(jobs.getTotalPages());
+            postFindingDTOAPIResponse.setTotalResults(jobs.getTotalElements());
         }
-
-        postFindingDTOAPIResponse.setResults(listJobs);
-        postFindingDTOAPIResponse.setPageIndex(pageNo + 1);
-        postFindingDTOAPIResponse.setTotalPages(jobs.getTotalPages());
-        postFindingDTOAPIResponse.setTotalResults(jobs.getTotalElements());
-    }
         return postFindingDTOAPIResponse;
     }
 
@@ -425,6 +432,47 @@ public class FreelancerServiceImpl implements FreelancerService {
                 apiResponse.setTotalPages(page.getTotalPages());
                 apiResponse.setTotalResults(page.getTotalElements());
             }
+        }
+        return apiResponse;
+    }
+
+    @Override
+    public APIResponse<FreelancerFilterDto> getFreelancerApplied(int jobId, String recruiterId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Job job=postRepository.getReferenceById(jobId);
+        APIResponse<FreelancerFilterDto> apiResponse = new APIResponse<>();
+        if(job!=null&&job.getCreateBy().getId().equals(recruiterId))
+        {
+        Page<Freelancer> freelancers = freelancerRepository.getFreelancerAppliedJob(jobId,pageable);
+
+        List<FreelancerFilterDto> filterDTOs = new ArrayList<>();
+        if (freelancers != null) {
+            {
+                for (Freelancer f : freelancers.getContent()) {
+                    FreelancerFilterDto filterDto = new FreelancerFilterDto();
+                    filterDto.setSkills(f.getSkills());
+                    filterDto.setAvatar(f.getUser().getAvatar());
+                    filterDto.setAddress(f.getUser().getAddress());
+                    filterDto.setFullName(f.getUser().getFullName());
+                    filterDto.setSubCareer(f.getSubCareer().getName());
+                    NumberFormat formatter = new DecimalFormat("#0.0");
+                    Double star = f.getUser().getStar();
+                    if (star == 0)
+                        filterDto.setStar("0");
+                    else
+                        filterDto.setStar(formatter.format(star));
+                    Locale vn = new Locale("vi", "VN");
+                    NumberFormat vnFormat = NumberFormat.getInstance(vn);
+                    filterDto.setCostPerHour(f.getCostPerHour() == null ? "0" : vnFormat.format(f.getCostPerHour()) + "VNĐ");
+                    filterDto.setDescription(f.getDescription());
+                    filterDTOs.add(filterDto);
+                }
+                apiResponse.setResults(filterDTOs);
+                apiResponse.setPageIndex(pageNo + 1);
+                apiResponse.setTotalPages(freelancers.getTotalPages());
+                apiResponse.setTotalResults(freelancers.getTotalElements());
+            }
+        }
         }
         return apiResponse;
     }

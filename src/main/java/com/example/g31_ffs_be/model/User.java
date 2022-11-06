@@ -77,12 +77,12 @@ public class User {
     @Column(name = "is_banned")
     private Boolean isBanned;
 
-    @OneToMany(mappedBy = "to", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "to")
     @Fetch(FetchMode.SUBSELECT)
     @JsonIgnore
     private Set<Feedback> feedbackTos = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "from",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "from")
     @JsonIgnore
     private Set<Feedback> feedbackFroms = new LinkedHashSet<>();
 

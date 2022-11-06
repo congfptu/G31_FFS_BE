@@ -3,6 +3,8 @@ package com.example.g31_ffs_be.service.impl;
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.PostRepository;
+import com.example.g31_ffs_be.repository.RecruiterRepository;
+import com.example.g31_ffs_be.repository.SubCareerRepository;
 import com.example.g31_ffs_be.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,10 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepository;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    RecruiterRepository recruiterRepository;
+    @Autowired
+    SubCareerRepository subCareerRepository;
     @Override
     public PostDTOResponse getAllPostByNameAndStatusPaging(int pageNumber, int pageSize, String keyword, String isApproved, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -85,23 +91,27 @@ public class PostServiceImpl implements PostService {
         PostDetailDTO postDetailDTO=new PostDetailDTO();
         postDetailDTO.setPostID(job.getId());
         Recruiter createdBy=job.getCreateBy();
+        User user=createdBy.getUser();
         RecruiterDto recruiterDto= new RecruiterDto();
-        recruiterDto.setPhone(createdBy.getUser().getPhone());
+        recruiterDto.setPhone(user.getPhone());
         recruiterDto.setId(createdBy.getId());
-        recruiterDto.setEmail(createdBy.getUser().getAccount().getEmail());
+        recruiterDto.setEmail(user.getAccount().getEmail());
         recruiterDto.setCompanyName(createdBy.getCompanyName());
         recruiterDto.setWebsite(createdBy.getWebsite());
-        recruiterDto.setNumberOfFeedback(createdBy.getUser().getFeedbackTos().size());
+        recruiterDto.setNumberOfFeedback(user.getFeedbackTos().size());
         recruiterDto.setTotalPosted(createdBy.getJobs().size());
 
         double star = 0;
-        User u = job.getCreateBy().getUser();
-        for (Feedback feedback : u.getFeedbackTos())
+
+        /*for (Feedback feedback : user.getFeedbackTos())
             star += feedback.getStar();
-        star = star / u.getFeedbackTos().size();
-        recruiterDto.setStar(star);
+        star = star / user.getFeedbackTos().size();*/
+        recruiterDto.setStar(user.getStar());
         postDetailDTO.setCreateBy(recruiterDto);
-        postDetailDTO.setTotalApplied(postRepository.getTotalAppliedById(createdBy.getId()));
+        int totalApplied=0;
+        for(Job j:createdBy.getJobs())
+            totalApplied+=j.getJobRequests().size();
+        postDetailDTO.setTotalApplied(totalApplied);
         postDetailDTO.setJobTitle(job.getJobTitle());
         postDetailDTO.setSubCareer(job.getSubCareer().getName());
         postDetailDTO.setDescription(job.getDescription());
@@ -121,15 +131,26 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setIsSave(isSaved);
         postDetailDTO.setPaymentType(job.getPaymentType()==1?"Trả theo giờ":"Trả theo dự án");
         String message="Đã đăng cách đây ";
-        long count=ChronoUnit.HOURS.between(job.getTime(), LocalDateTime.now());
-        if(count<24)
-            message+=count+" giờ";
-        else if(count<24*7)
-            message+=count/24+" ngày";
-        else if(count<24*30)
-            message+=count/(24*7)+" tuần";
+        LocalDateTime time=job.getTime();
+        long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+        long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+        long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+        long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+        long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
+        long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
+        if (minutes < 60)
+            message += minutes + " phút";
+        else if (hours<24)
+            message += hours+ " giờ";
+        else if (days<7)
+            message += days +" ngày";
+        else if (weeks < 5)
+            message += weeks + " tuần";
+        else if (months < 12) {
+            message += months+ " tháng";
+        }
         else{
-            message+=count/(24*30)+" tháng";
+            message += year+ "năm";
         }
         postDetailDTO.setTimeCount(message);
         Locale localeVN = new Locale("vi", "VN");
@@ -147,7 +168,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public APIResponse<PostFindingDTO> getJobSearch(int pageNumber, int pageSize, String area,String keyword,int paymentType,int sub_career_id,Boolean isMemberShip) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        APIResponse<PostFindingDTO> paymentDTOResponse = new APIResponse<>();
+        APIResponse<PostFindingDTO> apiResponse = new APIResponse<>();
         Page<Job> jobs;
 
         if(isMemberShip)
@@ -155,9 +176,9 @@ public class PostServiceImpl implements PostService {
         else
                     jobs=postRepository.getAllJobNormalSearchAll(area,keyword,paymentType,sub_career_id,pageable);
         if(jobs!=null) {
-            List<Job> paymentDTOResponseList = jobs.getContent();
+            List<Job> jobList = jobs.getContent();
             List<PostFindingDTO> listJobs = new ArrayList<>();
-            for (Job j : paymentDTOResponseList) {
+            for (Job j : jobList) {
                 PostFindingDTO post = new PostFindingDTO();
                 post.setPostID(j.getId());
                 post.setJobTitle(j.getJobTitle());
@@ -169,15 +190,26 @@ public class PostServiceImpl implements PostService {
                 post.setAttach(j.getAttach());
                 post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
                 String message = "Đã đăng cách đây ";
-                long count = ChronoUnit.HOURS.between(j.getTime(), LocalDateTime.now());
-                if (count < 24)
-                    message += count + " giờ";
-                else if (count < 24 * 7)
-                    message += count / 24 + " ngày";
-                else if (count < 24 * 30)
-                    message += count / (24 * 7) + " tuần";
-                else {
-                    message += count / (24 * 30) + " tháng";
+                LocalDateTime time=j.getTime();
+                long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+                long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+                long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+                long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+                long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
+                long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
+                if (minutes < 60)
+                    message += minutes + " phút";
+                else if (hours<24)
+                    message += hours+ " giờ";
+                else if (days<7)
+                    message += days +" ngày";
+                else if (weeks < 5)
+                    message += weeks + " tuần";
+                else if (months < 12) {
+                    message += months+ " tháng";
+                }
+                else{
+                    message += year+ "năm";
                 }
 
                 post.setTimeCount(message);
@@ -191,22 +223,83 @@ public class PostServiceImpl implements PostService {
                 listJobs.add(post);
             }
 
-            paymentDTOResponse.setResults(listJobs);
-            paymentDTOResponse.setPageIndex(pageNumber + 1);
-            paymentDTOResponse.setTotalPages(jobs.getTotalPages());
-            paymentDTOResponse.setTotalResults(jobs.getTotalElements());
+            apiResponse.setResults(listJobs);
+            apiResponse.setPageIndex(pageNumber + 1);
+            apiResponse.setTotalPages(jobs.getTotalPages());
+            apiResponse.setTotalResults(jobs.getTotalElements());
         }
-        return  paymentDTOResponse;
+        return  apiResponse;
     }
 
+    @Override
+    public void createPost(PostCreateDto postCreateDto) {
+        Job job=mapper.map(postCreateDto,Job.class);
+        Recruiter recruiter=recruiterRepository.getReferenceById(postCreateDto.getRecruiterId());
+        Subcareer subcareer=subCareerRepository.getReferenceById(postCreateDto.getSubCareerId());
+        job.setCreateBy(recruiter);
+        job.setSubCareer(subcareer);
+        job.setIsActive(false);
+        job.setTime(LocalDateTime.now());
+        job.setFee(recruiter.getUser().getIsMemberShip()?0:0.5);
+        job.setIsApproved(2);
+        postRepository.save(job);
+    }
+
+    @Override
+    public APIResponse<PostHistoryDto> getAllJobPosted(String recruiterId, int status, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        APIResponse<PostHistoryDto> apiResponse = new APIResponse<>();
+        Page<Job> jobs=postRepository.getAllJobPosted(recruiterId,status,pageable);
+        List<Job> jobList=jobs.getContent();
+        List<PostHistoryDto> postHistoryDtoList=new ArrayList<>();
+        for(Job j:jobList){
+            PostHistoryDto post=new PostHistoryDto();
+            post.setJobTitle(j.getJobTitle());
+            post.setDescription(j.getDescription());
+            post.setSubCareer(j.getSubCareer().getName());
+            post.setTimeCount(j.getSubCareer().getName());
+            String message = "Đã tạo ";
+            LocalDateTime time=j.getTime();
+            long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+            long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+            long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+            long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+            long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
+            long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
+            if (minutes < 60)
+                message += minutes + " phút";
+            else if (hours<24)
+                message += hours+ " giờ";
+            else if (days<7)
+                message += days +" ngày";
+            else if (weeks < 5)
+                message += weeks + " tuần";
+            else if (months < 12) {
+                message += months+ " tháng";
+            }
+            else{
+                message += year+ "năm";
+            }
+            post.setTimeCount(message);
+            post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
+            String statusMessage;
+            if(j.getIsApproved()==1) statusMessage="Chấp thuận";
+            else if(j.getIsApproved()==2) statusMessage="Đang chờ phản hồi";
+            else  statusMessage="từ chối";
+            post.setStatus(statusMessage);
+            post.setTotalApplied(j.getJobRequests().size());
+            postHistoryDtoList.add(post);
+
+        }
+        apiResponse.setResults(postHistoryDtoList);
+        apiResponse.setTotalPages(jobs.getTotalPages());
+        apiResponse.setPageIndex(pageNumber + 1);
+        apiResponse.setTotalResults(jobs.getTotalElements());
+        return apiResponse;
+    }
 
 
     private PostDTO mapToPostDTO(Job job){
-        PostDTO postDTO=mapper.map(job, PostDTO.class);
-        return postDTO;
-    }
-    private PostDetailDTO mapToPostDetailDTO(Job job){
-        PostDetailDTO postDetailDTO=mapper.map(job, PostDetailDTO.class);
-        return postDetailDTO;
+        return mapper.map(job, PostDTO.class);
     }
 }

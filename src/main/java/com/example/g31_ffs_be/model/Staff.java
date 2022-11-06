@@ -29,7 +29,7 @@ public class Staff {
     @Column(name = "id", nullable = false, length = 45)
     private String id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "id", nullable = false)
     @JsonIgnore
     private Account account;

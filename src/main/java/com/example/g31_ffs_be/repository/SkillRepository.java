@@ -15,4 +15,5 @@ public interface SkillRepository extends JpaRepository<Skill,Integer> {
                     "(select skill_id from `freelancer_skill` where freelancer_id like :freelancerId) limit 5 "
             , nativeQuery = true)
     List<Skill> getAllRemainSkills(String freelancerId,String name);
+
 }

@@ -41,7 +41,7 @@ public class Freelancer {
 
     @Column(name = "cv")
     private String cv;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "freelancer_id", nullable = false)
     @JsonIgnore
     private User user;

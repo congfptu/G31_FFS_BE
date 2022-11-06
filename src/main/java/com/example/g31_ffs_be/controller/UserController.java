@@ -103,7 +103,7 @@ public class UserController {
             jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
         }catch (AuthenticationException e){
-            return new ResponseEntity<>("Không tìm thấy user!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
     @GetMapping("/feedback")
@@ -127,11 +127,11 @@ public class UserController {
                                             ) {
         try {
             feedbackRepository.insert(feedback.getFromUserId(),feedback.getToUserId(),feedback.getStar(),feedback.getContent(),Instant.now());
-            return new ResponseEntity<>("Create feedback successfully", HttpStatus.CREATED);
+            return new ResponseEntity<>(true, HttpStatus.CREATED);
         }
         catch (Exception e){
             System.out.println(e);
-            return new ResponseEntity<>("Failed to create feedback", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
     @GetMapping ("/getAllService")
@@ -175,6 +175,14 @@ public class UserController {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
+    }
+    @PutMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody AccountDto accountDto) {
+
+        if(accountService.changePassword(accountDto))
+        return new ResponseEntity<>("Mật khẩu được thay đổi thành công! Mời bạn đăng nhập vào hệ thống", HttpStatus.OK);
+        else return new ResponseEntity<>(false, HttpStatus.OK);
+
     }
 }
 

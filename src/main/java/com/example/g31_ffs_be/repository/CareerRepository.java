@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CareerRepository extends JpaRepository<Career, Integer> {
     @Query(value = " SELECT * FROM career " +
@@ -17,5 +19,8 @@ public interface CareerRepository extends JpaRepository<Career, Integer> {
             " WHERE name =:name"
             , nativeQuery = true)
    Career getCareerByName(String name);
+    @Query(value = " SELECT distinct  c FROM Career c " +
+            "LEFT JOIN FETCH c.subcareers sub")
+    List<Career> getAllCareer();
 
 }

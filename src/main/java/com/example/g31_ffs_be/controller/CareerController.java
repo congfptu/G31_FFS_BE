@@ -76,7 +76,6 @@ public class CareerController {
 
                if(career1==null) {
                    Career career = new Career();
-                   System.out.println("chay vao day");
                    career.setName(name);
                    careerRepository.save(career);
                    return new ResponseEntity<>("Thêm mới career thành công", HttpStatus.OK);
