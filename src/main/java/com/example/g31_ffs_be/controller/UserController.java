@@ -179,7 +179,7 @@ public class UserController {
     @PutMapping("/changePassword")
     public ResponseEntity<?> changePassword(@Valid @RequestBody AccountDto accountDto) {
 
-        if(accountService.changePassword(accountDto))
+        if(accountService.changePasswordUser(accountDto))
         return new ResponseEntity<>("Mật khẩu được thay đổi thành công! Mời bạn đăng nhập vào hệ thống", HttpStatus.OK);
         else return new ResponseEntity<>(false, HttpStatus.OK);
 

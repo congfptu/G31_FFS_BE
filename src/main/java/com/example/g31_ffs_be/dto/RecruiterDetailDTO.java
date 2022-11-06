@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class RecruiterDetailDTO {
     String id;
+    String avatar;
     String email;
     Career career;
     String phone;

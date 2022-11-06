@@ -70,7 +70,7 @@ public class RecruiterServiceImpl implements RecruiterService {
             RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
             double star = 0;
             User u = r.getUser();
-
+            rd.setAvatar(u.getAvatar());
             rd.setStar(u.getStar());
             rd.setAddress(u.getAddress());
             rd.setPhone(u.getPhone());
