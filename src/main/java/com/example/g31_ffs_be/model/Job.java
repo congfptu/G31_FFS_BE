@@ -97,4 +97,7 @@ public class Job {
     @Fetch(FetchMode.SUBSELECT)
     private Set<JobRequest> jobRequests = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "job")
+    private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
 }

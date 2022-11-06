@@ -44,8 +44,11 @@ public class Feedback {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "date")
-    private LocalDateTime date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id")
+    private Job job;
 
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
 }

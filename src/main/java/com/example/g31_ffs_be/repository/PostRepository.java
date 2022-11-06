@@ -164,8 +164,8 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " LEFT JOIN  j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
-            " and (j.paymentType=:paymentType)"+
-            " and (sub.id=:subCareerId)"+
+            " and (j.paymentType=:paymentType or :paymentType=-1)"+
+            " and (sub.id=:subCareerId or :subCareerId=-1)"+
             " and ((j.budget <400000.0 and j.paymentType=1) or (j.budget <20000000.0 and j.paymentType=2))"+
              "Order by j.topTime desc,j.budget desc"
     )

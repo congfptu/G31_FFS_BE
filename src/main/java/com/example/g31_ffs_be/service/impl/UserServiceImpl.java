@@ -59,18 +59,13 @@ public class UserServiceImpl implements UserService {
     public APIResponse<RequestPayment> searchTransactionHistoryByTime(String from, String to, String userId, int pageNo, int pageSize) {
         APIResponse<RequestPayment> apiResponse = new APIResponse<>();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<RequestPayment> page=null;
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            if(!from.equals("")) {
-                LocalDate from_date = LocalDate.parse(from, formatter);
-                from= from_date.atTime(0,0).toString();
-            }
-        if(!to.equals("")) {
-            LocalDate to_date = LocalDate.parse(to, formatter);
-            to= to_date.atTime(23, 59).toString();
-        }
-             page = paymentRepository.getRequestPaymentByFromTo(from,to,userId, pageable);
+        Page<RequestPayment> page = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate from_date = LocalDate.parse(from, formatter);
+        from = from_date.atTime(0, 0).toString();
+        LocalDate to_date = LocalDate.parse(to, formatter);
+        to = to_date.atTime(23, 59).toString();
+        page = paymentRepository.getRequestPaymentByFromTo(from, to, userId, pageable);
         apiResponse.setResults(page.getContent());
         apiResponse.setPageIndex(pageNo + 1);
         apiResponse.setTotalResults(page.getTotalElements());
@@ -82,7 +77,7 @@ public class UserServiceImpl implements UserService {
     public Boolean rechargeMoney(RequestPaymentDto requestPayment) {
         User user = userRepository.getReferenceById(requestPayment.getUserId());
         RequestPayment payment = new RequestPayment();
-        if (paymentRepository.findByPaymentCode(requestPayment.getPaymentCode()).isPresent()==false) {
+        if (paymentRepository.findByPaymentCode(requestPayment.getPaymentCode()).isPresent() == false) {
             user.setAccountBalance((requestPayment.getAmount()) + user.getAccountBalance());
             userRepository.save(user);
             User u = new User(requestPayment.getUserId());

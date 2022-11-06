@@ -27,7 +27,9 @@ public interface PaymentRepository extends JpaRepository<RequestPayment,String> 
             , nativeQuery = true)
     Page<RequestPayment> getRequestPaymentPaging(String keyword,Pageable pageable);
     @Query(value = " SELECT * FROM request_payment " +
-            " WHERE ( :from='' or date_request >=:from ) and (:to='' or date_request <=:to  ) and user_id=:userId " +
+            " WHERE user_id=:userId " +
+            " and (:from like CONCAT('%','1970-01-01','%') or date_request>=:from ) " +
+            "and (:to like CONCAT('%','1970-01-01','%') or date_request<=:to)" +
             "order by date_request desc"
             , nativeQuery = true)
     Page<RequestPayment> getRequestPaymentByFromTo(String from, String to, String userId,Pageable pageable);

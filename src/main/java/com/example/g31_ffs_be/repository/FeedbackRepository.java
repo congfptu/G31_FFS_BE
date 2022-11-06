@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
@@ -25,8 +26,8 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
     Page<Feedback> getFeedbacksFromId(String toId,Pageable pageable);
     @Modifying
     @Transactional
-    @Query(value = " insert into feedback (from_id,to_id,star,content,date) values (:from_id,:to_id,:star,:content,:date)"
+    @Query(value = " insert into feedback (from_id,job_id,to_id,star,content,createdDate) values (:fromId,:jobId,:toId,:star,:content,:createdDate)"
             , nativeQuery = true)
-    Integer insert(String from_id, String to_id, Integer star, String content, Instant date);
+    Integer insert(String fromId,int jobId, String toId, Integer star, String content, LocalDateTime createdDate);
 
 }

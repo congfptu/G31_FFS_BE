@@ -65,8 +65,8 @@ public class UserController {
     @GetMapping("/searchTransaction")
     public ResponseEntity<?> searchTransaction(
             @RequestParam(name = "userId", defaultValue = "") String userId ,
-            @RequestParam(name = "from", defaultValue = "") String from,
-            @RequestParam(name = "to", defaultValue = "") String to,
+            @RequestParam(name = "from", defaultValue = "-1") String from,
+            @RequestParam(name = "to", defaultValue = "-1") String to,
             @RequestParam(name = "pageNo", defaultValue = "0") String pageNo)
     {
         try {
@@ -126,7 +126,7 @@ public class UserController {
                                             @RequestBody FeedbackDTO feedback
                                             ) {
         try {
-            feedbackRepository.insert(feedback.getFromUserId(),feedback.getToUserId(),feedback.getStar(),feedback.getContent(),Instant.now());
+            feedbackRepository.insert(feedback.getFromUserId(),feedback.getJobId(),feedback.getToUserId(),feedback.getStar(),feedback.getContent(),LocalDateTime.now());
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         }
         catch (Exception e){

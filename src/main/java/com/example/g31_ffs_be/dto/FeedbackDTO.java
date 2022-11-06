@@ -11,9 +11,10 @@ public class FeedbackDTO {
 Integer id;
 Integer star;
 String content;
-    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
-    LocalDateTime date;
+@JsonFormat(pattern="dd-MM-yyyy HH:mm")
+LocalDateTime date;
 String fromUserId;
+int jobId;
 String toUserId;
 String fromFullName;
 String fromAvatar;

@@ -32,7 +32,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         for (Feedback f:feedbackDTOS) {
             FeedbackDTO feedbackDTO= new FeedbackDTO();
             feedbackDTO.setId(f.getId());
-            feedbackDTO.setDate(f.getDate());
+            feedbackDTO.setDate(f.getCreatedDate());
             feedbackDTO.setFromUserId(f.getFrom().getId());
             feedbackDTO.setContent(f.getContent());
 
