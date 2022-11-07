@@ -10,7 +10,10 @@ public class RecruiterDetailDTO {
     String email;
     Career career;
     String phone;
+    String fullName;
     String companyName;
+    String city;
+    String country;
     String address;
     String taxNumber;
     String website;

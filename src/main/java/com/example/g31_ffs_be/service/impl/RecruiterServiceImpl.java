@@ -74,8 +74,11 @@ public class RecruiterServiceImpl implements RecruiterService {
             rd.setStar(u.getStar());
             rd.setAddress(u.getAddress());
             rd.setPhone(u.getPhone());
+            rd.setFullName(u.getFullName());
             rd.setEmail(u.getAccount().getEmail());
             rd.setIsBanned(u.getIsBanned());
+            rd.setCity(u.getCity());
+            rd.setCountry(u.getCountry());
             return rd;
         }
         catch (Exception e){
