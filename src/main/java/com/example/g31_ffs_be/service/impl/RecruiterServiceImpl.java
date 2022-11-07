@@ -120,6 +120,7 @@ public class RecruiterServiceImpl implements RecruiterService {
         career.setId(registerDto.getCareer());
         recruiter.setCareer(career);
         recruiter.setCompanyIntro(registerDto.getDescription());
+        recruiter.setCompanyName(registerDto.getCompanyName());
         recruiterRepository.save(recruiter);}
         catch(Exception e) {
             System.out.println(e);
