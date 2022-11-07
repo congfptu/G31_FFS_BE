@@ -172,7 +172,7 @@ public class UserController {
             @Valid @RequestBody AccountDto accountDto) {
 
         if(accountService.changePasswordUser(accountDto))
-        return new ResponseEntity<>("Mật khẩu được thay đổi thành công! Mời bạn đăng nhập vào hệ thống", HttpStatus.OK);
+        return new ResponseEntity<>(true, HttpStatus.OK);
         else return new ResponseEntity<>(false, HttpStatus.OK);
 
     }
