@@ -236,11 +236,20 @@ public class PostServiceImpl implements PostService {
         Job job=mapper.map(postCreateDto,Job.class);
         Recruiter recruiter=recruiterRepository.getReferenceById(postCreateDto.getRecruiterId());
         Subcareer subcareer=subCareerRepository.getReferenceById(postCreateDto.getSubCareerId());
+
+        Set<Skill> skills=new LinkedHashSet<>();
+        for(int i:postCreateDto.getSkillIds()){
+            Skill skill=new Skill();
+            skill.setId(i);
+            skills.add(skill);
+        }
+        job.setSkills(skills);
         job.setCreateBy(recruiter);
         job.setSubCareer(subcareer);
         job.setIsActive(false);
         job.setTime(LocalDateTime.now());
         job.setFee(recruiter.getUser().getIsMemberShip()?0:0.5);
+        recruiter.getUser().setAccountBalance(recruiter.getUser().getAccountBalance()-job.getFee());
         job.setIsApproved(2);
         postRepository.save(job);
     }

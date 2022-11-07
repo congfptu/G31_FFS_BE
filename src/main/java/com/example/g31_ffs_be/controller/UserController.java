@@ -167,12 +167,22 @@ public class UserController {
         }
     }
     @PutMapping("/changePassword")
-    public ResponseEntity<?> changePassword(@Valid @RequestBody AccountDto accountDto) {
+    public ResponseEntity<?> changePassword(
+            @RequestHeader(name = "Authorization") String token,
+            @Valid @RequestBody AccountDto accountDto) {
 
         if(accountService.changePasswordUser(accountDto))
         return new ResponseEntity<>("Mật khẩu được thay đổi thành công! Mời bạn đăng nhập vào hệ thống", HttpStatus.OK);
         else return new ResponseEntity<>(false, HttpStatus.OK);
 
     }
+    @GetMapping("/skill")
+    public ResponseEntity<?> getAllSkill(@RequestHeader(name = "Authorization") String token) {
+
+            return new ResponseEntity<>(skillRepository.findAll(), HttpStatus.OK);
+
+
+    }
+
 }
 
