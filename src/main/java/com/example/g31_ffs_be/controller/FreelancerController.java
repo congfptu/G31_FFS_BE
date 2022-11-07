@@ -1,24 +1,16 @@
 package com.example.g31_ffs_be.controller;
 
-import com.example.g31_ffs_be.dto.APIResponse;
-import com.example.g31_ffs_be.dto.CareerResponse;
 import com.example.g31_ffs_be.dto.FreelancerProfileDTO;
 import com.example.g31_ffs_be.dto.RegisterDto;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
-import com.example.g31_ffs_be.service.impl.FreelancerServiceImpl;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.constraints.NotEmpty;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/freelancer")
 public class FreelancerController {
     @Autowired
-    FreelancerServiceImpl freelancerService;
+    FreelancerService freelancerService;
     @Autowired
     FreelancerRepository freelancerRepository;
     @Autowired AccountRepository accountRepository;

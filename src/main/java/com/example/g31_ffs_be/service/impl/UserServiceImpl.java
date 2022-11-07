@@ -12,8 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,18 +39,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(u);
     }
 
-    public boolean verify(String verificationCode) {
-        User user = userRepository.findByVerificationCode(verificationCode);
-        if (user == null || !user.getIsBanned()) {
-            return false;
-        } else {
-            user.setVerificationCode("");
-            user.setIsBanned(false);
-            userRepository.save(user);
-            return true;
-        }
+   /* public Boolean verify(String verificationCode) {
 
-    }
+
+    }*/
 
 
     @Override
@@ -90,5 +80,18 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Boolean verify(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode);
+        if (user == null || !user.getIsBanned()) {
+            return false;
+        } else {
+            user.setVerificationCode("");
+            user.setIsBanned(false);
+            userRepository.save(user);
+            return true;
+        }
     }
 }

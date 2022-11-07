@@ -4,15 +4,14 @@ import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.security.CustomUserDetailService;
-import com.example.g31_ffs_be.service.ServiceService;
-import com.example.g31_ffs_be.service.impl.*;
+import com.example.g31_ffs_be.service.*;
+import com.example.g31_ffs_be.service.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -24,18 +23,18 @@ import java.util.*;
 @RequestMapping("/api/admin")
 public class AdminController {
     @Autowired
-    StaffServiceImpl staffService;
+    StaffService staffService;
 
     @Autowired
-    ReportServiceImpl reportService;
+    ReportService reportService;
     @Autowired
     StaffRepository repository;
     @Autowired
-    FreelancerServiceImpl freelancerService;
+    FreelancerService freelancerService;
     @Autowired
-    RecruiterServiceImpl recruiterService;
+    RecruiterService recruiterService;
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
     @Autowired
     FreelancerRepository freelancerRepository;
     @Autowired
@@ -51,7 +50,7 @@ public class AdminController {
     @Autowired
     ServiceService serviceService;
     @Autowired
-    private AccountServiceImpl accountService;
+    private AccountService accountService;
     @Autowired
     RoleRepository roleRepository;
     @Autowired

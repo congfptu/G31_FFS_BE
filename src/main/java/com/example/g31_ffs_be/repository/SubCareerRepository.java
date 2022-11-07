@@ -1,7 +1,4 @@
 package com.example.g31_ffs_be.repository;
-
-import com.example.g31_ffs_be.dto.SubCareerDTO;
-import com.example.g31_ffs_be.model.Career;
 import com.example.g31_ffs_be.model.Subcareer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

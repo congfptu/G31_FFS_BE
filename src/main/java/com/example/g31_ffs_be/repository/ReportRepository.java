@@ -1,17 +1,14 @@
 package com.example.g31_ffs_be.repository;
 
-import com.example.g31_ffs_be.dto.ReportDTO;
 import com.example.g31_ffs_be.model.Report;
-import com.example.g31_ffs_be.model.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import javax.transaction.Transactional;
-import java.time.Instant;
+
 import java.time.LocalDateTime;
 
 @Repository

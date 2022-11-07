@@ -3,21 +3,18 @@ package com.example.g31_ffs_be.repository;
 
 import com.example.g31_ffs_be.model.Freelancer;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
-public interface FreelancerRepository extends JpaRepository<Freelancer,String>, JpaSpecificationExecutor<Freelancer> {
+public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
   @Query(value = "SELECT f FROM Freelancer f "+
           "LEFT JOIN FETCH f.user b " +
           "LEFT JOIN FETCH b.account a " +

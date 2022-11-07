@@ -1,7 +1,6 @@
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.*;
-import com.example.g31_ffs_be.model.Freelancer;
 import com.example.g31_ffs_be.model.Job;
 import com.example.g31_ffs_be.model.Subcareer;
 import com.example.g31_ffs_be.model.User;

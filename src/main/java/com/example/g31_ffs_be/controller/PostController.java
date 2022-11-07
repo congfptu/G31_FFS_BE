@@ -1,24 +1,19 @@
 package com.example.g31_ffs_be.controller;
 
-import com.example.g31_ffs_be.dto.CareerResponse;
+
 import com.example.g31_ffs_be.dto.PostDTOResponse;
 import com.example.g31_ffs_be.model.Job;
-import com.example.g31_ffs_be.model.RequestPayment;
+
 import com.example.g31_ffs_be.model.Staff;
-import com.example.g31_ffs_be.repository.CareerRepository;
+
 import com.example.g31_ffs_be.repository.PostRepository;
 import com.example.g31_ffs_be.repository.StaffRepository;
-import com.example.g31_ffs_be.service.CareerService;
 import com.example.g31_ffs_be.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.constraints.NotEmpty;
-import java.time.Instant;
 
 @RestController
 @CrossOrigin("*")

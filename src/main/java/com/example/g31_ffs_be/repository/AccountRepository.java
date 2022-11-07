@@ -28,5 +28,5 @@ public interface AccountRepository extends JpaRepository<Account,String> {
          "LEFT JOIN FETCH a.role r "+
          "where u.resetPasswordToken like :resetPasswordToken")
  Account findByResetPasswordToken(String resetPasswordToken);
- void deleteAccountByEmail(String email);
+
 }

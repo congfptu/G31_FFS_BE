@@ -1,8 +1,6 @@
 package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_be.dto.CareerResponse;
 import com.example.g31_ffs_be.dto.SubCareerResponse;
-import com.example.g31_ffs_be.model.Career;
 import com.example.g31_ffs_be.model.Subcareer;
 import com.example.g31_ffs_be.repository.CareerRepository;
 import com.example.g31_ffs_be.repository.SubCareerRepository;

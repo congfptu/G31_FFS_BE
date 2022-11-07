@@ -3,24 +3,14 @@ package com.example.g31_ffs_be.controller;
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
-import com.example.g31_ffs_be.security.JwtTokenProvider;
-import com.example.g31_ffs_be.service.FeedbackService;
-import com.example.g31_ffs_be.service.PostService;
-import com.example.g31_ffs_be.service.ServiceService;
-import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
+import com.example.g31_ffs_be.service.*;
+import com.example.g31_ffs_be.service.UserService;
 import com.example.g31_ffs_be.service.impl.FeedbackServiceImpl;
-import com.example.g31_ffs_be.service.impl.FreelancerServiceImpl;
-import com.example.g31_ffs_be.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.sql.Date;
 import java.time.Instant;
@@ -32,13 +22,13 @@ import java.time.temporal.ChronoUnit;
 @CrossOrigin("*")
 public class UserController {
     @Autowired
-    AccountServiceImpl accountService;
+    AccountService accountService;
     @Autowired
     AccountRepository accountRepository;
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
     @Autowired
-    FreelancerServiceImpl freelancerService;
+    FreelancerService freelancerService;
     @Autowired
     FreelancerRepository freelancerRepository;
     @Autowired

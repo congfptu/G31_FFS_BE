@@ -1,9 +1,6 @@
 package com.example.g31_ffs_be.repository;
 
-import com.example.g31_ffs_be.model.Career;
 import com.example.g31_ffs_be.model.Job;
-import com.example.g31_ffs_be.model.Recruiter;
-import com.example.g31_ffs_be.model.RequestPayment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -195,7 +192,7 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " LEFT JOIN fetch j.subCareer sub "+
             " WHERE r.id=:recruiterId and (j.isApproved=:status or :status=-1) "+
              "Order by j.time desc"
-            , countQuery = "SELECT count(j.id) FROM Recruiter r " +
+            , countQuery = "SELECT count(DISTINCT j.id) FROM Recruiter r " +
             " LEFT JOIN  r.jobs j "+
             " LEFT JOIN  j.jobRequests "+
             " LEFT JOIN  j.subCareer sub "+
