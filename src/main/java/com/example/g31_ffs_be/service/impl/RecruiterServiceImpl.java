@@ -1,11 +1,9 @@
 package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.*;
-import com.example.g31_ffs_be.model.Feedback;
-import com.example.g31_ffs_be.model.Freelancer;
-import com.example.g31_ffs_be.model.Recruiter;
-import com.example.g31_ffs_be.model.User;
+import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.RecruiterRepository;
+import com.example.g31_ffs_be.repository.UserRepository;
 import com.example.g31_ffs_be.service.RecruiterService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +20,8 @@ import java.util.Optional;
 public class RecruiterServiceImpl implements RecruiterService {
     @Autowired
     RecruiterRepository recruiterRepository;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     private ModelMapper mapper;
 
@@ -87,6 +87,42 @@ public class RecruiterServiceImpl implements RecruiterService {
     public List<RecruiterAdminDto> getTop5RecruiterByName(String name) {
         List<Recruiter> recruiters = recruiterRepository.getTop5Recruiter(name,PageRequest.of(0,5)).getContent();
         return convertListRecruiterAdminDto(recruiters);
+    }
+
+    @Override
+    public Boolean updateProfile(RegisterDto registerDto) {
+        try {
+            String id = registerDto.getId();
+            User user = userRepository.getReferenceById(id);
+            user.setFullName(registerDto.getFullName());
+            user.setAddress(registerDto.getAddress());
+            user.setCity(registerDto.getCity());
+            user.setCountry(registerDto.getCountry());
+            user.setPhone(registerDto.getPhone());
+            userRepository.save(user);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean updateProfileRecruiter(RegisterDto registerDto) {
+        try{
+        Recruiter recruiter =recruiterRepository.getReferenceById(registerDto.getId());
+        recruiter.setTaxNumber(registerDto.getTaxNumber());
+        recruiter.setWebsite(registerDto.getWebsite());
+        Career career=new Career();
+        career.setId(registerDto.getCareer());
+        recruiter.setCareer(career);
+        recruiter.setCompanyIntro(registerDto.getDescription());
+        recruiterRepository.save(recruiter);}
+        catch(Exception e) {
+            System.out.println(e);
+            return true;
+        }
+        return false;
     }
 
 }

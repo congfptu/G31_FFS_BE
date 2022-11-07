@@ -1,13 +1,12 @@
 package com.example.g31_ffs_be.controller;
 
-import com.example.g31_ffs_be.dto.APIResponse;
-import com.example.g31_ffs_be.dto.FreelancerFilterDto;
-import com.example.g31_ffs_be.dto.PostCreateDto;
-import com.example.g31_ffs_be.dto.RecruiterDetailDTO;
+import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Freelancer;
 import com.example.g31_ffs_be.model.Job;
 import com.example.g31_ffs_be.model.Subcareer;
+import com.example.g31_ffs_be.model.User;
 import com.example.g31_ffs_be.repository.PostRepository;
+import com.example.g31_ffs_be.repository.UserRepository;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
 import com.example.g31_ffs_be.service.RecruiterService;
@@ -17,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -31,14 +31,15 @@ public class RecruiterController {
     PostRepository postRepository;
   @Autowired
     RecruiterService recruiterService;
+  @Autowired
+    UserRepository userRepository;
     @GetMapping("/findFreelancer")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
                                            @RequestParam(name = "address", defaultValue = "") String address,
-                                           @RequestParam(name = "skill", defaultValue = "-1") int skill,
+                                           @RequestParam(name = "skill", defaultValue = "-1") List<Integer> skill,
                                            @RequestParam(name = "costOption", defaultValue = "1") int costOption,
                                            @RequestParam(name = "subCareer", defaultValue = "-1") int subCareer,
                                            @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
-
         try {
             return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(address, costOption, subCareer, skill, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
@@ -158,5 +159,42 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
+    }
+    @PutMapping("/updateProfile")
+    public ResponseEntity<?> updateProfile(@RequestHeader(name = "Authorization") String token,
+                                                 @RequestBody RegisterDto registerDto) {
+        try {
+            recruiterService.updateProfile(registerDto);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @PutMapping("/updateProfileRecruiter")
+    public ResponseEntity<?> updateProfileRecruiter(@RequestHeader(name = "Authorization") String token,
+                                                 @RequestBody RegisterDto registerDto) {
+        try {
+            recruiterService.updateProfileRecruiter(registerDto);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @PutMapping("/updateAvatar")
+    public ResponseEntity<?> editInformation(@RequestHeader(name = "Authorization") String token,
+                                             @RequestParam(name = "recruiterId") String recruiterId,
+                                             @RequestParam(name = "avatar") String avatar
+                                   ) {
+        try {
+            User user=userRepository.getReferenceById(recruiterId);
+            user.setAvatar(avatar);
+            userRepository.save(user);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
     }
 }

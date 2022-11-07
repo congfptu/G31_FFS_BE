@@ -25,6 +25,7 @@ public class RegisterDto {
     double costPerHour;
     int career;
     String companyName;
+    String description;
 
 
 }

@@ -384,7 +384,7 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String address, int costOption, int subCareer, int skill, int pageNo, int pageSize) {
+    public APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String address, int costOption, int subCareer, List<Integer> skill, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Freelancer> page = null;
         switch (costOption) {
@@ -417,10 +417,8 @@ public class FreelancerServiceImpl implements FreelancerService {
                     filterDto.setSubCareer(f.getSubCareer().getName());
                     NumberFormat formatter = new DecimalFormat("#0.0");
                     Double star = f.getUser().getStar();
-                    if (star == 0)
-                        filterDto.setStar("0");
-                    else
-                        filterDto.setStar(formatter.format(star));
+
+                        filterDto.setStar(star.toString());
                     Locale vn = new Locale("vi", "VN");
                     NumberFormat vnFormat = NumberFormat.getInstance(vn);
                     filterDto.setCostPerHour(f.getCostPerHour() == null ? "0" : vnFormat.format(f.getCostPerHour()) + "VNĐ");

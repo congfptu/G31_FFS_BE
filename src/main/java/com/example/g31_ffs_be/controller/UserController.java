@@ -65,8 +65,8 @@ public class UserController {
     @GetMapping("/searchTransaction")
     public ResponseEntity<?> searchTransaction(
             @RequestParam(name = "userId", defaultValue = "") String userId ,
-            @RequestParam(name = "from", defaultValue = "-1") String from,
-            @RequestParam(name = "to", defaultValue = "-1") String to,
+            @RequestParam(name = "from", defaultValue = "1970-01-01") String from,
+            @RequestParam(name = "to", defaultValue = "1970-01-01") String to,
             @RequestParam(name = "pageNo", defaultValue = "0") String pageNo)
     {
         try {

@@ -78,6 +78,7 @@ public class AccountServiceImpl implements AccountService {
             user.setCountry(registerDto.getCountry());
             user.setPhone(registerDto.getPhone());
             user.setAccountBalance(0.0);
+            user.setIsMemberShip(false);
             acc.setCreatedDate(LocalDateTime.now());
             user.setVerificationCode(RandomString.make(36));
             user.setIsBanned(true);
