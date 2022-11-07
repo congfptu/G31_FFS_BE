@@ -35,7 +35,6 @@ public class FeedbackServiceImpl implements FeedbackService {
             feedbackDTO.setDate(f.getCreatedDate());
             feedbackDTO.setFromUserId(f.getFrom().getId());
             feedbackDTO.setContent(f.getContent());
-
             feedbackDTO.setStar(f.getStar());
             feedbackDTO.setFromAvatar(f.getFrom().getAvatar());
             feedbackDTO.setFromFullName(f.getFrom().getFullName());
@@ -46,7 +45,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedbackDTOResponse.setTotalFeedback(feedbackDTOS.size());
         feedbackDTOResponse.setComments(feedbackDTOS1);
         feedbackDTOResponse.setPageIndex(pageNumber + 1);
-        feedbackDTOResponse.setStarAverage(feedbackDTOS.get(0).getTo().getStar());
+        feedbackDTOResponse.setStarAverage(feedbackDTOS.size()!=0? feedbackDTOS.get(0).getTo().getStar():0);
         feedbackDTOResponse.setTotalPages(feedbackDTOPage.getTotalPages());
         feedbackDTOResponse.setTotalResults(feedbackDTOPage.getTotalElements());
         return feedbackDTOResponse;
