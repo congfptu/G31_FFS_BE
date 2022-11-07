@@ -384,24 +384,24 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String address, int costOption, int subCareer, List<Integer> skill, int pageNo, int pageSize) {
+    public APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String address, int costOption, int subCareer, List<Integer> skill,String keyword,int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Freelancer> page = null;
         switch (costOption) {
             case 1:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 0, -1, subCareer, pageable);
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 0, -1, subCareer,keyword, pageable);
                 break;
             case 2:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 0, 100000, subCareer, pageable);
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 0, 100000, subCareer, keyword,pageable);
                 break;
             case 3:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 100000, 200000, subCareer, pageable);
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 100000, 200000, subCareer,keyword, pageable);
                 break;
             case 4:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 200000, 500000, subCareer, pageable);
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 200000, 500000, subCareer,keyword, pageable);
                 break;
             case 5:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 500000, -1, subCareer, pageable);
+                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(address, skill, 500000, -1, subCareer,keyword, pageable);
                 break;
         }
         APIResponse<FreelancerFilterDto> apiResponse = new APIResponse<>();
@@ -435,13 +435,13 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public APIResponse<FreelancerFilterDto> getFreelancerApplied(int jobId, String recruiterId, int pageNo, int pageSize) {
+    public APIResponse<FreelancerFilterDto> getFreelancerApplied(int jobId,String recruiterId,String address,List<Integer> skill,int subCareer,String keyword,int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Job job=postRepository.getReferenceById(jobId);
         APIResponse<FreelancerFilterDto> apiResponse = new APIResponse<>();
         if(job!=null&&job.getCreateBy().getId().equals(recruiterId))
         {
-        Page<Freelancer> freelancers = freelancerRepository.getFreelancerAppliedJob(jobId,pageable);
+        Page<Freelancer> freelancers = freelancerRepository.getFreelancerAppliedJob(jobId,address,skill, subCareer,keyword,pageable);
 
         List<FreelancerFilterDto> filterDTOs = new ArrayList<>();
         if (freelancers != null) {

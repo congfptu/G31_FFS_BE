@@ -69,10 +69,12 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String>, 
           " LEFT JOIN fetch a.subCareer b" +
           " LEFT JOIN  a.skills c" +
           " LEFT JOIN fetch a.user f"+
-          " WHERE (f.address like :address or :address='') " +
+          " WHERE " +
+          "(f.address like :address or :address='') " +
           "and (-1 in :skill or c.id in :skill) " +
           "and (b.id =:subCareer or :subCareer=-1)"+
-          " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "
+          "and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
+          "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) "
           ,
            countQuery = "select count(distinct a.id) from Freelancer a"+
                    " LEFT JOIN  a.subCareer b" +
@@ -81,30 +83,39 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String>, 
                    " WHERE (f.address like :address or :address='') " +
                    "and (-1 in :skill or c.id in :skill)" +
                    "and (b.id =:subCareer or :subCareer=-1)"+
-                   " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "
+                   " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
+                   "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) "
   )
-  Page<Freelancer> getAllFreelancerWithCostPerHourBetween(String address,List<Integer> skill,double costFrom,double costTo,int subCareer,Pageable pageable);
+  Page<Freelancer> getAllFreelancerWithCostPerHourBetween(String address,List<Integer> skill,double costFrom,double costTo,int subCareer,String keyword,Pageable pageable);
 
   @Query(value = "select distinct fre from Job j"+
           " LEFT JOIN   j.jobRequests rq" +
           " LEFT JOIN  rq.freelancer fre" +
-          " LEFT JOIN fetch fre.subCareer "+
-          " LEFT JOIN  fre.skills "+
+          " LEFT JOIN fetch fre.subCareer sub "+
+          " LEFT JOIN  fre.skills s "+
           " LEFT JOIN fetch fre.user u "+
           " WHERE j.id=:jobId "+
+          " and (u.address like :address or :address='')" +
+          "and (-1 in :skill or s.id in :skill) " +
+          "and (sub.id =:subCareer or :subCareer=-1)"+
+          "and ( u.fullName like CONCAT('%',:keyword,'%') or s.name  like CONCAT('%',:keyword,'%') ) "+
           " order by rq.applyDate desc"
 
           ,
           countQuery = "select  count(distinct fre.id) from Job j"+
                   " LEFT JOIN  j.jobRequests rq" +
                   " LEFT JOIN  rq.freelancer fre" +
-                  " LEFT JOIN  fre.subCareer "+
-                  " LEFT JOIN  fre.skills "+
+                  " LEFT JOIN  fre.subCareer sub"+
+                  " LEFT JOIN  fre.skills s"+
                   " LEFT JOIN  fre.user u "+
                   " WHERE j.id=:jobId "+
+                  " and (u.address like :address or :address='')" +
+                  "and (-1 in :skill or s.id in :skill) " +
+                  "and (sub.id =:subCareer or :subCareer=-1)"+
+                  "and ( u.fullName like CONCAT('%',:keyword,'%') or s.name  like CONCAT('%',:keyword,'%') ) "+
                   " order by rq.applyDate desc"
   )
-  Page<Freelancer> getFreelancerAppliedJob(int jobId,Pageable pageable);
+  Page<Freelancer> getFreelancerAppliedJob(int jobId,String address,List<Integer> skill,int subCareer,String keyword, Pageable pageable);
 
 
 
