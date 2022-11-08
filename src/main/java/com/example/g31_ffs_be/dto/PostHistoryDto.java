@@ -4,11 +4,12 @@ import lombok.Data;
 
 @Data
 public class PostHistoryDto {
+    int jobId;
     String jobTitle;
     String description;
     String timeCount;
     String paymentType;
-    String status;
+    int status;
     String subCareer;
     int totalApplied;
 }

@@ -21,7 +21,6 @@ import java.util.List;
 @CrossOrigin("*")
 @RequestMapping("/api/recruiter")
 public class RecruiterController {
-
     @Autowired
     FreelancerService freelancerService;
     @Autowired
@@ -55,20 +54,18 @@ public class RecruiterController {
                                         @RequestBody PostCreateDto post) {
 
         try {
-            return new ResponseEntity<>(postService.createPost(post), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(postService.createPost(post), HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
     }
-
     @PostMapping("/addSkill")
     public ResponseEntity<?> addJobSkill(@RequestHeader(name = "Authorization") String token,
                                          @RequestParam(name = "jobId", defaultValue = "1") int jobId,
                                          @RequestParam(name = "skillId", defaultValue = "-1") int skillId
     ) {
-
         try {
             postRepository.insertJobSkill(jobId, skillId);
             return new ResponseEntity<>(true, HttpStatus.CREATED);

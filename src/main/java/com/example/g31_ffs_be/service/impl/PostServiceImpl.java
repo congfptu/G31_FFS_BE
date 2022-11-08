@@ -268,6 +268,7 @@ public class PostServiceImpl implements PostService {
             post.setDescription(j.getDescription());
             post.setSubCareer(j.getSubCareer().getName());
             post.setTimeCount(j.getSubCareer().getName());
+            post.setJobId(j.getId());
             String message = "Đã tạo ";
             LocalDateTime time=j.getTime();
             long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
@@ -292,11 +293,7 @@ public class PostServiceImpl implements PostService {
             }
             post.setTimeCount(message);
             post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
-            String statusMessage;
-            if(j.getIsApproved()==1) statusMessage="Chấp thuận";
-            else if(j.getIsApproved()==2) statusMessage="Đang chờ phản hồi";
-            else  statusMessage="từ chối";
-            post.setStatus(statusMessage);
+            post.setStatus(status);
             post.setTotalApplied(j.getJobRequests().size());
             postHistoryDtoList.add(post);
 
