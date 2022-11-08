@@ -435,13 +435,15 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public APIResponse<FreelancerFilterDto> getFreelancerApplied(int jobId,String recruiterId,String address,List<Integer> skill,int subCareer,String keyword,int pageNo, int pageSize) {
+    public APIResponse<FreelancerFilterDto> getFreelancerApplied(int jobId,String recruiterId,String address,List<Integer> skill,int subCareer,String keyword,int status,int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Job job=postRepository.getReferenceById(jobId);
         APIResponse<FreelancerFilterDto> apiResponse = new APIResponse<>();
         if(job!=null&&job.getCreateBy().getId().equals(recruiterId))
         {
-        Page<Freelancer> freelancers = freelancerRepository.getFreelancerAppliedJob(jobId,address,skill, subCareer,keyword,pageable);
+            System.out.println(" di vao day");
+            System.out.println(status);
+        Page<Freelancer> freelancers = freelancerRepository.getFreelancerAppliedJob(jobId,address,skill, subCareer,keyword,status,pageable);
 
         List<FreelancerFilterDto> filterDTOs = new ArrayList<>();
         if (freelancers != null) {

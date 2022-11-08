@@ -38,6 +38,9 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " WHERE (j.id=:id)  "
             )
     Job getJobDetail(int id);
+
+    @Query(value = " SELECT MAX(j.id) FROM Job j")
+    Integer getMaxId();
 /*@Query(value = " SELECT DISTINCT j FROM Job j " +
         " LEFT JOIN  j.skills s "+
         " LEFT JOIN FETCH j.subCareer sub "+
@@ -191,15 +194,17 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " LEFT JOIN  j.jobRequests "+
             " LEFT JOIN fetch j.subCareer sub "+
             " WHERE r.id=:recruiterId and (j.isApproved=:status or :status=-1) "+
+            " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or j.description LIKE CONCAT('%',:keyword,'%')) "+
              "Order by j.time desc"
             , countQuery = "SELECT count(DISTINCT j.id) FROM Recruiter r " +
             " LEFT JOIN  r.jobs j "+
             " LEFT JOIN  j.jobRequests "+
             " LEFT JOIN  j.subCareer sub "+
             " WHERE r.id=:recruiterId and (j.isApproved=:status or :status=-1) "+
+            " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or j.description LIKE CONCAT('%',:keyword,'%'))"+
             "Order by j.time desc"
     )
-    Page<Job> getAllJobPosted(String recruiterId, int status, Pageable pageable);
+    Page<Job> getAllJobPosted(String recruiterId, int status,String keyword, Pageable pageable);
 
 
    /* @Query(value = " select count(*) from jobs a " +

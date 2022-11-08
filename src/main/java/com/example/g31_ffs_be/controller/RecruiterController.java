@@ -26,12 +26,13 @@ public class RecruiterController {
     FreelancerService freelancerService;
     @Autowired
     PostService postService;
-  @Autowired
+    @Autowired
     PostRepository postRepository;
-  @Autowired
+    @Autowired
     RecruiterService recruiterService;
-  @Autowired
+    @Autowired
     UserRepository userRepository;
+
     @GetMapping("/findFreelancer")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
                                            @RequestParam(name = "address", defaultValue = "") String address,
@@ -41,34 +42,35 @@ public class RecruiterController {
                                            @RequestParam(name = "keyword", defaultValue = "") String keyword,
                                            @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
         try {
-            return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(address, costOption, subCareer, skill,keyword, pageIndex, 10), HttpStatus.OK);
+            return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(address, costOption, subCareer, skill, keyword, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
     }
+
     @PostMapping("/createPost")
     public ResponseEntity<?> createPost(@RequestHeader(name = "Authorization") String token,
                                         @RequestBody PostCreateDto post) {
 
         try {
-           postService.createPost(post);
-            return new ResponseEntity<>(true, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(postService.createPost(post), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
     }
+
     @PostMapping("/addSkill")
     public ResponseEntity<?> addJobSkill(@RequestHeader(name = "Authorization") String token,
-                                         @RequestParam(name = "jobId", defaultValue = "1") int jobId ,
-                                        @RequestParam(name = "skillId", defaultValue = "-1") int skillId
-                                       ) {
+                                         @RequestParam(name = "jobId", defaultValue = "1") int jobId,
+                                         @RequestParam(name = "skillId", defaultValue = "-1") int skillId
+    ) {
 
         try {
-             postRepository.insertJobSkill(jobId,skillId);
+            postRepository.insertJobSkill(jobId, skillId);
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);
@@ -76,13 +78,14 @@ public class RecruiterController {
         }
 
     }
+
     @DeleteMapping("/deleteSkill")
     public ResponseEntity<?> deleteJobSkill(@RequestHeader(name = "Authorization") String token,
-                                        @RequestParam(name = "jobId", defaultValue = "-1") int jobId,
-                                        @RequestParam(name = "skillId", defaultValue = "1") int skillId ) {
+                                            @RequestParam(name = "jobId", defaultValue = "-1") int jobId,
+                                            @RequestParam(name = "skillId", defaultValue = "1") int skillId) {
 
         try {
-            postRepository.deleteJobSkill(jobId,skillId);
+            postRepository.deleteJobSkill(jobId, skillId);
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
@@ -90,25 +93,25 @@ public class RecruiterController {
         }
 
     }
+
     @PutMapping("/update-post")
     public ResponseEntity<?> updatePost(@RequestHeader(name = "Authorization") String token,
-                                             @RequestParam(name = "job_id") int jobId,
-                                             @RequestParam(name = "field") String field,
-                                             @RequestParam(name = "value") String value) {
+                                        @RequestParam(name = "job_id") int jobId,
+                                        @RequestParam(name = "field") String field,
+                                        @RequestParam(name = "value") String value) {
         try {
             Job job = postRepository.getReferenceById(jobId);
             if (field.equals("jobTitle"))
-               job.setJobTitle(value);
+                job.setJobTitle(value);
             else if (field.equals("area"))
                 job.setArea(value);
             else if (field.equals("budget"))
                 job.setBudget(Double.parseDouble(value));
             else if (field.equals("subCareer")) {
-                Subcareer subcareer=new Subcareer();
+                Subcareer subcareer = new Subcareer();
                 subcareer.setId(Integer.parseInt(value));
-                 job.setSubCareer(subcareer);
-            }
-            else{
+                job.setSubCareer(subcareer);
+            } else {
                 return new ResponseEntity<>(false, HttpStatus.OK);
             }
             postRepository.save(job);
@@ -118,54 +121,60 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @GetMapping("/getAllJobPosted")
     public ResponseEntity<?> getAllJobPosted(@RequestHeader(name = "Authorization") String token,
-                                           @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId,
-                                           @RequestParam(name = "status", defaultValue = "-1") int status,
-                                           @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
-
+                                             @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId,
+                                             @RequestParam(name = "status", defaultValue = "-1") int status,
+                                             @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                                             @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
         try {
-            return new ResponseEntity<>(postService.getAllJobPosted(recruiterId, status, pageIndex, 10), HttpStatus.OK);
+            return new ResponseEntity<>(postService.getAllJobPosted(recruiterId, status, keyword,pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
     }
+
     @GetMapping("/getFreelancerApplied")
     public ResponseEntity<?> getFreelancerOfJob(@RequestHeader(name = "Authorization") String token,
-                                             @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId, @RequestParam(name = "jobId", defaultValue = "-1") int jobId,
-                                             @RequestParam(name = "skill", defaultValue = "-1") List<Integer> skill,
-                                             @RequestParam(name = "subCareer", defaultValue = "-1") int subCareer,
-                                             @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                             @RequestParam(name = "address", defaultValue = "") String address,
-                                             @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
+                                                @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId,
+                                                @RequestParam(name = "jobId", defaultValue = "-1") int jobId,
+                                                @RequestParam(name = "skill", defaultValue = "-1") List<Integer> skill,
+                                                @RequestParam(name = "status", defaultValue = "0") int status,
+                                                @RequestParam(name = "subCareer", defaultValue = "-1") int subCareer,
+                                                @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                                                @RequestParam(name = "address", defaultValue = "") String address,
+                                                @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
 
         try {
-            APIResponse<FreelancerFilterDto>freelancerApplied=freelancerService.getFreelancerApplied(jobId, recruiterId,address,skill,subCareer,keyword, pageIndex, 10);
-            return new ResponseEntity<>(freelancerApplied==null?false:freelancerApplied, HttpStatus.OK);
+            APIResponse<FreelancerFilterDto> freelancerApplied = freelancerService.getFreelancerApplied(jobId, recruiterId, address, skill, subCareer, keyword, status, pageIndex, 10);
+            return new ResponseEntity<>(freelancerApplied == null ? false : freelancerApplied, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
     }
+
     @GetMapping("/getProfileRecruiter")
     public ResponseEntity<?> getRecruiterProfile(@RequestHeader(name = "Authorization") String token,
-                                                @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId) {
+                                                 @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId) {
 
         try {
-            RecruiterDetailDTO recruiterDetailDTO =recruiterService.getDetailRecruiter( recruiterId);
-            return new ResponseEntity<>(recruiterDetailDTO==null?false:recruiterDetailDTO, HttpStatus.OK);
+            RecruiterDetailDTO recruiterDetailDTO = recruiterService.getDetailRecruiter(recruiterId);
+            return new ResponseEntity<>(recruiterDetailDTO == null ? false : recruiterDetailDTO, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
     }
+
     @PutMapping("/updateProfile")
     public ResponseEntity<?> updateProfile(@RequestHeader(name = "Authorization") String token,
-                                                 @RequestBody RegisterDto registerDto) {
+                                           @RequestBody RegisterDto registerDto) {
         try {
             recruiterService.updateProfile(registerDto);
             return new ResponseEntity<>(true, HttpStatus.OK);
@@ -174,9 +183,10 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @PutMapping("/updateProfileRecruiter")
     public ResponseEntity<?> updateProfileRecruiter(@RequestHeader(name = "Authorization") String token,
-                                                 @RequestBody RegisterDto registerDto) {
+                                                    @RequestBody RegisterDto registerDto) {
         try {
             recruiterService.updateProfileRecruiter(registerDto);
             return new ResponseEntity<>(true, HttpStatus.OK);
@@ -185,13 +195,14 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @PutMapping("/updateAvatar")
     public ResponseEntity<?> editInformation(@RequestHeader(name = "Authorization") String token,
                                              @RequestParam(name = "recruiterId") String recruiterId,
                                              @RequestParam(name = "avatar") String avatar
-                                   ) {
+    ) {
         try {
-            User user=userRepository.getReferenceById(recruiterId);
+            User user = userRepository.getReferenceById(recruiterId);
             user.setAvatar(avatar);
             userRepository.save(user);
             return new ResponseEntity<>(true, HttpStatus.OK);

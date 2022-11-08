@@ -232,7 +232,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void createPost(PostCreateDto postCreateDto) {
+    public int createPost(PostCreateDto postCreateDto) {
         Job job=mapper.map(postCreateDto,Job.class);
         Recruiter recruiter=recruiterRepository.getReferenceById(postCreateDto.getRecruiterId());
         Subcareer subcareer=subCareerRepository.getReferenceById(postCreateDto.getSubCareerId());
@@ -252,13 +252,14 @@ public class PostServiceImpl implements PostService {
         recruiter.getUser().setAccountBalance(recruiter.getUser().getAccountBalance()-job.getFee());
         job.setIsApproved(2);
         postRepository.save(job);
+        return (postRepository.getMaxId()+1);
     }
 
     @Override
-    public APIResponse<PostHistoryDto> getAllJobPosted(String recruiterId, int status, int pageNumber, int pageSize) {
+    public APIResponse<PostHistoryDto> getAllJobPosted(String recruiterId, int status,String keyword, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         APIResponse<PostHistoryDto> apiResponse = new APIResponse<>();
-        Page<Job> jobs=postRepository.getAllJobPosted(recruiterId,status,pageable);
+        Page<Job> jobs=postRepository.getAllJobPosted(recruiterId,status,keyword,pageable);
         List<Job> jobList=jobs.getContent();
         List<PostHistoryDto> postHistoryDtoList=new ArrayList<>();
         for(Job j:jobList){

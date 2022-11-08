@@ -8,8 +8,8 @@ public interface PostService {
     PostDetailDTO getPostDetail(String freelancerId,int id);
 
     APIResponse<PostFindingDTO> getJobSearch(int pageNumber, int pageSize, String area, String keyword, int paymentType, int sub_career_id,Boolean isMemberShip);
-    void createPost(PostCreateDto postCreateDto);
-    APIResponse<PostHistoryDto> getAllJobPosted(String recruiterId,int status,int pageNumber,int pageSize);
+    int createPost(PostCreateDto postCreateDto);
+    APIResponse<PostHistoryDto> getAllJobPosted(String recruiterId,int status,String keyword,int pageNumber,int pageSize);
 
 
 }

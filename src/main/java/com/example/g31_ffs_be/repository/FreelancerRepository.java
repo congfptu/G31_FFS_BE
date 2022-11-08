@@ -92,6 +92,7 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
           " LEFT JOIN  fre.skills s "+
           " LEFT JOIN fetch fre.user u "+
           " WHERE j.id=:jobId "+
+          " and rq.status=:status" +
           " and (u.address like :address or :address='')" +
           "and (-1 in :skill or s.id in :skill) " +
           "and (sub.id =:subCareer or :subCareer=-1)"+
@@ -106,13 +107,14 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
                   " LEFT JOIN  fre.skills s"+
                   " LEFT JOIN  fre.user u "+
                   " WHERE j.id=:jobId "+
+                  " and rq.status=:status" +
                   " and (u.address like :address or :address='')" +
                   "and (-1 in :skill or s.id in :skill) " +
                   "and (sub.id =:subCareer or :subCareer=-1)"+
                   "and ( u.fullName like CONCAT('%',:keyword,'%') or s.name  like CONCAT('%',:keyword,'%') ) "+
                   " order by rq.applyDate desc"
   )
-  Page<Freelancer> getFreelancerAppliedJob(int jobId,String address,List<Integer> skill,int subCareer,String keyword, Pageable pageable);
+  Page<Freelancer> getFreelancerAppliedJob(int jobId,String address,List<Integer> skill,int subCareer,String keyword,int status, Pageable pageable);
 
 
 
