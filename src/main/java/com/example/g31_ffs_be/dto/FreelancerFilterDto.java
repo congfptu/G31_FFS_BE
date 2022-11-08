@@ -10,11 +10,13 @@ public class FreelancerFilterDto {
     private  String avatar;
     private  String fullName;
     private  String subCareer;
-    private  String address;
+    private  String city;
     private Set<Skill> skills;
     private  String star;
+    private  int totalFeedbacks;
     private  String costPerHour;
     private  String description;
+
 
 
 }

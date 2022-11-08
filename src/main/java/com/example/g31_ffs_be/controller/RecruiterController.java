@@ -35,14 +35,14 @@ public class RecruiterController {
 
     @GetMapping("/findFreelancer")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
-                                           @RequestParam(name = "address", defaultValue = "") String address,
+                                           @RequestParam(name = "city", defaultValue = "") String city,
                                            @RequestParam(name = "skill", defaultValue = "-1") List<Integer> skill,
                                            @RequestParam(name = "costOption", defaultValue = "1") int costOption,
                                            @RequestParam(name = "subCareer", defaultValue = "-1") int subCareer,
                                            @RequestParam(name = "keyword", defaultValue = "") String keyword,
                                            @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
         try {
-            return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(address, costOption, subCareer, skill, keyword, pageIndex, 10), HttpStatus.OK);
+            return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(city, costOption, subCareer, skill, keyword, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
@@ -145,11 +145,11 @@ public class RecruiterController {
                                                 @RequestParam(name = "status", defaultValue = "0") int status,
                                                 @RequestParam(name = "subCareer", defaultValue = "-1") int subCareer,
                                                 @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                                @RequestParam(name = "address", defaultValue = "") String address,
+                                                @RequestParam(name = "city", defaultValue = "") String city,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
 
         try {
-            APIResponse<FreelancerFilterDto> freelancerApplied = freelancerService.getFreelancerApplied(jobId, recruiterId, address, skill, subCareer, keyword, status, pageIndex, 10);
+            APIResponse<FreelancerFilterDto> freelancerApplied = freelancerService.getFreelancerApplied(jobId, recruiterId, city, skill, subCareer, keyword, status, pageIndex, 10);
             return new ResponseEntity<>(freelancerApplied == null ? false : freelancerApplied, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);

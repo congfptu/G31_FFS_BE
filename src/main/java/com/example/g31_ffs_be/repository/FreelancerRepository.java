@@ -67,7 +67,7 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
           " LEFT JOIN  a.skills c" +
           " LEFT JOIN fetch a.user f"+
           " WHERE " +
-          "(f.address like :address or :address='') " +
+          "(f.city like :city or :city='') " +
           "and (-1 in :skill or c.id in :skill) " +
           "and (b.id =:subCareer or :subCareer=-1)"+
           "and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
@@ -77,13 +77,13 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
                    " LEFT JOIN  a.subCareer b" +
                    " LEFT JOIN  a.skills c" +
                    " LEFT JOIN  a.user f"+
-                   " WHERE (f.address like :address or :address='') " +
+                   " WHERE (f.city like :city or :city='') " +
                    "and (-1 in :skill or c.id in :skill)" +
                    "and (b.id =:subCareer or :subCareer=-1)"+
                    " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
                    "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) "
   )
-  Page<Freelancer> getAllFreelancerWithCostPerHourBetween(String address,List<Integer> skill,double costFrom,double costTo,int subCareer,String keyword,Pageable pageable);
+  Page<Freelancer> getAllFreelancerWithCostPerHourBetween(String city,List<Integer> skill,double costFrom,double costTo,int subCareer,String keyword,Pageable pageable);
 
   @Query(value = "select distinct fre from Job j"+
           " LEFT JOIN   j.jobRequests rq" +
@@ -93,7 +93,7 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
           " LEFT JOIN fetch fre.user u "+
           " WHERE j.id=:jobId "+
           " and rq.status=:status" +
-          " and (u.address like :address or :address='')" +
+          " and (u.city like :city or :city='')" +
           "and (-1 in :skill or s.id in :skill) " +
           "and (sub.id =:subCareer or :subCareer=-1)"+
           "and ( u.fullName like CONCAT('%',:keyword,'%') or s.name  like CONCAT('%',:keyword,'%') ) "+
@@ -108,13 +108,13 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
                   " LEFT JOIN  fre.user u "+
                   " WHERE j.id=:jobId "+
                   " and rq.status=:status" +
-                  " and (u.address like :address or :address='')" +
+                  " and (u.city like :city or :city='')" +
                   "and (-1 in :skill or s.id in :skill) " +
                   "and (sub.id =:subCareer or :subCareer=-1)"+
                   "and ( u.fullName like CONCAT('%',:keyword,'%') or s.name  like CONCAT('%',:keyword,'%') ) "+
                   " order by rq.applyDate desc"
   )
-  Page<Freelancer> getFreelancerAppliedJob(int jobId,String address,List<Integer> skill,int subCareer,String keyword,int status, Pageable pageable);
+  Page<Freelancer> getFreelancerAppliedJob(int jobId,String city,List<Integer> skill,int subCareer,String keyword,int status, Pageable pageable);
 
 
 
