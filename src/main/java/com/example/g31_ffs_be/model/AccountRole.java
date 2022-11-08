@@ -1,5 +1,10 @@
 package com.example.g31_ffs_be.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,6 +13,10 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "account_role")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AccountRole {
     @Id
     @Size(max = 45)
@@ -17,20 +26,6 @@ public class AccountRole {
     @Column(name = "role_id")
     private Integer role;
 
-    public String getId() {
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Integer getRole() {
-        return role;
-    }
-
-    public void setRole(Integer role) {
-        this.role = role;
-    }
 
 }

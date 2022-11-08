@@ -75,6 +75,7 @@ public class PostServiceImpl implements PostService {
             fa.setCreatedBy(f.getCreateBy().getCompanyName());
             fa.setJobTitle(f.getJobTitle());
             fa.setIsApproved(f.getIsApproved());
+            if(f.getApprovedBy()!=null)
             fa.setApprovedBy(f.getApprovedBy().getFullName());
             fas.add(fa);
         }
@@ -160,6 +161,7 @@ public class PostServiceImpl implements PostService {
         postDetailDTO.setTime(job.getTime());
         postDetailDTO.setIsActive(job.getIsActive());
         postDetailDTO.setIsApproved(job.getIsApproved());
+        if(job.getApprovedBy()!=null)
         postDetailDTO.setApprovedBy(job.getApprovedBy().getFullName());
         postDetailDTO.setListSkills(job.getSkills());
         return postDetailDTO;

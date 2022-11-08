@@ -90,10 +90,8 @@ public class FreelancerServiceImpl implements FreelancerService {
         try {
             Freelancer f = freelancerRepository.getDetailFreelancer(id);
             FreelancerDetailDto fd = mapToFreelancerDetailDTO(f);
-            double star = 0;
             User u = f.getUser();
             Set<Feedback> feedbacks = u.getFeedbackTos();
-
             fd.setFeedbackTos(feedbacks);
             fd.setStar(u.getStar());
             fd.setSubCareer(f.getSubCareer().getName());
@@ -415,8 +413,8 @@ public class FreelancerServiceImpl implements FreelancerService {
                     filterDto.setFullName(f.getUser().getFullName());
                     filterDto.setSubCareer(f.getSubCareer().getName());
                     filterDto.setTotalFeedbacks(f.getUser().getFeedbackTos().size());
-                    Double star = f.getUser().getStar();
-                    filterDto.setStar(star.toString());
+                    double star = f.getUser().getStar();
+                    filterDto.setStar(Double.toString(star));
                     Locale vn = new Locale("vi", "VN");
                     NumberFormat vnFormat = NumberFormat.getInstance(vn);
                     filterDto.setCostPerHour(f.getCostPerHour() == null ? "0" : vnFormat.format(f.getCostPerHour()) + "VNĐ");
