@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ban")
@@ -24,7 +25,7 @@ public class Ban {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Column(name = "date")
-    private Instant date;
+    private LocalDateTime date;
 
     @Column(name = "user_id")
     private String user;

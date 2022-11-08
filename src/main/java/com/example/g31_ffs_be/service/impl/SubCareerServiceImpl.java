@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.service.impl;
 
+import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.SubCareerResponse;
 import com.example.g31_ffs_be.model.Subcareer;
 import com.example.g31_ffs_be.repository.CareerRepository;
@@ -55,14 +56,15 @@ public class SubCareerServiceImpl implements SubCareerService {
     }
 
     @Override
-    public SubCareerResponse getAllSubCareerSearchByCareerIDAndSubName(int pageNumber, int pageSize, String keyword, Integer careerID, String sortValue) {
+    public APIResponse<Subcareer> getAllSubCareerFilter(int pageNumber, int pageSize, String keyword, Integer careerID, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Subcareer> careerPage=subCareerRepository.getSubCareerByCareerIDAndSubCareerName(keyword,careerID,pageable);
-        List<Subcareer> careerList=careerPage.getContent();
-        SubCareerResponse careerResponse= new SubCareerResponse();
-        careerResponse.setSubCareers(careerList);
-        careerResponse.setPageIndex(pageNumber+1);
-        careerResponse.setTotalPages(careerPage.getTotalPages());
-        return careerResponse;
+        Page<Subcareer> subcareerPage=subCareerRepository.getSubCareerByCareerIDAndSubCareerName(keyword,careerID,pageable);
+        List<Subcareer> subcareerList=subcareerPage.getContent();
+        APIResponse<Subcareer> apiResponse= new APIResponse<>();
+        apiResponse.setResults(subcareerList);
+        apiResponse.setPageIndex(pageNumber+1);
+        apiResponse.setTotalPages(subcareerPage.getTotalPages());
+        apiResponse.setTotalResults(subcareerPage.getTotalElements());
+        return apiResponse;
     }
 }

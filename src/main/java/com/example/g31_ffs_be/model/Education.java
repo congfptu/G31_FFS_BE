@@ -17,9 +17,6 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "education")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 @Getter
 @Setter
 @AllArgsConstructor

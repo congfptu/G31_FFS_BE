@@ -7,18 +7,26 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
 import javax.transaction.Transactional;
 
 import java.time.LocalDateTime;
 
 @Repository
-public interface ReportRepository extends JpaRepository<Report,Integer> {
-    @Query(value = "select * from `report` r " +
-            "inner join `user` u on r.from_id=u.user_id"+
-            " where u.fullname like CONCAT('%',:keyword,'%') " +
-            "or r.date_created like CONCAT('%',:keyword,'%')"
-            , nativeQuery = true)
-    Page<Report> getReportByCreatedByOrCreatedDate(String keyword, Pageable pageable);
+public interface ReportRepository extends JpaRepository<Report, Integer> {
+    @Query(value = "select r from Report r " +
+                   "left join fetch r.from u " +
+                    "where u.fullName like CONCAT('%',:keyword,'%') " +
+                    "or r.content like CONCAT('%',:keyword,'%') "+
+                    "or r.title like CONCAT('%',:keyword,'%')",
+            countQuery =  "select count(r.id) from Report r " +
+                    "left join  r.from u " +
+                    "where u.fullName like CONCAT('%',:keyword,'%') " +
+                    "or r.content like CONCAT('%',:keyword,'%') "+
+                    "or r.title like CONCAT('%',:keyword,'%')")
+
+    Page<Report> getAllReport(String keyword, Pageable pageable);
+
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO `report`(from_id,title,content,date_created) VALUES(:from_id,:title,:content,:dateCreated)"

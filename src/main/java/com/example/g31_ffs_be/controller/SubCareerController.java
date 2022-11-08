@@ -25,7 +25,7 @@ public class SubCareerController {
     CareerRepository careerRepository;
     @Autowired
     SubCareerRepository subCareerRepository;
-    @GetMapping("/subcareer")
+    @GetMapping("/subCareer")
     public ResponseEntity<?> getAllSubCareer(@RequestHeader(name = "Authorization") String token,
                                           @RequestParam(name = "name", defaultValue = "") String name,
                                              @RequestParam(name = "careerID", defaultValue = "") Integer careerID,
@@ -34,16 +34,12 @@ public class SubCareerController {
         try {
             pageIndex = Integer.parseInt(pageNo);
         } catch (Exception e) {
-
         }
         int pageSize = 5;
-        SubCareerResponse fas = subCareerService.getAllSubCareerSearchByCareerIDAndSubName(pageIndex, pageSize, name, careerID,null);
-        if (fas.getTotalPages() >= pageIndex - 1) {
-            return new ResponseEntity<>(fas, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
-        }}
-        @PostMapping("/subcareer/add")
+        return new ResponseEntity<>( subCareerService.getAllSubCareerFilter(pageIndex, pageSize, name, careerID,null), HttpStatus.OK);
+           // return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+        }
+        @PostMapping("/subCareer/add")
         public ResponseEntity<?> createSubCareer(@RequestHeader(name = "Authorization") String token,
                                                  @RequestParam(name = "career_id") Integer career_id
                 ,@NotEmpty @RequestParam(name = "name") String name) {
@@ -61,7 +57,7 @@ public class SubCareerController {
                 return new ResponseEntity<>("Thêm mới subcareer thất bại", HttpStatus.BAD_REQUEST);
             }
         }
-    @PutMapping("/subcareer/update")
+    @PutMapping("/subCareer/update")
     public ResponseEntity<?> updateSubCareer(@RequestHeader(name = "Authorization") String token,
                                           @NotEmpty @RequestParam(name = "career_id") Integer career_id,
                                              @NotEmpty @RequestParam(name = "id") Integer id,
@@ -76,7 +72,7 @@ public class SubCareerController {
             return new ResponseEntity<>("Cập nhật subcareer thất bại", HttpStatus.BAD_REQUEST);
         }
     }
-    @DeleteMapping("/subcareer/delete")
+    @DeleteMapping("/subCareer/delete")
     public ResponseEntity<?> deleteSubCareer(@RequestHeader(name = "Authorization") String token,
 
                                           @NotEmpty @RequestParam(name = "id") Integer id

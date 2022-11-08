@@ -1,9 +1,6 @@
 package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_be.dto.CareerResponse;
-import com.example.g31_ffs_be.dto.CareerTitleDTO;
-import com.example.g31_ffs_be.dto.FreelancerAdminDto;
-import com.example.g31_ffs_be.dto.SubCareerTitleDTO;
+import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Career;
 import com.example.g31_ffs_be.model.Freelancer;
 import com.example.g31_ffs_be.model.Subcareer;
@@ -57,16 +54,17 @@ public class CareerServiceImpl implements CareerService {
     }
 
     @Override
-    public CareerResponse getAllCareer(int pageNumber, int pageSize, String keyword, String sortValue) {
+    public APIResponse<Career> getAllCareer(int pageNumber, int pageSize, String keyword, String sortValue) {
         try{
+            APIResponse<Career> apiResponse=new APIResponse<>();
             Pageable pageable = PageRequest.of(pageNumber, pageSize);
             Page<Career> careerPage=careerRepository.getCareerByName(keyword,pageable);
             List<Career> careerList=careerPage.getContent();
-            CareerResponse careerResponse= new CareerResponse();
-            careerResponse.setCareers(careerList);
-            careerResponse.setPageIndex(pageNumber+1);
-            careerResponse.setTotalPages(careerPage.getTotalPages());
-            return careerResponse;
+            apiResponse.setResults(careerList);
+            apiResponse.setPageIndex(pageNumber+1);
+            apiResponse.setTotalPages(careerPage.getTotalPages());
+            apiResponse.setTotalResults(careerPage.getTotalElements());
+            return apiResponse;
         }catch (Exception e){
             System.out.println(e);
             return null;

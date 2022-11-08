@@ -34,50 +34,30 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentDTOResponse getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword,String status, String sortValue) {
+    public APIResponse<PaymentDTO> getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword,int status,int defaultStatus, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentSearchPaging(keyword,status,pageable);
+        APIResponse<PaymentDTO> apiResponse=new APIResponse<>();
+        Boolean statusBoolean=false;
+        if(status==1) statusBoolean=true;
+        Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentSearchPaging(keyword,statusBoolean,defaultStatus,pageable);
         List<RequestPayment> paymentDTOResponseList=paymentPaging.getContent();
-        List<PaymentDTO> fas=new ArrayList<>();
+        List<PaymentDTO> paymentDTOS=new ArrayList<>();
         for (RequestPayment f: paymentDTOResponseList){
-            PaymentDTO fa=new PaymentDTO();
-            fa=mapToPaymentDTO(f);
-            fa.setUserId(f.getUser().getId());
-            fa.setCode(f.getPaymentCode());
-            fa.setStatus(f.getStatus());
-            fa.setUserId(f.getUser().getId());
-            fa.setMoney(f.getAmount());
-            fa.setDateRequest(f.getDateRequest());
-            fas.add(fa);
+            PaymentDTO payment=new PaymentDTO();
+            payment=mapToPaymentDTO(f);
+            payment.setUserId(f.getUser().getId());
+            payment.setCode(f.getPaymentCode());
+            payment.setStatus(f.getStatus());
+            payment.setUserId(f.getUser().getId());
+            payment.setMoney(f.getAmount());
+            payment.setDateRequest(f.getDateRequest());
+            paymentDTOS.add(payment);
         }
-        PaymentDTOResponse paymentDTOResponse= new PaymentDTOResponse();
-        paymentDTOResponse.setPayments(fas);
-        paymentDTOResponse.setPageIndex(pageNumber+1);
-        paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
-        return paymentDTOResponse;
+        apiResponse.setResults(paymentDTOS);
+        apiResponse.setTotalPages(paymentPaging.getTotalPages());
+        apiResponse.setTotalResults(paymentPaging.getTotalElements());
+        apiResponse.setPageIndex(pageNumber+1);
+        return apiResponse;
     }
 
-    @Override
-    public PaymentDTOResponse getAllPaymentPaging(int pageNumber, int pageSize,String keyword, String sortValue) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentPaging(keyword,pageable);
-        List<RequestPayment> paymentDTOResponseList=paymentPaging.getContent();
-        List<PaymentDTO> fas=new ArrayList<>();
-        for (RequestPayment f: paymentDTOResponseList){
-            PaymentDTO fa=new PaymentDTO();
-            fa=mapToPaymentDTO(f);
-            fa.setUserId(f.getUser().getId());
-            fa.setCode(f.getPaymentCode());
-            fa.setStatus(f.getStatus());
-            fa.setUserId(f.getUser().getId());
-            fa.setMoney(f.getAmount());
-            fa.setDateRequest(f.getDateRequest());
-            fas.add(fa);
-        }
-        PaymentDTOResponse paymentDTOResponse= new PaymentDTOResponse();
-        paymentDTOResponse.setPayments(fas);
-        paymentDTOResponse.setPageIndex(pageNumber+1);
-        paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
-        return paymentDTOResponse;
-    }
 }

@@ -82,6 +82,7 @@ public class RecruiterServiceImpl implements RecruiterService {
             return rd;
         }
         catch (Exception e){
+            System.out.println(e);
            return null;
         }
     }

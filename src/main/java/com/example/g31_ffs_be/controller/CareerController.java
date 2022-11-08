@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.controller;
 
+import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.CareerResponse;
 import com.example.g31_ffs_be.dto.CareerTitleDTO;
 import com.example.g31_ffs_be.model.Ban;
@@ -32,56 +33,56 @@ public class CareerController {
 
     @GetMapping("/career")
     public ResponseEntity<?> getAllCareerPaging(@RequestHeader(name = "Authorization") String token,
-                                          @RequestParam(name = "name", defaultValue = "") String name,
-                                          @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
-        int pageIndex = 0;
+                                                @RequestParam(name = "name", defaultValue = "") String name,
+                                                @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
         try {
-            pageIndex = Integer.parseInt(pageNo);
+            int pageIndex = 0;
+            try {
+                pageIndex = Integer.parseInt(pageNo);
+            } catch (Exception e) {
+
+            }
+            int pageSize = 10;
+            APIResponse<Career> careerAPIResponse = careerService.getAllCareer(pageIndex, pageSize, name, null);
+            return new ResponseEntity<>(careerAPIResponse, HttpStatus.OK);
         } catch (Exception e) {
-
-        }
-        int pageSize = 5;
-
-        CareerResponse fas = careerService.getAllCareer(pageIndex, pageSize, name, null);
-        if (fas.getTotalPages() >= pageIndex - 1) {
-            return new ResponseEntity<>(fas, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("không có dữ liệu trang này!" + e.getMessage(), HttpStatus.NO_CONTENT);
         }
     }
+
     @GetMapping("/getAllCareer")
     public ResponseEntity<?> getAllCareer() {
-        if(careerRepository.findAll().size()!=0){
+        if (careerRepository.findAll().size() != 0) {
             return new ResponseEntity<>(careerRepository.findAll(), HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
         }
     }
+
     @GetMapping("/getCareerTitle")
     public ResponseEntity<?> getAllCareerTitle() {
-        if(careerService.getCareerTitle().size()!=0){
-            List<CareerTitleDTO> list=careerService.getCareerTitle();
+        if (careerService.getCareerTitle().size() != 0) {
+            List<CareerTitleDTO> list = careerService.getCareerTitle();
             return new ResponseEntity<>(list, HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
         }
     }
+
     @PostMapping("/career/add")
     public ResponseEntity<?> createCareer(@RequestHeader(name = "Authorization") String token,
                                           @RequestParam(name = "name") String name) {
         try {
-            Career career1= careerRepository.getCareerByName(name);
+            Career career1 = careerRepository.getCareerByName(name);
 
-               if(career1==null) {
-                   Career career = new Career();
-                   career.setName(name);
-                   careerRepository.save(career);
-                   return new ResponseEntity<>("Thêm mới career thành công", HttpStatus.OK);
-            }else{
-                   return new ResponseEntity<>("Thêm mới career thất bại, duplicated name", HttpStatus.BAD_REQUEST);
-               }
+            if (career1 == null) {
+                Career career = new Career();
+                career.setName(name);
+                careerRepository.save(career);
+                return new ResponseEntity<>("Thêm mới career thành công", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Thêm mới career thất bại, duplicated name", HttpStatus.BAD_REQUEST);
+            }
 
         } catch (Exception e) {
             System.out.println(e);

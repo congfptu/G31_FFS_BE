@@ -14,9 +14,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "subcareer")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 @Getter
 @Setter
 @AllArgsConstructor

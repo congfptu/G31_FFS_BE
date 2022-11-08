@@ -14,18 +14,19 @@ import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<RequestPayment,String> {
-    @Query(value = " SELECT * FROM request_payment " +
-            " WHERE (payment_code LIKE CONCAT('%',:keyword,'%') " +
-            "or response_message like CONCAT('%',:keyword,'%')) " +
-            "and status like CONCAT('%',:status,'%') " +
-            "Order by payment_code asc,response_message asc,status asc "
-            , nativeQuery = true)
-    Page<RequestPayment> getRequestPaymentSearchPaging(String keyword,String status, Pageable pageable);
-    @Query(value = " SELECT * FROM request_payment "+
-            " WHERE payment_code LIKE CONCAT('%',:keyword,'%') " +
-            "or response_message like CONCAT('%',:keyword,'%') "
-            , nativeQuery = true)
-    Page<RequestPayment> getRequestPaymentPaging(String keyword,Pageable pageable);
+    @Query(value =  " SELECT r FROM RequestPayment r " +
+                    "LEFT JOIN FETCH r.user "+
+                    " WHERE (r.paymentCode LIKE CONCAT('%',:keyword,'%') )" +
+                    "and (:defaultStatus=-1 or r.status=:status) " +
+                    "Order by r.dateRequest desc ",
+            countQuery = " SELECT count(r.id) FROM RequestPayment r " +
+                    "LEFT JOIN  r.user "+
+                    " WHERE (r.paymentCode LIKE CONCAT('%',:keyword,'%') )" +
+                    "and (:defaultStatus=-1 or r.status=:status) " +
+                    "Order by r.dateRequest desc "
+           )
+    Page<RequestPayment> getRequestPaymentSearchPaging(String keyword,Boolean status,int defaultStatus, Pageable pageable);
+
     @Query(value = " SELECT * FROM request_payment " +
             " WHERE user_id=:userId " +
             " and (:from like CONCAT('%','1970-01-01','%') or date_request>=:from ) " +

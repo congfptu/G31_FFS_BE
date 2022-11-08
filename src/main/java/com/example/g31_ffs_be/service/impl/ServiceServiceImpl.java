@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.service.impl;
 
+import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.ServiceDto;
 import com.example.g31_ffs_be.dto.ServiceResponse;
 import com.example.g31_ffs_be.model.Benefit;
@@ -29,21 +30,17 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceDto;
     }
     @Override
-    public  ServiceResponse getServiceByName(String name,int roleId,int pageNo, int pageSize) {
+    public List<ServiceDto> getServiceByName(String name, int roleId, int pageNo, int pageSize) {
         ServiceResponse serviceResponse=new ServiceResponse();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Service> page = serviceRepository.getServiceByName(name,roleId,pageable);
-        List<Service> services=page.getContent();
+        List<Service> services = serviceRepository.getServiceByName(name,roleId,pageable);
         List<ServiceDto> serviceDtos=new ArrayList<>();
         for (Service service: services){
             ServiceDto serviceDto=new ServiceDto();
             serviceDto=mapper.map(service,ServiceDto.class);
             serviceDtos.add(serviceDto);
         }
-        serviceResponse.setServices(serviceDtos);
-        serviceResponse.setTotalPages(( page.getTotalPages()));
-        serviceResponse.setPageIndex(pageNo+1);
-        return serviceResponse;
+        return serviceDtos;
 
     }
     private Service mapToServiceEntity(ServiceDto serviceDto){

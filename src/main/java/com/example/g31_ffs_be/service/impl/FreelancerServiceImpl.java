@@ -171,7 +171,6 @@ public class FreelancerServiceImpl implements FreelancerService {
             freelancerProfileDTO.setWorkExps(workExperienceDTOS);
             freelancerProfileDTO.setBirthDate(freelancer.getBirthdate());
             freelancerProfileDTO.setSubCareer(freelancer.getSubCareer().getName());
-
             freelancerProfileDTO.setStar(freelancer.getUser().getStar());
             return freelancerProfileDTO;
         } catch (Exception e) {
@@ -416,10 +415,8 @@ public class FreelancerServiceImpl implements FreelancerService {
                     filterDto.setFullName(f.getUser().getFullName());
                     filterDto.setSubCareer(f.getSubCareer().getName());
                     filterDto.setTotalFeedbacks(f.getUser().getFeedbackTos().size());
-                    NumberFormat formatter = new DecimalFormat("#0.0");
                     Double star = f.getUser().getStar();
-
-                        filterDto.setStar(star.toString());
+                    filterDto.setStar(star.toString());
                     Locale vn = new Locale("vi", "VN");
                     NumberFormat vnFormat = NumberFormat.getInstance(vn);
                     filterDto.setCostPerHour(f.getCostPerHour() == null ? "0" : vnFormat.format(f.getCostPerHour()) + "VNĐ");
@@ -442,8 +439,6 @@ public class FreelancerServiceImpl implements FreelancerService {
         APIResponse<FreelancerFilterDto> apiResponse = new APIResponse<>();
         if(job!=null&&job.getCreateBy().getId().equals(recruiterId))
         {
-            System.out.println(" di vao day");
-            System.out.println(status);
         Page<Freelancer> freelancers = freelancerRepository.getFreelancerAppliedJob(jobId,city,skill, subCareer,keyword,status,pageable);
 
         List<FreelancerFilterDto> filterDTOs = new ArrayList<>();

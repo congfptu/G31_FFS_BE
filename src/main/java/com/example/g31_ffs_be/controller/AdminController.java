@@ -140,14 +140,12 @@ public class AdminController {
                                                 @RequestParam(name = "name", defaultValue = "") String name,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
     ) {
-
         try {
             int pageIndex = 0;
             try{
             pageIndex = Integer.parseInt(pageNo);
             }
             catch(Exception e){
-
             }
             int pageSize = 10;
             APIResponse<FreelancerAdminDto> apiResponse = freelancerService.getFreelancerByName(name, pageIndex, pageSize);
@@ -156,7 +154,6 @@ public class AdminController {
             System.out.println(e);
             return new ResponseEntity<>("ko co du lieu trang nay", HttpStatus.OK);
         }
-
     }
 
 
@@ -184,7 +181,7 @@ public class AdminController {
         Ban b = new Ban();
         b.setBannedBy(adminId);
         b.setUser(userId);
-        b.setDate(Instant.now());
+        b.setDate(LocalDateTime.now());
         b.setTypeBan(Integer.parseInt(typeBan));
         banRepository.save(b);
         userService.banUser(userId);
@@ -247,15 +244,13 @@ public class AdminController {
                                               @RequestParam(name = "roleId", defaultValue = "3") int roleId,
                                               @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
         int pageIndex = 0;
-
         try {
             pageIndex = Integer.parseInt(pageNo);
         } catch (Exception e) {
 
         }
-        int pageSize = 5;
-        ServiceResponse serviceResponse = serviceService.getServiceByName(name, roleId, pageIndex, pageSize);
-        return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
+        int pageSize = 10;
+        return new ResponseEntity<>(serviceService.getServiceByName(name, roleId, pageIndex, pageSize), HttpStatus.OK);
     }
 
     @PostMapping("/add-service")

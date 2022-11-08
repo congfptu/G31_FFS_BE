@@ -1,10 +1,8 @@
 package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_be.dto.PostDTO;
-import com.example.g31_ffs_be.dto.PostDTOResponse;
+import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.ReportDTO;
 import com.example.g31_ffs_be.dto.ReportDTOResponse;
-import com.example.g31_ffs_be.model.Job;
 import com.example.g31_ffs_be.model.Report;
 import com.example.g31_ffs_be.repository.ReportRepository;
 import com.example.g31_ffs_be.service.ReportService;
@@ -15,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 @Service
@@ -30,26 +27,25 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ReportDTOResponse getReportPagingByDateOrCreatedBy(int pageNumber, int pageSize, String keyword,String sortValue) {
+    public APIResponse<ReportDTO> getAllReportByKeyword(int pageNumber, int pageSize, String keyword, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Report> paymentPaging=reportRepository.getReportByCreatedByOrCreatedDate(keyword,pageable);
-        List<Report> paymentDTOResponseList=paymentPaging.getContent();
-        List<ReportDTO> fas=new ArrayList<>();
-        for (Report f: paymentDTOResponseList){
-            ReportDTO fa=new ReportDTO();
-            fa=mapToReportDTO(f);
-            fa.setCreatedBy(f.getFrom().getId());
-            fa.setCreatedBy(f.getFrom().getFullName());
-            fa.setTitle(f.getTitle());
-            fa.setContent(f.getContent());
-            fa.setCreatedDate(f.getDateCreated());
-            fas.add(fa);
+        APIResponse<ReportDTO> apiResponse=new APIResponse<>();
+        Page<Report> page=reportRepository.getAllReport(keyword,pageable);
+        List<Report> paymentDTOResponseList=page.getContent();
+        List<ReportDTO> reportDTOS=new ArrayList<>();
+        for (Report report: paymentDTOResponseList){
+            ReportDTO reportDTO=new ReportDTO();
+            reportDTO.setCreatedBy(report.getFrom().getFullName());
+            reportDTO.setTitle(report.getTitle());
+            reportDTO.setContent(report.getContent());
+            reportDTO.setCreatedDate(report.getDateCreated());
+            reportDTOS.add(reportDTO);
         }
-        ReportDTOResponse reportDTOResponse= new ReportDTOResponse();
-        reportDTOResponse.setReports(fas);
-        reportDTOResponse.setPageIndex(pageNumber+1);
-        reportDTOResponse.setTotalPages(paymentPaging.getTotalPages());
-        return reportDTOResponse;
+        apiResponse.setResults(reportDTOS);
+        apiResponse.setPageIndex(pageNumber+1);
+        apiResponse.setTotalResults(page.getTotalElements());
+        apiResponse.setTotalPages(page.getTotalPages());
+        return apiResponse;
     }
     private ReportDTO mapToReportDTO(Report report){
         ReportDTO reportDTO=mapper.map(report, ReportDTO.class);

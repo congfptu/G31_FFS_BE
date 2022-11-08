@@ -25,7 +25,9 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_id")
+    private User from;
 
     @Column(name = "title")
     private String title;
@@ -36,9 +38,7 @@ public class Report {
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_id")
-    private User from;
+
 
 
 }

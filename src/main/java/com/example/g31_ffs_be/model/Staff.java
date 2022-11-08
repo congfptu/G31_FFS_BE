@@ -18,10 +18,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
-
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 @DynamicUpdate
 @DynamicInsert
 public class Staff {
