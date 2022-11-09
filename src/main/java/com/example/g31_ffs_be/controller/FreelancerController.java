@@ -1,11 +1,13 @@
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.FreelancerProfileDTO;
+import com.example.g31_ffs_be.dto.RecruiterDetailDTO;
 import com.example.g31_ffs_be.dto.RegisterDto;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
+import com.example.g31_ffs_be.service.RecruiterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.List;
 public class FreelancerController {
     @Autowired
     FreelancerService freelancerService;
+    @Autowired
+    RecruiterService recruiterService;
     @Autowired
     FreelancerRepository freelancerRepository;
     @Autowired AccountRepository accountRepository;
@@ -300,6 +304,22 @@ public class FreelancerController {
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @GetMapping("/getProfileRecruiter")
+    public ResponseEntity<?> getProfileRecruiter(@RequestHeader(name = "Authorization") String token,
+                                                  @RequestParam(name = "recruiterId", defaultValue = "") String id,
+                                                  @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId) {
+        RecruiterDetailDTO recruiterDetailDTO=recruiterService.getProfileRecruiterByFreelancer(id,freelancerId);
+        try{
+            if (recruiterDetailDTO != null) {
+                return new ResponseEntity<>(recruiterDetailDTO, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+            }
+        }catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
 

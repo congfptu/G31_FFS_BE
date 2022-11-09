@@ -20,4 +20,5 @@ public class RecruiterDetailDTO {
     String companyIntro;
     double star;
     Boolean isBanned;
+    Boolean isApplied;
 }

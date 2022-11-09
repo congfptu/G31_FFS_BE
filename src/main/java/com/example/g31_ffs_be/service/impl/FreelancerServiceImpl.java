@@ -453,25 +453,49 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String city, int costOption, int subCareer, List<Integer> skill,String keyword,int pageNo, int pageSize) {
+    public APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(Boolean isMemberShip,String city, int costOption, int subCareer, List<Integer> skill,String keyword,int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Freelancer> page = null;
-        switch (costOption) {
-            case 1:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 0, -1, subCareer,keyword, pageable);
-                break;
-            case 2:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 0, 100000, subCareer, keyword,pageable);
-                break;
-            case 3:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 100000, 200000, subCareer,keyword, pageable);
-                break;
-            case 4:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 200000, 500000, subCareer,keyword, pageable);
-                break;
-            case 5:
-                page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 500000, -1, subCareer,keyword, pageable);
-                break;
+        if(isMemberShip)
+        {
+            switch (costOption) {
+                case 1:
+
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetweenAndIsMemberShip(city, skill, 0, -1, subCareer, keyword, pageable);
+                    break;
+                case 2:
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetweenAndIsMemberShip(city, skill, 0, 100000, subCareer, keyword, pageable);
+                    break;
+                case 3:
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetweenAndIsMemberShip(city, skill, 100000, 200000, subCareer, keyword, pageable);
+                    break;
+                case 4:
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetweenAndIsMemberShip(city, skill, 200000, 500000, subCareer, keyword, pageable);
+                    break;
+                case 5:
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetweenAndIsMemberShip(city, skill, 500000, -1, subCareer, keyword, pageable);
+                    break;
+            }
+        }
+        else {
+            switch (costOption) {
+                case 1:
+
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 0, -1, subCareer, keyword, pageable);
+                    break;
+                case 2:
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 0, 100000, subCareer, keyword, pageable);
+                    break;
+                case 3:
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 100000, 200000, subCareer, keyword, pageable);
+                    break;
+                case 4:
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 200000, 500000, subCareer, keyword, pageable);
+                    break;
+                case 5:
+                    page = freelancerRepository.getAllFreelancerWithCostPerHourBetween(city, skill, 500000, -1, subCareer, keyword, pageable);
+                    break;
+            }
         }
         APIResponse<FreelancerFilterDto> apiResponse = new APIResponse<>();
         List<FreelancerFilterDto> filterDTOs = new ArrayList<>();

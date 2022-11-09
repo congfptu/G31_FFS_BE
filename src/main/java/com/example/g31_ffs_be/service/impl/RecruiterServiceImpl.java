@@ -2,9 +2,11 @@ package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
+import com.example.g31_ffs_be.repository.FreelancerRepository;
 import com.example.g31_ffs_be.repository.RecruiterRepository;
 import com.example.g31_ffs_be.repository.UserRepository;
 import com.example.g31_ffs_be.service.RecruiterService;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,8 @@ public class RecruiterServiceImpl implements RecruiterService {
     UserRepository userRepository;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    FreelancerRepository freelancerRepository;
 
     private RecruiterAdminDto mapToFreeDTO(Recruiter recruiter) {
         RecruiterAdminDto recruiterAdminDto = mapper.map(recruiter, RecruiterAdminDto.class);
@@ -128,6 +132,39 @@ public class RecruiterServiceImpl implements RecruiterService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public RecruiterDetailDTO getProfileRecruiterByFreelancer(String id, String freelancerId) {
+        try {
+            Freelancer freelancer=freelancerRepository.getReferenceById(freelancerId);
+            Recruiter r  = recruiterRepository.getDetailRecruiterByFreelancer(id);
+            RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
+            double star = 0;
+            User u = r.getUser();
+            rd.setAvatar(u.getAvatar());
+            rd.setStar(u.getStar());
+            rd.setAddress(u.getAddress());
+            rd.setPhone(u.getPhone());
+            rd.setFullName(u.getFullName());
+            rd.setEmail(u.getAccount().getEmail());
+            rd.setIsBanned(u.getIsBanned());
+            rd.setCity(u.getCity());
+            rd.setCountry(u.getCountry());
+            Boolean isApplied=false;
+            for(JobRequest jobRequest:freelancer.getJobRequests()){
+                if(jobRequest.getStatus()==1 && jobRequest.getJob().getCreateBy().getId().equals(id)) {
+                    isApplied = true;
+                    break;
+                }
+            }
+            rd.setIsApplied(isApplied);
+            return rd;
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
     }
 
 }

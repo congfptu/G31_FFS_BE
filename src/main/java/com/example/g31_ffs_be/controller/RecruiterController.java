@@ -49,9 +49,10 @@ public class RecruiterController {
                                            @RequestParam(name = "costOption", defaultValue = "1") int costOption,
                                            @RequestParam(name = "subCareer", defaultValue = "-1") int subCareer,
                                            @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                           @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
+                                           @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex,
+                                           @RequestParam(name = "isMemberShip", defaultValue = "false") Boolean isMemberShip) {
         try {
-            return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(city, costOption, subCareer, skill, keyword, pageIndex, 10), HttpStatus.OK);
+            return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(isMemberShip,city, costOption, subCareer, skill, keyword, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
@@ -303,5 +304,6 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
         }
     }
+
 
 }

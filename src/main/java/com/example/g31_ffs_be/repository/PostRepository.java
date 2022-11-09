@@ -30,7 +30,6 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " LEFT JOIN FETCH jobCreate.jobRequests" +
             " LEFT JOIN FETCH u.feedbackTos" +
             " LEFT JOIN FETCH j.freelancers free" +
-
             " LEFT JOIN FETCH j.skills " +
             " LEFT JOIN FETCH j.subCareer " +
             " LEFT JOIN FETCH j.jobRequests rq" +

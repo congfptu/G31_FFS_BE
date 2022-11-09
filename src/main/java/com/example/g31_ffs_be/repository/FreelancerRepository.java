@@ -79,6 +79,35 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
           " LEFT JOIN fetch a.subCareer b" +
           " LEFT JOIN  a.skills c" +
           " LEFT JOIN fetch a.user f"+
+          " LEFT JOIN f.feedbackTos fe"+
+          " WHERE " +
+          "(f.city like :city or :city='') " +
+          "and (-1 in :skill or c.id in :skill) " +
+          "and (b.id =:subCareer or :subCareer=-1)"+
+          "and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
+          "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) " +
+          "group by a "+
+          "having (avg(fe.star)<=3) or (avg(fe.star) is null) "
+          ,
+           countQuery = "select count(distinct a.id) from Freelancer a"+
+                   " LEFT JOIN  a.subCareer b" +
+                   " LEFT JOIN  a.skills c" +
+                   " LEFT JOIN  a.user f"+
+                   " LEFT JOIN f.feedbackTos fe"+
+                   " WHERE (f.city like :city or :city='') " +
+                   "and (-1 in :skill or c.id in :skill)" +
+                   "and (b.id =:subCareer or :subCareer=-1)"+
+                   " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
+                   "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) "+
+                   "group by a.id "+
+                   "having (avg(fe.star)<=3) or (avg(fe.star) is null) "
+  )
+  Page<Freelancer> getAllFreelancerWithCostPerHourBetween(String city,List<Integer> skill,double costFrom,double costTo,int subCareer,String keyword,Pageable pageable);
+  @Query(value = "select  distinct a from Freelancer a"+
+          " LEFT JOIN fetch a.subCareer b" +
+          " LEFT JOIN  a.skills c" +
+          " LEFT JOIN fetch a.user f"+
+          " LEFT JOIN f.feedbackTos fe"+
           " WHERE " +
           "(f.city like :city or :city='') " +
           "and (-1 in :skill or c.id in :skill) " +
@@ -86,17 +115,18 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
           "and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
           "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) "
           ,
-           countQuery = "select count(distinct a.id) from Freelancer a"+
-                   " LEFT JOIN  a.subCareer b" +
-                   " LEFT JOIN  a.skills c" +
-                   " LEFT JOIN  a.user f"+
-                   " WHERE (f.city like :city or :city='') " +
-                   "and (-1 in :skill or c.id in :skill)" +
-                   "and (b.id =:subCareer or :subCareer=-1)"+
-                   " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
-                   "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) "
+          countQuery = "select count(distinct a.id) from Freelancer a"+
+                  " LEFT JOIN  a.subCareer b" +
+                  " LEFT JOIN  a.skills c" +
+                  " LEFT JOIN  a.user f"+
+                  " LEFT JOIN f.feedbackTos fe"+
+                  " WHERE (f.city like :city or :city='') " +
+                  "and (-1 in :skill or c.id in :skill)" +
+                  "and (b.id =:subCareer or :subCareer=-1)"+
+                  " and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
+                  "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) "
   )
-  Page<Freelancer> getAllFreelancerWithCostPerHourBetween(String city,List<Integer> skill,double costFrom,double costTo,int subCareer,String keyword,Pageable pageable);
+  Page<Freelancer> getAllFreelancerWithCostPerHourBetweenAndIsMemberShip(String city,List<Integer> skill,double costFrom,double costTo,int subCareer,String keyword,Pageable pageable);
 
   @Query(value = "select distinct fre from Job j"+
           " LEFT JOIN   j.jobRequests rq" +

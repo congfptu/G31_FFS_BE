@@ -18,4 +18,6 @@ public interface RecruiterService {
     Boolean updateProfile(RegisterDto registerDto);
     Boolean updateProfileRecruiter(RegisterDto registerDto);
 
+    RecruiterDetailDTO getProfileRecruiterByFreelancer(String id,String freelancerId);
+
 }

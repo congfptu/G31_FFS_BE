@@ -49,5 +49,17 @@ public interface RecruiterRepository extends JpaRepository<Recruiter,String> {
 
     Recruiter getDetailRecruiter(String id);
 
+    @Query(value = "select r from Recruiter r " +
+            "LEFT JOIN FETCH r.user u " +
+            "LEFT JOIN FETCH u.account a " +
+            "LEFT JOIN FETCH u.feedbackTos " +
+            "LEFT JOIN FETCH r.career " +
+            "LEFT JOIN FETCH r.jobs job " +
+            "LEFT JOIN FETCH job.jobRequests rq " +
+            "where r.id =:id " +
+            "order by r.id asc")
+
+    Recruiter getDetailRecruiterByFreelancer(String id);
+
 
 }
