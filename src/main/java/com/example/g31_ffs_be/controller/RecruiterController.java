@@ -287,5 +287,21 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+    @GetMapping("/getProfileFreelancer")
+    public ResponseEntity<?> getProfileFreelancer(@RequestHeader(name = "Authorization") String token,
+                                                  @RequestParam(name = "id", defaultValue = "") String id,
+                                                  @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId) {
+        FreelancerProfileDTO f=freelancerService.getDetailFreelancerByRecruiter(recruiterId,id);
+        try{
+            if (f != null) {
+                return new ResponseEntity<>(f, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+            }
+        }catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+        }
+    }
 
 }

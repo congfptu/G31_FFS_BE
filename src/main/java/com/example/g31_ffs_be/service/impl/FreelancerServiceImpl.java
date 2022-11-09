@@ -229,10 +229,14 @@ public class FreelancerServiceImpl implements FreelancerService {
                 workExperienceDTO.setPosition(w.getPosition());
                 workExperienceDTOS.add(workExperienceDTO);
             }
-           /* boolean
+            boolean isApplied=false;
             for(JobRequest jobRequest:freelancer.getJobRequests()){
-                if(jobRequest)
-            }*/
+                if(jobRequest.getStatus()==1 && jobRequest.getJob().getCreateBy().getId().equals(recruiterId)) {
+                    isApplied = true;
+                    break;
+                }
+            }
+            freelancerProfileDTO.setIsApplied(isApplied);
             freelancerProfileDTO.setWorkExps(workExperienceDTOS);
             freelancerProfileDTO.setBirthDate(freelancer.getBirthdate());
             freelancerProfileDTO.setSubCareer(freelancer.getSubCareer().getName());
