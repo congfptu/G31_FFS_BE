@@ -31,4 +31,6 @@ public class FreelancerProfileDTO {
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate birthDate;
     String subCareer;
+    Boolean isApplied;
+
 }

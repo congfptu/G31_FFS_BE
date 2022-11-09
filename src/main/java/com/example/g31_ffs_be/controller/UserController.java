@@ -9,6 +9,7 @@ import com.example.g31_ffs_be.service.impl.FeedbackServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -20,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 @RestController
 @RequestMapping("/api/user")
 @CrossOrigin("*")
+@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') ")
 public class UserController {
     @Autowired
     AccountService accountService;
@@ -91,6 +93,7 @@ public class UserController {
             jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
             jwtAuthResponse.setAvatar(account.getUser().getAvatar());
             jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+            jwtAuthResponse.setEmail(account.getEmail());
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
         }catch (AuthenticationException e){
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

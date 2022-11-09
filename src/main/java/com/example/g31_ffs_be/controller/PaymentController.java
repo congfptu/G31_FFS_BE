@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/staff")
+@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') or hasAuthority('staff') ")
 public class PaymentController {
     @Autowired
     PaymentService paymentService;

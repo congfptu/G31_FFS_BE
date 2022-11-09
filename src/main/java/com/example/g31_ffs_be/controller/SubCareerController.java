@@ -9,6 +9,7 @@ import com.example.g31_ffs_be.service.SubCareerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/staff")
+@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') or hasAuthority('staff') ")
 public class SubCareerController {
     @Autowired
     SubCareerService subCareerService;

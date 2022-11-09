@@ -26,5 +26,5 @@ public interface FreelancerService {
     APIResponse<PostFindingDTO> getJobRequest(String freelancerId,int status,int pageNo,int pageSize);
     APIResponse<FreelancerFilterDto> getAllFreelancerByFilter(String city,int costOption,int subCareer,List<Integer> skill,String keyword,int pageNo,int pageSize);
     APIResponse<FreelancerFilterDto> getFreelancerApplied(int jobId,String recruiterId,String city,List<Integer> skill,int subCareer,String keyword,int status,int pageNo,int pageSize);
-
+    FreelancerProfileDTO getDetailFreelancerByRecruiter(String recruiterId,String id);
 }

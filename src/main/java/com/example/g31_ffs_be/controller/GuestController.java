@@ -110,7 +110,9 @@ public class GuestController {
                 jwtAuthResponse.setTokenType("Bearer");
                 jwtAuthResponse.setAvatar(account.getUser().getAvatar());
                 jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
+                jwtAuthResponse.setEmail(account.getEmail());
                 jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+
                 jwtAuthResponse.setAvatar(account.getUser().getAvatar());
                 return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
             }else{

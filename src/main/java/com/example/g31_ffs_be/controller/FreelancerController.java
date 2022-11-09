@@ -9,6 +9,7 @@ import com.example.g31_ffs_be.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/freelancer")
+@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') or hasAuthority('staff') ")
 public class FreelancerController {
     @Autowired
     FreelancerService freelancerService;

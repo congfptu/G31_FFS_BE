@@ -176,6 +176,74 @@ public class FreelancerServiceImpl implements FreelancerService {
         }
         return null;
     }
+    @Override
+    public FreelancerProfileDTO getDetailFreelancerByRecruiter(String recruiterId,String id) {
+        try {
+            Freelancer freelancer = freelancerRepository.getFreelancerDetailByRecruiter(id);
+
+            FreelancerProfileDTO freelancerProfileDTO = new FreelancerProfileDTO();
+            freelancerProfileDTO.setId(id);
+            freelancerProfileDTO.setGender(freelancer.getGender());
+            freelancerProfileDTO.setAvatar(freelancer.getUser().getAvatar());
+            freelancerProfileDTO.setPhone(freelancer.getUser().getPhone());
+            freelancerProfileDTO.setFullName(freelancer.getUser().getFullName());
+            freelancerProfileDTO.setAddress(freelancer.getUser().getAddress());
+            freelancerProfileDTO.setCity(freelancer.getUser().getCity());
+            freelancerProfileDTO.setCountry(freelancer.getUser().getCountry());
+            List<SkillDTO> skillDTOS = new ArrayList<>();
+            for (Skill s : freelancer.getSkills()) {
+                SkillDTO skillDTO = new SkillDTO();
+                skillDTO.setId(s.getId());
+                skillDTO.setName(s.getName());
+                skillDTOS.add(skillDTO);
+            }
+            freelancerProfileDTO.setSkills(skillDTOS);
+            freelancerProfileDTO.setCostPerHour(freelancer.getCostPerHour());
+            freelancerProfileDTO.setEmail(freelancer.getUser().getAccount().getEmail());
+            freelancerProfileDTO.setDescription(freelancer.getDescription());
+            freelancerProfileDTO.setCv(freelancer.getCv());
+            List<EducationDTO> educationDTOS = new ArrayList<>();
+            for (Education e : freelancer.getEducations()
+            ) {
+                EducationDTO educationDTO = new EducationDTO();
+                educationDTO.setId(e.getId().toString());
+                educationDTO.setUniversity(e.getUniversity());
+                educationDTO.setMajor(e.getMajor());
+                educationDTO.setTo(e.getTo().toString());
+                educationDTO.setFrom(e.getFrom().toString());
+                educationDTO.setLevel(e.getLevel());
+                educationDTOS.add(educationDTO);
+            }
+            freelancerProfileDTO.setEducations(educationDTOS);
+            List<WorkExperienceDTO> workExperienceDTOS = new ArrayList<>();
+            for (WorkExperience w : freelancer.getWorkExperiences()
+            ) {
+                WorkExperienceDTO workExperienceDTO = new WorkExperienceDTO();
+                workExperienceDTO.setId(w.getId().toString());
+                workExperienceDTO.setDescription(w.getDescription());
+                workExperienceDTO.setMonthFrom(w.getMonthFrom());
+                workExperienceDTO.setYearFrom(w.getYearFrom());
+                workExperienceDTO.setMonthTo(w.getMonthTo());
+                workExperienceDTO.setYearTo(w.getYearTo());
+                workExperienceDTO.setCompanyName(w.getCompanyName());
+                workExperienceDTO.setPosition(w.getPosition());
+                workExperienceDTOS.add(workExperienceDTO);
+            }
+           /* boolean
+            for(JobRequest jobRequest:freelancer.getJobRequests()){
+                if(jobRequest)
+            }*/
+            freelancerProfileDTO.setWorkExps(workExperienceDTOS);
+            freelancerProfileDTO.setBirthDate(freelancer.getBirthdate());
+            freelancerProfileDTO.setSubCareer(freelancer.getSubCareer().getName());
+            freelancerProfileDTO.setStar(freelancer.getUser().getStar());
+
+            return freelancerProfileDTO;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
 
     @Override
     public void addEducation(Education education, String freelancerId) {
@@ -301,7 +369,7 @@ public class FreelancerServiceImpl implements FreelancerService {
             post.setListSkills(j.getSkills());
             listJobs.add(post);
         }
-        APIResponse<PostFindingDTO> postFindingDTOAPIResponse = new APIResponse();
+        APIResponse<PostFindingDTO> postFindingDTOAPIResponse = new APIResponse<>();
         postFindingDTOAPIResponse.setResults(listJobs);
         postFindingDTOAPIResponse.setPageIndex(pageNo + 1);
         postFindingDTOAPIResponse.setTotalPages(jobs.getTotalPages());
@@ -435,7 +503,7 @@ public class FreelancerServiceImpl implements FreelancerService {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Job job=postRepository.getReferenceById(jobId);
         APIResponse<FreelancerFilterDto> apiResponse = new APIResponse<>();
-        if(job!=null&&job.getCreateBy().getId().equals(recruiterId))
+        if(job.getCreateBy().getId().equals(recruiterId))
         {
         Page<Freelancer> freelancers = freelancerRepository.getFreelancerAppliedJob(jobId,city,skill, subCareer,keyword,status,pageable);
 

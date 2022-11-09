@@ -22,7 +22,7 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
     Page<Feedback> getFeedbacksFromId(String toId,Pageable pageable);
     @Modifying
     @Transactional
-    @Query(value = " insert into feedback (from_id,job_id,to_id,star,content,createdDate) values (:fromId,:jobId,:toId,:star,:content,:createdDate)"
+    @Query(value = " insert into feedback (from_id,job_id,to_id,star,content,created_date) values (:fromId,:jobId,:toId,:star,:content,:createdDate)"
             , nativeQuery = true)
     Integer insert(String fromId,int jobId, String toId, Integer star, String content, LocalDateTime createdDate);
 

@@ -44,6 +44,19 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
           "LEFT JOIN FETCH b.feedbackTos fb "+
           "where f.id like :id ")
   Freelancer getDetailFreelancer(String id);
+  @Query(value = "SELECT f FROM Freelancer f "+
+          "LEFT JOIN FETCH f.educations e " +
+          "LEFT JOIN FETCH f.workExperiences w " +
+          "LEFT JOIN FETCH f.user b " +
+          "LEFT JOIN FETCH b.account a " +
+          "LEFT JOIN FETCH f.skills s " +
+          "LEFT JOIN FETCH f.subCareer sub " +
+          "LEFT JOIN FETCH b.feedbackTos fb "+
+          "LEFT JOIN FETCH f.jobRequests rq "+
+          "LEFT JOIN FETCH rq.job job "+
+          "LEFT JOIN FETCH job.createBy cre "+
+          "where f.id like :id")
+  Freelancer getFreelancerDetailByRecruiter(String id);
 
 /*
   @Query(value = "select distinct a from Freelancer a"+
