@@ -348,7 +348,7 @@ public class PostServiceImpl implements PostService {
             }
             post.setTimeCount(message);
             post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
-            post.setStatus(status);
+            post.setStatus(j.getIsApproved());
             post.setTotalApplied(j.getJobRequests().size());
             postHistoryDtoList.add(post);
 

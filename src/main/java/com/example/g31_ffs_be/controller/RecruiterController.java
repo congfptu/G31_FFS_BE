@@ -5,6 +5,7 @@ import com.example.g31_ffs_be.model.Job;
 import com.example.g31_ffs_be.model.Recruiter;
 import com.example.g31_ffs_be.model.Subcareer;
 import com.example.g31_ffs_be.model.User;
+import com.example.g31_ffs_be.repository.JobRequestRepository;
 import com.example.g31_ffs_be.repository.PostRepository;
 import com.example.g31_ffs_be.repository.RecruiterRepository;
 import com.example.g31_ffs_be.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,6 +37,8 @@ public class RecruiterController {
     UserRepository userRepository;
     @Autowired
     RecruiterRepository recruiterRepository;
+    @Autowired
+    JobRequestRepository jobRequestRepository;
 
     @GetMapping("/findFreelancer")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
@@ -215,8 +219,7 @@ public class RecruiterController {
     @DeleteMapping("/deleteJob")
     public ResponseEntity<?> deleteJob(@RequestHeader(name = "Authorization") String token,
                                              @RequestParam(name = "recruiterId") String recruiterId,
-                                             @RequestParam(name = "jobId") int jobId
-    ) {
+                                             @RequestParam(name = "jobId") int jobId) {
         try {
             Job job=postRepository.getReferenceById(jobId);
         Recruiter r=recruiterRepository.getReferenceById(recruiterId);
@@ -240,7 +243,10 @@ public class RecruiterController {
             Job job=postRepository.getReferenceById(jobId);
             Recruiter r=recruiterRepository.getReferenceById(recruiterId);
             if(job.getCreateBy().getId().equals(r.getId())) {
-                job.setIsActive(false);
+                if(job.getIsActive())
+                    job.setIsActive(false);
+                else
+                    job.setIsActive(true);
                 postRepository.save(job);
                 return new ResponseEntity<>(true, HttpStatus.OK);
             }
@@ -260,6 +266,20 @@ public class RecruiterController {
                 return new ResponseEntity<>(postService.viewDetailPostByRecruiter(recruiterId,jobId), HttpStatus.OK);
 
 
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @PutMapping("/responseJobApply")
+    public ResponseEntity<?> approvedFreelancer(@RequestHeader(name = "Authorization") String token,
+                                     @RequestParam(name = "freelancerId") String freelancerId,
+                                     @RequestParam(name = "jobId") int jobId,
+                                     @RequestParam(name = "status") int status
+    ) {
+        try {
+            jobRequestRepository.responseJobApply(jobId,freelancerId,status, LocalDateTime.now());
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);

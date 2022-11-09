@@ -18,6 +18,11 @@ public interface JobRequestRepository extends JpaRepository<Job,String> {
     @Query(value = " insert into job_request (job_id,freelancer_id,status,apply_date,fee) values (:job_id,:freelancer_id,:status,:date,:fee)"
             , nativeQuery = true)
     Integer insert(Integer job_id, String freelancer_id, int status, LocalDateTime date,double fee);
+    @Modifying
+    @Transactional
+    @Query(value = " update  job_request set status=:status, approved_date=:approvedDate where job_id=:jobId and freelancer_id=:freelancerId"
+            , nativeQuery = true)
+    Integer responseJobApply(Integer jobId, String freelancerId, int status, LocalDateTime approvedDate);
     @Query(value = " SELECT DISTINCT job FROM Freelancer f" +
             " LEFT JOIN  f.jobRequests jrq" +
             " LEFT JOIN  jrq.job job" +

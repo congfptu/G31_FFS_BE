@@ -41,5 +41,7 @@ public class JobRequest {
     private Instant approvedDate;
 
 
+    @Column(name = "fee")
+    private Double fee;
 
 }

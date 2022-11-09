@@ -105,7 +105,7 @@ public class AdminController {
             return new ResponseEntity<>("Email đã tồn tại trên hệ thống, vui lòng thử email khác", HttpStatus.OK);
         } else {
             String id = "LS" + RandomString.make(8);
-            if (accountService.checkIdExist(id)==false) {
+            if (!accountService.checkIdExist(id)) {
                 Account acc = new Account();
                 acc.setId(id);
                 acc.setEmail(staffDto.getEmail());
