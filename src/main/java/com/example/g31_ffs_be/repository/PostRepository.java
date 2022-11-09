@@ -213,6 +213,14 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             "where c.recruiter_id=:recruiterId",nativeQuery = true)
     Integer getTotalAppliedById(String recruiterId);*/
 
+    @Query(value = " SELECT j FROM Job j" +
+            " LEFT JOIN FETCH j.createBy cre" +
+            " LEFT JOIN FETCH j.skills " +
+            " LEFT JOIN FETCH j.subCareer " +
+            " WHERE (j.id=:id and cre.id=:recruiterId)  "
+    )
+    Job getDetailPostByRecruiter(String recruiterId,int id);
+
     @Modifying
     @Transactional
     @Query(value = " insert into job_skill (job_id,skill_id) values (:jobId,:skillId)"

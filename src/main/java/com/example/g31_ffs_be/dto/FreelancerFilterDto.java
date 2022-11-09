@@ -7,6 +7,7 @@ import java.util.Set;
 
 @Data
 public class FreelancerFilterDto {
+    private String id;
     private  String avatar;
     private  String fullName;
     private  String subCareer;

@@ -2,9 +2,11 @@ package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Job;
+import com.example.g31_ffs_be.model.Recruiter;
 import com.example.g31_ffs_be.model.Subcareer;
 import com.example.g31_ffs_be.model.User;
 import com.example.g31_ffs_be.repository.PostRepository;
+import com.example.g31_ffs_be.repository.RecruiterRepository;
 import com.example.g31_ffs_be.repository.UserRepository;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
@@ -31,6 +33,8 @@ public class RecruiterController {
     RecruiterService recruiterService;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RecruiterRepository recruiterRepository;
 
     @GetMapping("/findFreelancer")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
@@ -208,4 +212,58 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+    @DeleteMapping("/deleteJob")
+    public ResponseEntity<?> deleteJob(@RequestHeader(name = "Authorization") String token,
+                                             @RequestParam(name = "recruiterId") String recruiterId,
+                                             @RequestParam(name = "jobId") int jobId
+    ) {
+        try {
+            Job job=postRepository.getReferenceById(jobId);
+        Recruiter r=recruiterRepository.getReferenceById(recruiterId);
+        if(job.getCreateBy().getId().equals(r.getId())) {
+
+            postRepository.deleteById(job.getId());
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @PutMapping("/hideJob")
+    public ResponseEntity<?> hideJob(@RequestHeader(name = "Authorization") String token,
+                                       @RequestParam(name = "recruiterId") String recruiterId,
+                                       @RequestParam(name = "jobId") int jobId
+    ) {
+        try {
+            Job job=postRepository.getReferenceById(jobId);
+            Recruiter r=recruiterRepository.getReferenceById(recruiterId);
+            if(job.getCreateBy().getId().equals(r.getId())) {
+                job.setIsActive(false);
+                postRepository.save(job);
+                return new ResponseEntity<>(true, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @GetMapping("/viewDetailPost")
+    public ResponseEntity<?> viewDetailPost(@RequestHeader(name = "Authorization") String token,
+                                     @RequestParam(name = "recruiterId") String recruiterId,
+                                     @RequestParam(name = "jobId") int jobId
+    ) {
+        try {
+
+                return new ResponseEntity<>(postService.viewDetailPostByRecruiter(recruiterId,jobId), HttpStatus.OK);
+
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+
 }

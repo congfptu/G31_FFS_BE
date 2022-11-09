@@ -444,6 +444,7 @@ public class FreelancerServiceImpl implements FreelancerService {
             {
                 for (Freelancer f : freelancers.getContent()) {
                     FreelancerFilterDto filterDto = new FreelancerFilterDto();
+                    filterDto.setId(f.getId());
                     filterDto.setSkills(f.getSkills());
                     filterDto.setAvatar(f.getUser().getAvatar());
                     filterDto.setCity(f.getUser().getCity());
