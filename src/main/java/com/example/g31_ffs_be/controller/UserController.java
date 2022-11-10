@@ -13,15 +13,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
-import java.sql.Date;
-import java.time.Instant;
+
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+
 
 @RestController
 @RequestMapping("/api/user")
 @CrossOrigin("*")
-@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') ")
+//@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') ")
 public class UserController {
     @Autowired
     AccountService accountService;
@@ -53,6 +52,7 @@ public class UserController {
     @Autowired UserServiceRepository userServiceRepository;
     @Autowired ReportRepository reportRepository;
     @Autowired RecruiterRepository recruiterRepository;
+    @Autowired ViewProfileHistoryRepository viewProfileHistory;
 
     @GetMapping("/searchTransaction")
     public ResponseEntity<?> searchTransaction(
@@ -173,17 +173,27 @@ public class UserController {
     public ResponseEntity<?> changePassword(
             @RequestHeader(name = "Authorization") String token,
             @Valid @RequestBody AccountDto accountDto) {
-
         if(accountService.changePasswordUser(accountDto))
         return new ResponseEntity<>(true, HttpStatus.OK);
         else return new ResponseEntity<>(false, HttpStatus.OK);
-
     }
     @GetMapping("/skill")
     public ResponseEntity<?> getAllSkill(@RequestHeader(name = "Authorization") String token) {
-
             return new ResponseEntity<>(skillRepository.findAll(), HttpStatus.OK);
-
+    }
+    @PutMapping("/updateAccountBalance")
+    public ResponseEntity<?> updateAccountBalance(@RequestHeader(name = "Authorization") String token,
+                                                  @RequestParam(name = "userId", defaultValue = "") String userId,
+                                                  @RequestParam(name = "fee", defaultValue = "0") double fee
+           ) {
+           User user=userRepository.getReferenceById(userId);
+           user.setAccountBalance(user.getAccountBalance()-fee);
+           userRepository.save(user);
+          ViewProfileHistory profileHistory=new ViewProfileHistory();
+          profileHistory.setUser(user);
+          profileHistory.setFee(fee);
+          viewProfileHistory.save(profileHistory);
+            return new ResponseEntity<>(true, HttpStatus.OK);
 
     }
 

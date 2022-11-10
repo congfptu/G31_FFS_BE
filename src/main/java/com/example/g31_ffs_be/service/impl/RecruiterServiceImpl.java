@@ -6,7 +6,6 @@ import com.example.g31_ffs_be.repository.FreelancerRepository;
 import com.example.g31_ffs_be.repository.RecruiterRepository;
 import com.example.g31_ffs_be.repository.UserRepository;
 import com.example.g31_ffs_be.service.RecruiterService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class RecruiterServiceImpl implements RecruiterService {

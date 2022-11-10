@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/recruiter")
-@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') ")
+//@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') ")
 public class RecruiterController {
     @Autowired
     FreelancerService freelancerService;

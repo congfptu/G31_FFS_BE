@@ -19,8 +19,8 @@ import javax.validation.constraints.NotEmpty;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/job")
-@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') or hasAuthority('staff') ")
-public class    PostController {
+//@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') or hasAuthority('staff') ")
+public class  PostController {
     @Autowired
     PostService postService;
     @Autowired
