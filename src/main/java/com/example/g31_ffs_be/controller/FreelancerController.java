@@ -71,8 +71,8 @@ public class FreelancerController {
                                      @RequestParam(name = "sub_career_id", defaultValue = "-1") int sub_career_id
     ) {
         try {
-            User user=userRepository.findByUserId(userId);
-            return new ResponseEntity<>(postService.getJobSearch(pageIndex,10,area,keyword,paymentType,sub_career_id,user.getIsMemberShip()), HttpStatus.OK);
+
+            return new ResponseEntity<>(postService.getJobSearch(pageIndex,10,area,keyword,paymentType,sub_career_id,userId), HttpStatus.OK);
 
         } catch (Exception e) {
             System.out.println(e);

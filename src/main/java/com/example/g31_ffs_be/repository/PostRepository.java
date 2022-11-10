@@ -151,7 +151,13 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
     @Query(value = " SELECT DISTINCT j FROM Job j " +
             " LEFT JOIN  j.skills s "+
             " LEFT JOIN FETCH j.subCareer sub "+
+            " LEFT JOIN  j.jobRequests rq "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
+            " and (j.id not in" +
+                        " (select job.id from JobRequest request " +
+                        " left join  request.job job " +
+                        " left join  request.freelancer " +
+                        " fre where fre.id=:freelancerId) )"+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
@@ -162,32 +168,47 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " LEFT JOIN  j.skills s "+
             " LEFT JOIN  j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
+            " and (j.id not in" +
+                        " (select job.id from JobRequest request " +
+                        " left join  request.job job " +
+                        " left join  request.freelancer " +
+                        " fre where fre.id=:freelancerId) )"+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
             " and ((j.budget <400000.0 and j.paymentType=1) or (j.budget <20000000.0 and j.paymentType=2))"+
              "Order by j.topTime desc,j.budget desc"
     )
-    Page<Job> getAllJobNormalSearchAll(String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
+    Page<Job> getAllJobNormalSearchAll(String freelancerId,String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
     @Query(value = " SELECT DISTINCT j FROM Job j " +
             " LEFT JOIN  j.skills s "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
+            " and j.id not in" +
+                        " (select distinct job.id from JobRequest request " +
+                        " left join  request.job job " +
+                        " left join request.freelancer " +
+                        " fre where fre.id=:freelancerId)"+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
-            " and (sub.id=:subCareerId or :subCareerId=-1)"
-            + "Order by j.topTime desc,j.budget desc"
+            " and (sub.id=:subCareerId or :subCareerId=-1)"+
+            "Order by j.topTime desc,j.budget desc"
 
             , countQuery = " SELECT count( distinct j.id) FROM Job j " +
             " LEFT JOIN  j.skills s "+
             " LEFT JOIN  j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
+            " and j.id not in" +
+                        " (select distinct job.id from JobRequest request " +
+                        " left join  request.job job " +
+                        " left join  request.freelancer " +
+                        " fre where fre.id=:freelancerId)"+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
-            "Order by j.topTime desc,j.budget desc"
+            " Order by j.topTime desc,j.budget desc"
     )
-    Page<Job> getAllJobMemberShipSearchAll(String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
+    Page<Job> getAllJobMemberShipSearchAll(String freelancerId,String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
     @Query(value = " SELECT DISTINCT j FROM Recruiter r " +
             " LEFT JOIN  r.jobs j "+
             " LEFT JOIN  j.jobRequests "+

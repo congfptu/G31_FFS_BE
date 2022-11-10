@@ -5,6 +5,7 @@ import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.PostRepository;
 import com.example.g31_ffs_be.repository.RecruiterRepository;
 import com.example.g31_ffs_be.repository.SubCareerRepository;
+import com.example.g31_ffs_be.repository.UserRepository;
 import com.example.g31_ffs_be.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ import java.util.*;
 public class PostServiceImpl implements PostService {
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     private ModelMapper mapper;
     @Autowired
@@ -221,15 +224,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public APIResponse<PostFindingDTO> getJobSearch(int pageNumber, int pageSize, String area,String keyword,int paymentType,int sub_career_id,Boolean isMemberShip) {
+    public APIResponse<PostFindingDTO> getJobSearch(int pageNumber, int pageSize, String area,String keyword,int paymentType,int sub_career_id,String userId) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         APIResponse<PostFindingDTO> apiResponse = new APIResponse<>();
         Page<Job> jobs;
-
-        if(isMemberShip)
-                jobs=postRepository.getAllJobMemberShipSearchAll(area,keyword,paymentType,sub_career_id,pageable);
+         User user=userRepository.getReferenceById(userId);
+        if(user.getIsMemberShip())
+                jobs=postRepository.getAllJobMemberShipSearchAll(userId,area,keyword,paymentType,sub_career_id,pageable);
         else
-                    jobs=postRepository.getAllJobNormalSearchAll(area,keyword,paymentType,sub_career_id,pageable);
+                    jobs=postRepository.getAllJobNormalSearchAll(userId,area,keyword,paymentType,sub_career_id,pageable);
         if(jobs!=null) {
             List<Job> jobList = jobs.getContent();
             List<PostFindingDTO> listJobs = new ArrayList<>();
