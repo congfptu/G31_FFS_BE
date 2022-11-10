@@ -322,5 +322,17 @@ public class FreelancerController {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
+    @DeleteMapping("/deleteJobRequest")
+    public ResponseEntity<?> deleteJobRequest(@RequestHeader(name = "Authorization") String token,
+                                         @RequestParam(name = "freelancerId", defaultValue = "0") String freelancerId,
+                                         @RequestParam(name = "jobId", defaultValue = "0") int jobId ) {
+        try {
+            jobRequestRepository.deleteJobRequest(jobId,freelancerId );
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
 
 }
