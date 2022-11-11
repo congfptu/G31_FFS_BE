@@ -102,8 +102,9 @@ public class GuestController {
                 return new ResponseEntity<>("Email không đúng!", HttpStatus.BAD_REQUEST);
             }
             String role=account.getRole().getRoleName();
-            if(role.equals("admin")||(role.equals("staff") &&account.getStaff().getIsActive())||(account.getUser()!=null&&!account.getUser().getIsBanned())){
-                System.out.println("váo day");
+            if(role.equals("admin")||(role.equals("staff") &&account.getStaff().getIsActive())|| (account.getUser()!=null&&!account.getUser().getIsBanned())){
+                if(!(role.equals("recruiter")&&account.getUser().getRecruiter().getIsActive()))
+                    return new ResponseEntity<>(" Người dùng đã bị chặn !", HttpStatus.BAD_REQUEST);
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(), loginDTO.getPassword()
                 ));
@@ -118,9 +119,9 @@ public class GuestController {
                     if(!role.equals("staff")) {
                         jwtAuthResponse.setAvatar(account.getUser().getAvatar());
                         jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
-                        jwtAuthResponse.setFeePostJob(feeRepository.findByName("postJob").getPrice());
-                        jwtAuthResponse.setFeeViewProfile(feeRepository.findByName("viewProfile").getPrice());
-                        jwtAuthResponse.setFeeApplyJob(feeRepository.findByName("applyJob").getPrice());
+                        jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
+                        jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
+                        jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
                         jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
                     }
                     jwtAuthResponse.setEmail(account.getEmail());
@@ -128,7 +129,7 @@ public class GuestController {
 
                 return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
             }else{
-                System.out.println("váo loi");
+
                 return new ResponseEntity<>(" Người dùng đã bị chặn !", HttpStatus.BAD_REQUEST);
             }
         }catch (AuthenticationException e){

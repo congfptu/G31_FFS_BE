@@ -48,21 +48,46 @@ public class RecruiterServiceImpl implements RecruiterService {
             ra.setEmail(u.getAccount().getEmail());
             ra.setIsBanned(u.getIsBanned());
             ra.setAccountBalance(u.getAccountBalance());
+            ra.setPhone(u.getPhone());
             ras.add(ra);
         }
         return ras;
     }
 
-    @Override
-    public APIResponse<RecruiterAdminDto> getAllRecruiterByStatus(String name,Boolean status, int pageNo, int pageSize) {
+   /* @Override
+    public APIResponse<RecruiterAdminDto> getRecruiterActivated(String name,Boolean status,Boolean isBanned,int defaultBan, int pageNo, int pageSize) {
         APIResponse<RecruiterAdminDto> apiResponse=new APIResponse();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Recruiter> page = recruiterRepository.getRecruiterByName(name,status,pageable);
+        Page<Recruiter> page = recruiterRepository.getRecruiterActive(name,status,pageable);
         apiResponse.setPageIndex(pageNo+1);
         apiResponse.setResults(convertListRecruiterAdminDto(page.getContent()));
         apiResponse.setTotalPages(page.getTotalPages());
         apiResponse.setTotalResults(page.getTotalElements());
 
+        return apiResponse;
+    }*/
+
+    @Override
+    public APIResponse<RecruiterAdminDto> getRecruiterActivated(String keyword, Boolean status,int defaultStatus, int pageNo, int pageSize) {
+        APIResponse<RecruiterAdminDto> apiResponse=new APIResponse();
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Recruiter> page = recruiterRepository.getRecruiterActive(keyword,status,defaultStatus,pageable);
+        apiResponse.setPageIndex(pageNo+1);
+        apiResponse.setResults(convertListRecruiterAdminDto(page.getContent()));
+        apiResponse.setTotalPages(page.getTotalPages());
+        apiResponse.setTotalResults(page.getTotalElements());
+        return apiResponse;
+    }
+
+    @Override
+    public APIResponse<RecruiterAdminDto> getRecruiterNotActivated(String keyword, int pageNo, int pageSize) {
+        APIResponse<RecruiterAdminDto> apiResponse=new APIResponse();
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Recruiter> page = recruiterRepository.getRecruiterIsNotActive(keyword,pageable);
+        apiResponse.setPageIndex(pageNo+1);
+        apiResponse.setResults(convertListRecruiterAdminDto(page.getContent()));
+        apiResponse.setTotalPages(page.getTotalPages());
+        apiResponse.setTotalResults(page.getTotalElements());
         return apiResponse;
     }
 

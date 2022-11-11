@@ -20,16 +20,33 @@ public interface RecruiterRepository extends JpaRepository<Recruiter, String> {
             "LEFT JOIN FETCH r.user u " +
             "LEFT JOIN FETCH u.account a " +
             "LEFT JOIN FETCH a.role ro " +
-            "where (u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')) " +
-            "and u.isBanned=:status ",
-            countQuery = "SELECT count(r) FROM Recruiter r " +
+            "where r.isActive=true " +
+            "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "+
+            "and (u.isBanned=:isBanned or :defaultBan=-1)"
+            ,
+            countQuery = "SELECT count(r.id) FROM Recruiter r " +
                     "LEFT JOIN  r.user u " +
-                    "LEFT JOIN u.account a " +
-                    "LEFT JOIN a.role ro " +
-                    "where u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')" +
-                    "and u.isBanned=:status ")
-    Page<Recruiter> getRecruiterByName(String name, Boolean status, Pageable pageable);
-
+                    "LEFT JOIN  u.account a " +
+                    "LEFT JOIN  a.role ro " +
+                    "where r.isActive=true " +
+                    "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "+
+                    "and (u.isBanned=:isBanned or :defaultBan=-1)")
+    Page<Recruiter> getRecruiterActive(String keyword,Boolean isBanned,int defaultBan,Pageable pageable);
+    @Query(value = "SELECT r FROM Recruiter r " +
+            "LEFT JOIN FETCH r.user u " +
+            "LEFT JOIN FETCH u.account a " +
+            "LEFT JOIN FETCH a.role ro " +
+            "where r.isActive=false " +
+            "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "
+            ,
+            countQuery = "SELECT count(r.id) FROM Recruiter r " +
+                    "LEFT JOIN  r.user u " +
+                    "LEFT JOIN  u.account a " +
+                    "LEFT JOIN  a.role ro " +
+                    "where r.isActive=false " +
+                    "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "
+                  )
+    Page<Recruiter> getRecruiterIsNotActive(String keyword,Pageable pageable);
     @Query(value = "select r from Recruiter r " +
             "LEFT JOIN FETCH r.user u " +
             "LEFT JOIN FETCH u.account a " +

@@ -54,4 +54,7 @@ public class Recruiter {
     @OneToMany(mappedBy = "createBy")
     private Set<Job> jobs = new LinkedHashSet<>();
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
 }

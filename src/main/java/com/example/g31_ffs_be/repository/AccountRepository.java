@@ -12,6 +12,7 @@ public interface AccountRepository extends JpaRepository<Account,String> {
          "LEFT JOIN FETCH a.role r "+
          "LEFT JOIN FETCH a.staff s "+
          "LEFT JOIN FETCH a.user u "+
+         "LEFT JOIN FETCH u.recruiter re "+
          "where a.email like :email")
  Account findByEmail(String email);
  @Query(value = " SELECT distinct a FROM Account a " +

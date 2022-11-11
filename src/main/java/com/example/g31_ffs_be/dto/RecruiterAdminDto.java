@@ -9,4 +9,5 @@ public class RecruiterAdminDto {
     String fullName;
     double accountBalance;
     Boolean isBanned;
+    String phone;
 }

@@ -206,19 +206,35 @@ public class AdminController {
     }
 
     //recruiter
-    @GetMapping("/recruiter")
-    public ResponseEntity<?> getRecruiterFilter(@RequestHeader(name = "Authorization") String token,
-                                                @RequestParam(name = "name", defaultValue = "") String name,
-                                                @RequestParam(name = "status", defaultValue = "") Boolean status,
+    @GetMapping("/recruiterActivated")
+    public ResponseEntity<?> getRecruiterActivated(@RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                                                @RequestParam(name = "status", defaultValue = "-1") int status,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex
     ) {
+        Boolean statusBoolean=false;
+        if(status==1) statusBoolean=true;
         try {
-            return new ResponseEntity<>(recruiterService.getAllRecruiterByStatus(name, status, pageIndex, 10), HttpStatus.OK);
+            return new ResponseEntity<>(recruiterService.getRecruiterActivated(keyword,statusBoolean,status,pageIndex,10), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
     }
+    @GetMapping("/recruiterNotActivated")
+    public ResponseEntity<?> getRecruiterNotActivated(@RequestHeader(name = "Authorization") String token,
+                                                   @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                                                   @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex
+    ) {
+        try {
+            return new ResponseEntity<>(recruiterService.getRecruiterNotActivated(keyword,pageIndex,10), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+
 
     @GetMapping("/top5-recruiter")
     public ResponseEntity<?> getTop5Recruiter(@RequestHeader(name = "Authorization") String token,
@@ -319,5 +335,20 @@ public class AdminController {
     @GetMapping("/benefit")
     public ResponseEntity<?> getAllBenefits(@RequestHeader(name = "Authorization") String token) {
         return new ResponseEntity<>(benefitRepository.findAll(), HttpStatus.CREATED);
+    }
+    @PutMapping("/approveRecruiter")
+    public ResponseEntity<?> approveRecruiter(@RequestHeader(name = "Authorization") String token,
+                                              @RequestParam(name = "userId", defaultValue = "") String userId) {
+        try{
+            User user=userRepository.getReferenceById(userId);
+            user.setIsBanned(false);
+            userRepository.save(user);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(false, HttpStatus.CREATED);
+        }
+
+
     }
 }
