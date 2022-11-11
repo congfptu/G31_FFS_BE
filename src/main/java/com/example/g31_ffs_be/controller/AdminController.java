@@ -254,8 +254,7 @@ public class AdminController {
     //Service
     @GetMapping("/service")
     public ResponseEntity<?> getServiceByName(@RequestHeader(name = "Authorization") String token,
-                                              @RequestParam(name = "roleId", defaultValue = "-1") int roleId,
-                                              @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
+                                              @RequestParam(name = "roleId", defaultValue = "-1") int roleId) {
         try {
             return new ResponseEntity<>(serviceService.getAllService(roleId), HttpStatus.OK);
         } catch (Exception e) {
@@ -290,13 +289,16 @@ public class AdminController {
 
     @PutMapping("update-service")
     public ResponseEntity<?> updateService(@RequestHeader(name = "Authorization") String token
-            , @RequestBody ServiceDto serviceDto
+                         ,  @RequestParam(name = "serviceId", defaultValue = "") int serviceId,
+                                           @RequestParam(name = "price", defaultValue = "0") double price
     ) {
         try {
-            serviceService.saveService(serviceDto);
-            return new ResponseEntity<>("Update dịch vụ thành công!", HttpStatus.CREATED);
+            Service service=serviceRepository.getReferenceById(serviceId);
+            service.setPrice(price);
+            serviceRepository.save(service);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Không thành công!", HttpStatus.CREATED);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
 

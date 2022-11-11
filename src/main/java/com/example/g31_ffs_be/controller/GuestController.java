@@ -103,9 +103,11 @@ public class GuestController {
             }
             String role=account.getRole().getRoleName();
 
-            if(role.equals("admin")||(role.equals("staff") &&account.getStaff().getIsActive())|| (account.getUser()!=null&&!account.getUser().getIsBanned())){
-            /*    if(!(role.equals("recruiter")&&account.getUser().getRecruiter().getIsActive()))
-                    return new ResponseEntity<>(" Người dùng đã bị chặn !", HttpStatus.BAD_REQUEST);*/
+            if(role.equals("admin")||(role.equals("staff") &&account.getStaff().getIsActive())||
+                    (account.getUser()!=null&&!account.getUser().getIsBanned()&&role.equals("freelancer"))||
+                    !(role.equals("recruiter")&&account.getUser().getRecruiter().getIsActive())
+            ){
+
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(), loginDTO.getPassword()
                 ));
