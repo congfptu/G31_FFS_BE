@@ -24,5 +24,4 @@ public class ServiceDto {
 
     private Integer duration;
 
-    private Role role;
 }

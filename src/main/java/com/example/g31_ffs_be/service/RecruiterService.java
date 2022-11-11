@@ -14,7 +14,7 @@ public interface RecruiterService {
     APIResponse<RecruiterAdminDto> getRecruiterActivated(String keyword,Boolean status,int defaultStatus, int pageNo, int pageSize);
     APIResponse<RecruiterAdminDto> getRecruiterNotActivated(String keyword, int pageNo, int pageSize);
     RecruiterDetailDTO getDetailRecruiter(String id);
-    List<RecruiterAdminDto> getTop5RecruiterByName(String name,Boolean status);
+    List<RecruiterAdminDto> getTop5Recruiter(String name, Boolean isActive);
 
     Boolean updateProfile(RegisterDto registerDto);
     Boolean updateProfileRecruiter(RegisterDto registerDto);

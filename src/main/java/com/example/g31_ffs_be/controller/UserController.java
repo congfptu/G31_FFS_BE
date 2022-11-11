@@ -136,9 +136,9 @@ public class UserController {
     }
 
     @GetMapping("/getAllService")
-    public ResponseEntity<?> insertFeedBack(@RequestParam(name = "role", defaultValue = "") String roleName) {
+    public ResponseEntity<?> getAllServiceByRoleName(@RequestParam(name = "role", defaultValue = "") String roleName) {
         try {
-            return new ResponseEntity<>(serviceService.getAllService(roleName), HttpStatus.CREATED);
+            return new ResponseEntity<>(serviceService.getAllServiceByRole(roleName), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

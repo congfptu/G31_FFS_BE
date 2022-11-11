@@ -6,9 +6,11 @@ import com.example.g31_ffs_be.dto.ServiceResponse;
 import com.example.g31_ffs_be.model.Benefit;
 
 import com.example.g31_ffs_be.model.Fee;
+import com.example.g31_ffs_be.model.Role;
 import com.example.g31_ffs_be.model.Service;
 import com.example.g31_ffs_be.repository.BenefitRepository;
 import com.example.g31_ffs_be.repository.FeeRepository;
+import com.example.g31_ffs_be.repository.RoleRepository;
 import com.example.g31_ffs_be.repository.ServiceRepository;
 import com.example.g31_ffs_be.service.ServiceService;
 import org.modelmapper.ModelMapper;
@@ -19,12 +21,16 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 @org.springframework.stereotype.Service
 public class ServiceServiceImpl implements ServiceService {
     @Autowired
     ServiceRepository serviceRepository;
     @Autowired
     BenefitRepository benefitRepository;
+    @Autowired
+    RoleRepository roleRepository;
     @Autowired
     FeeRepository feeRepository;
     @Autowired
@@ -40,15 +46,15 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public ServiceResponse getAllService(String name, int roleId, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        List<Service> services = serviceRepository.getServiceByName(name,roleId,pageable);
+    public ServiceResponse getAllService(int roleId) {
+        List<Service> services = serviceRepository.getServiceByName(roleId);
         List<ServiceDto> serviceDTOs=new ArrayList<>();
         for(Service service:services){
             serviceDTOs.add(mapToServiceDto(service));
         }
         List<Fee> fees=feeRepository.findAll();
-        List<Benefit> benefits=benefitRepository.findAll();
+        Role role=roleRepository.getReferenceById(roleId);
+        Set<Benefit> benefits=role.getBenefits();
         ServiceResponse serviceResponse=new ServiceResponse();
         serviceResponse.setServices(serviceDTOs);
         serviceResponse.setFees(fees);
@@ -59,16 +65,11 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public void saveService(ServiceDto serviceDto) {
         Service service=serviceRepository.findById(serviceDto.getId()).get();
-        service.setBenefits(null);
         serviceRepository.save(service);
         service=mapToServiceEntity(serviceDto);
         serviceRepository.save(service);
     }
 
-    @Override
-    public List<Benefit> getBenefitsOfServiceByID(int id) {
-        return  serviceRepository.getBenefitByServiceID(id).getBenefits();
-    }
 
 
     @Override
@@ -79,7 +80,16 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public List<Service> getAllService(String roleName) {
-       return serviceRepository.getAllService(roleName);
+    public ServiceResponse getAllServiceByRole(String roleName) {
+         ServiceResponse serviceResponse =new ServiceResponse();
+         Role role=roleRepository.findByRoleName(roleName);
+        Set<Service> services =role.getServices();
+        List<ServiceDto> serviceDTOs=new ArrayList<>();
+        for(Service service:services){
+            serviceDTOs.add(mapToServiceDto(service));
+        }
+         serviceResponse.setServices(serviceDTOs);
+        serviceResponse.setBenefits(role.getBenefits());
+        return serviceResponse;
     }
 }

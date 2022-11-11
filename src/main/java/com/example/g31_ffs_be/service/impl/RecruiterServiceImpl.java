@@ -116,10 +116,12 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public List<RecruiterAdminDto> getTop5RecruiterByName(String name,Boolean status) {
-        List<Recruiter> recruiters = recruiterRepository.getTop5Recruiter(name,status,PageRequest.of(0,5)).getContent();
+    public List<RecruiterAdminDto> getTop5Recruiter(String name, Boolean isActive) {
+        List<Recruiter> recruiters = recruiterRepository.getTop5Recruiter(name,isActive,PageRequest.of(0,5)).getContent();
         return convertListRecruiterAdminDto(recruiters);
     }
+
+
 
     @Override
     public Boolean updateProfile(RegisterDto registerDto) {

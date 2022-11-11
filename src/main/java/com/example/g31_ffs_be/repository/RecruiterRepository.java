@@ -50,15 +50,17 @@ public interface RecruiterRepository extends JpaRepository<Recruiter, String> {
     @Query(value = "select r from Recruiter r " +
             "LEFT JOIN FETCH r.user u " +
             "LEFT JOIN FETCH u.account a " +
-            "where (u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')) " +
-            "and u.isBanned=:status " +
+            "where r.isActive=:isActive " +
+            "and (u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')) " +
             "order by length(r.id),r.id asc",
             countQuery = "select count(r) from Recruiter r " +
                     "LEFT JOIN  r.user u " +
                     "LEFT JOIN  u.account a " +
-                    "where (u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%'))" +
-                    "and u.isBanned=:status ")
-    Page<Recruiter> getTop5Recruiter(String name, Boolean status, Pageable pageable);
+                    "where r.isActive=:isActive " +
+                    "and (u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%'))"
+    )
+    Page<Recruiter> getTop5Recruiter(String name, Boolean isActive, Pageable pageable);
+
 
     @Query(value = "select r from Recruiter r " +
             "LEFT JOIN FETCH r.user u " +

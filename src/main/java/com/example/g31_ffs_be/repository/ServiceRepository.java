@@ -12,22 +12,11 @@ import java.util.List;
 public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "select distinct s from Service s " +
             "LEFT JOIN FETCH s.role r "+
-            "where s.serviceName like CONCAT('%',:name,'%') and r.id = :roleId ")
-    List<Service> getServiceByName(String name,int roleId,Pageable pageable);
-    @Query(value = "select s from Service s "
-             +"LEFT JOIN fetch s.benefits "+
+            "where r.id = :roleId ")
+    List<Service> getServiceByName(int roleId);
+    @Query(value = "select s from Service s "+
             "where s.serviceName =:name " )
     Service getService(String name);
-    @Query(value = "SELECT s FROM Service s "+
-            "LEFT JOIN fetch s.benefits b "+
-            " where s.id=:id "+
-            "order by b.id asc")
-    Service getBenefitByServiceID(int id);
 
-    @Query(value = "SELECT distinct s FROM Service s "+
-            "LEFT JOIN fetch s.benefits b "+
-            "LEFT JOIN fetch s.role r where r.roleName=:roleName"
-    )
-    List<Service> getAllService(String roleName);
 
 }

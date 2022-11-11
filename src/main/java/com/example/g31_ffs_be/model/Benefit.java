@@ -30,13 +30,10 @@ public class Benefit {
     @Size(max = 255)
     @Column(name = "name")
     private String name;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "benefit_service",
             joinColumns = @JoinColumn(name = "benefit_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id"))
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     @JsonIgnore
-    private Set<Service> services = new LinkedHashSet<>();
-
-
-
+    private Set<Role> roles;
 }

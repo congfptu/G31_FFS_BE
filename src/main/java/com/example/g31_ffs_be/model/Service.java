@@ -48,12 +48,6 @@ public class Service {
     @JsonIgnore
     private Role role;
 
-    @ManyToMany
-    @JoinTable(name = "benefit_service",
-            joinColumns = @JoinColumn(name = "service_id"),
-            inverseJoinColumns = @JoinColumn(name = "benefit_id"))
-    private List<Benefit> benefits = new ArrayList<>();
-
     @OneToMany(mappedBy = "service")
     @JsonIgnore
     private Set<UserService> userServices = new LinkedHashSet<>();

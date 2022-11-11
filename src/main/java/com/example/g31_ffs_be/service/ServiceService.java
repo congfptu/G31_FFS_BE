@@ -8,11 +8,10 @@ import com.example.g31_ffs_be.model.Service;
 
 import java.util.List;
 public interface ServiceService {
-    ServiceResponse getAllService(String name, int roleId, int pageNo, int pageSize);
+    ServiceResponse getAllService(int roleId);
 
     void saveService(ServiceDto serviceDto);
-    List<Benefit> getBenefitsOfServiceByID(int id);
     Boolean checkServiceNameUnique(String name);
-    List<Service> getAllService(String roleName);
+    ServiceResponse getAllServiceByRole(String roleName);
 
 }

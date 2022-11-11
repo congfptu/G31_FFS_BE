@@ -38,5 +38,16 @@ public class Role {
     @JsonIgnore
     private Set<Account> accounts = new LinkedHashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "benefit_service",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "benefit_id"))
+    @JsonIgnore
+    private Set<Benefit> benefits;
+
+
+    @OneToMany(mappedBy = "role")
+    @JsonIgnore
+    private Set<Service> services = new LinkedHashSet<>();
 
 }

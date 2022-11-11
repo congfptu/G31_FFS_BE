@@ -10,12 +10,10 @@ import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -239,10 +237,12 @@ public class AdminController {
     @GetMapping("/top5-recruiter")
     public ResponseEntity<?> getTop5Recruiter(@RequestHeader(name = "Authorization") String token,
                                               @RequestParam(name = "name", defaultValue = "") String name,
-                                              @RequestParam(name = "status", defaultValue = "false") Boolean status
+                                              @RequestParam(name = "isActive", defaultValue = "false") Boolean isActive
     ) {
-        return new ResponseEntity<>(recruiterService.getTop5RecruiterByName(name,status), HttpStatus.OK);
+        return new ResponseEntity<>(recruiterService.getTop5Recruiter(name,isActive), HttpStatus.OK);
     }
+
+
 
     @GetMapping("/detail-recruiter")
     public ResponseEntity<?> getDetailRecruiter(@RequestHeader(name = "Authorization") String token,
@@ -254,11 +254,10 @@ public class AdminController {
     //Service
     @GetMapping("/service")
     public ResponseEntity<?> getServiceByName(@RequestHeader(name = "Authorization") String token,
-                                              @RequestParam(name = "name", defaultValue = "") String name,
                                               @RequestParam(name = "roleId", defaultValue = "-1") int roleId,
                                               @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
         try {
-            return new ResponseEntity<>(serviceService.getAllService(name, roleId, pageIndex, 10), HttpStatus.OK);
+            return new ResponseEntity<>(serviceService.getAllService(roleId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
@@ -286,17 +285,6 @@ public class AdminController {
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("/benefits-service")
-    public ResponseEntity<?> benefitService(@RequestHeader(name = "Authorization") String token,
-                                            @RequestParam(name = "id", defaultValue = "") String id) {
-        try {
-            int serviceId = Integer.parseInt(id);
-            return new ResponseEntity<>(serviceService.getBenefitsOfServiceByID(serviceId), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Không tìm thấy service cần xóa", HttpStatus.CREATED);
         }
     }
 
@@ -340,9 +328,9 @@ public class AdminController {
     public ResponseEntity<?> approveRecruiter(@RequestHeader(name = "Authorization") String token,
                                               @RequestParam(name = "userId", defaultValue = "") String userId) {
         try{
-            User user=userRepository.getReferenceById(userId);
-            user.setIsBanned(false);
-            userRepository.save(user);
+            Recruiter recruiter=recruiterRepository.getReferenceById(userId);
+            recruiter.setIsActive(true);
+            recruiterRepository.save(recruiter);
             return new ResponseEntity<>(true, HttpStatus.OK);
         }
         catch(Exception e){
