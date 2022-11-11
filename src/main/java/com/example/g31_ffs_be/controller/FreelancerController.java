@@ -87,7 +87,7 @@ public class FreelancerController {
     ) {
         try {
 
-            if( jobSavedRepository.getJob(job_id,freelancer_id)!=null){
+            if( jobSavedRepository.getJob(job_id,freelancer_id)>0){
                  jobSavedRepository.delete(job_id,freelancer_id);
                 return new ResponseEntity<>("Xóa lưu job", HttpStatus.CREATED);
             }
@@ -138,8 +138,10 @@ public class FreelancerController {
             User user=userRepository.getReferenceById(freelancer_id);
             if(user.getIsMemberShip())
             jobRequestRepository.insert(job_id,freelancer_id,2, LocalDateTime.now(),0);
-            else
-                jobRequestRepository.insert(job_id,freelancer_id,2, LocalDateTime.now(),0.5);
+            else {
+                jobRequestRepository.insert(job_id, freelancer_id, 2, LocalDateTime.now(), 0.5);
+                user.setAccountBalance(user.getAccountBalance()-0.5);
+            }
             return new ResponseEntity<>("Thêm mới jobRequest thành công", HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);

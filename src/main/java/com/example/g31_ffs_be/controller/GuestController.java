@@ -5,6 +5,7 @@ import com.example.g31_ffs_be.model.Account;
 import com.example.g31_ffs_be.model.User;
 import com.example.g31_ffs_be.repository.AccountRepository;
 import com.example.g31_ffs_be.repository.CareerRepository;
+import com.example.g31_ffs_be.repository.FeeRepository;
 import com.example.g31_ffs_be.security.JwtTokenProvider;
 import com.example.g31_ffs_be.service.CareerService;
 import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
@@ -32,6 +33,8 @@ public class GuestController {
     AccountServiceImpl accountService;
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    FeeRepository feeRepository;
     @Autowired
     UserServiceImpl userService;
 
@@ -93,11 +96,14 @@ public class GuestController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             Account account = accountRepository.findByEmail(loginDTO.getEmail());
+
             /*   orElseThrow(() -> new UsernameNotFoundException("Không tìm được người dùng có số điện thoại là: " + loginDTO.getPhone()));*/
             if(account==null){
                 return new ResponseEntity<>("Email không đúng!", HttpStatus.BAD_REQUEST);
             }
-            if(!account.getUser().getIsBanned()){
+            String role=account.getRole().getRoleName();
+            if(role.equals("admin")||(role.equals("staff") &&account.getStaff().getIsActive())||(account.getUser()!=null&&!account.getUser().getIsBanned())){
+                System.out.println("váo day");
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(), loginDTO.getPassword()
                 ));
@@ -105,17 +111,24 @@ public class GuestController {
                 String token = tokenProvider.generateToken(authentication);
                 JWTAuthResponse jwtAuthResponse=new JWTAuthResponse();
                 jwtAuthResponse.setUserId(account.getId());
-                jwtAuthResponse.setRole(account.getRole().getRoleName());
+                jwtAuthResponse.setRole(role);
                 jwtAuthResponse.setAccessToken(token);
                 jwtAuthResponse.setTokenType("Bearer");
-                jwtAuthResponse.setAvatar(account.getUser().getAvatar());
-                jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
-                jwtAuthResponse.setEmail(account.getEmail());
-                jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+                if(!role.equals("admin")) {
+                    if(!role.equals("staff")) {
+                        jwtAuthResponse.setAvatar(account.getUser().getAvatar());
+                        jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
+                        jwtAuthResponse.setFeePostJob(feeRepository.findByName("postJob").getPrice());
+                        jwtAuthResponse.setFeeViewProfile(feeRepository.findByName("viewProfile").getPrice());
+                        jwtAuthResponse.setFeeApplyJob(feeRepository.findByName("applyJob").getPrice());
+                        jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+                    }
+                    jwtAuthResponse.setEmail(account.getEmail());
+                }
 
-                jwtAuthResponse.setAvatar(account.getUser().getAvatar());
                 return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
             }else{
+                System.out.println("váo loi");
                 return new ResponseEntity<>(" Người dùng đã bị chặn !", HttpStatus.BAD_REQUEST);
             }
         }catch (AuthenticationException e){

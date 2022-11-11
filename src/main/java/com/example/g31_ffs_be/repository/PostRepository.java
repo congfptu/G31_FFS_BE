@@ -12,12 +12,20 @@ import javax.transaction.Transactional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Job, Integer> {
-    @Query(value = " SELECT * FROM jobs " +
-            " WHERE (description LIKE CONCAT('%',:keyword,'%') " +
-            "or job_title LIKE CONCAT('%',:keyword,'%'))"+
-            " and is_approved LIKE CONCAT('%',:status,'%')"
-            , nativeQuery = true)
-    Page<Job> getRequestPostByStatusAndDescription(String keyword, String status, Pageable pageable);
+    @Query(value = " SELECT j From Job j" +
+            " left join fetch j.approvedBy "+
+            " left join fetch j.createBy "+
+            " WHERE ((j.description LIKE CONCAT('%',:keyword,'%') " +
+            "or j.jobTitle LIKE CONCAT('%',:keyword,'%')))"+
+            " and (j.isApproved =:status or :status=-1)",
+            countQuery = " SELECT  count(j.id) From Job j" +
+                    " left join  j.approvedBy "+
+                    " left join  j.createBy "+
+                    " WHERE ((j.description LIKE CONCAT('%',:keyword,'%') " +
+                    "or j.jobTitle LIKE CONCAT('%',:keyword,'%')))"+
+                    " and (j.isApproved =:status or :status=-1)"
+           )
+    Page<Job> getAllJobByStatus(String keyword, int status, Pageable pageable);
     @Query(value = " SELECT * FROM jobs "+
             "WHERE description LIKE CONCAT('%',:keyword,'%')"
             , nativeQuery = true)

@@ -22,7 +22,7 @@ public interface JobSavedRepository extends JpaRepository<Job,String> {
             , nativeQuery = true)
     Integer delete(Integer job_id, String freelancer_id);
 
-    @Query(value = " select job_id from job_saved where job_id=:job_id and freelancer_id=:freelancer_id"
+    @Query(value = " select count(*) from job_saved where job_id=:job_id and freelancer_id=:freelancer_id"
             , nativeQuery = true)
     Integer getJob(Integer job_id, String freelancer_id);
 

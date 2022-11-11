@@ -3,7 +3,7 @@ package com.example.g31_ffs_be.service;
 import com.example.g31_ffs_be.dto.*;
 
 public interface PostService {
-    PostDTOResponse getAllPostByNameAndStatusPaging(int pageNumber, int pageSize, String keyword, String isApproved, String sortValue);
+    APIResponse<PostDTO> getAllPostByAdmin(int pageNumber, int pageSize, String keyword, int status);
     PostDTOResponse getAllPostSearchNamePaging(int pageNumber, int pageSize, String keyword, String sortValue);
     PostDetailDTO getPostDetail(String freelancerId,int id);
 

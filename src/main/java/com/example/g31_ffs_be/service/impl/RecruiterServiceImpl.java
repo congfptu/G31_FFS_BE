@@ -54,10 +54,10 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public APIResponse<RecruiterAdminDto> getRecruiterByName(String name, int pageNo, int pageSize) {
+    public APIResponse<RecruiterAdminDto> getAllRecruiterByStatus(String name,Boolean status, int pageNo, int pageSize) {
         APIResponse<RecruiterAdminDto> apiResponse=new APIResponse();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Recruiter> page = recruiterRepository.getRecruiterByName(name, pageable);
+        Page<Recruiter> page = recruiterRepository.getRecruiterByName(name,status,pageable);
         apiResponse.setPageIndex(pageNo+1);
         apiResponse.setResults(convertListRecruiterAdminDto(page.getContent()));
         apiResponse.setTotalPages(page.getTotalPages());
@@ -91,8 +91,8 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public List<RecruiterAdminDto> getTop5RecruiterByName(String name) {
-        List<Recruiter> recruiters = recruiterRepository.getTop5Recruiter(name,PageRequest.of(0,5)).getContent();
+    public List<RecruiterAdminDto> getTop5RecruiterByName(String name,Boolean status) {
+        List<Recruiter> recruiters = recruiterRepository.getTop5Recruiter(name,status,PageRequest.of(0,5)).getContent();
         return convertListRecruiterAdminDto(recruiters);
     }
 

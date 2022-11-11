@@ -12,6 +12,10 @@ public class JWTAuthResponse {
     private String accessToken;
     private String tokenType = "Bearer";
     private String avatar;
+    private double feeApplyJob;
+    private double feePostJob;
+    private double feeViewProfile;
+
 
     private String email;
 

@@ -16,16 +16,14 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<RequestPayment,String> {
     @Query(value =  " SELECT r FROM RequestPayment r " +
                     "LEFT JOIN FETCH r.user "+
-                    " WHERE (r.paymentCode LIKE CONCAT('%',:keyword,'%') )" +
-                    "and (:defaultStatus=-1 or r.status=:status) " +
+                    " WHERE r.paymentCode like CONCAT('%',:keyword,'%') " +
                     "Order by r.dateRequest desc ",
             countQuery = " SELECT count(r.id) FROM RequestPayment r " +
                     "LEFT JOIN  r.user "+
-                    " WHERE (r.paymentCode LIKE CONCAT('%',:keyword,'%') )" +
-                    "and (:defaultStatus=-1 or r.status=:status) " +
+                    " WHERE r.paymentCode like CONCAT('%',:keyword,'%') " +
                     "Order by r.dateRequest desc "
            )
-    Page<RequestPayment> getRequestPaymentSearchPaging(String keyword,Boolean status,int defaultStatus, Pageable pageable);
+    Page<RequestPayment> getRequestPaymentSearchPaging(String keyword, Pageable pageable);
 
     @Query(value = " SELECT * FROM request_payment " +
             " WHERE user_id=:userId " +

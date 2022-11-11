@@ -28,25 +28,13 @@ public class  PostController {
     @Autowired
     StaffRepository staffRepository;
     @GetMapping("/post")
-    public ResponseEntity<?> getAllPostSearchByDesAndStatusPaging(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<?> getAllPostByAdmin(@RequestHeader(name = "Authorization") String token,
                                                                   @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                                                  @RequestParam(name = "status", defaultValue = "") String status,
-                                                                  @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
-        int pageIndex = 0;
+                                                                  @RequestParam(name = "status", defaultValue = "-1") int status,
+                                                                  @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
+
         try {
-            pageIndex = Integer.parseInt(pageNo);
-            int pageSize = 5;
-
-            PostDTOResponse fas = postService.getAllPostByNameAndStatusPaging(pageIndex, pageSize, keyword, "", null);
-            if (fas.getTotalPages() >= pageIndex - 1 && status.equals("-1")) {
-
-                return new ResponseEntity<>(fas, HttpStatus.OK);
-            } else if (fas.getTotalPages() >= pageIndex - 1) {
-                fas = postService.getAllPostByNameAndStatusPaging(pageIndex, pageSize, keyword, status, null);
-                return new ResponseEntity<>(fas, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
-            }
+                return new ResponseEntity<>(postService.getAllPostByAdmin(pageIndex, 10, keyword, status), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("không có dữ liệu trang này! " + e, HttpStatus.NO_CONTENT);
         }

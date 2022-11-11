@@ -13,15 +13,11 @@ import java.time.LocalDateTime;
 @Setter
 @Data
 public class PaymentDTO {
-    String id;
-    String code;
+    int id;
+    String paymentCode;
     String userId;
     double money;
     @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     LocalDateTime dateRequest;
-    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
-    LocalDateTime dateApprove;
     Boolean status;
-    String responseMessage;
-
 }

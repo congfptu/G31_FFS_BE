@@ -52,7 +52,6 @@ public class Service {
     @JoinTable(name = "benefit_service",
             joinColumns = @JoinColumn(name = "service_id"),
             inverseJoinColumns = @JoinColumn(name = "benefit_id"))
-    @Fetch(FetchMode.SUBSELECT)
     private List<Benefit> benefits = new ArrayList<>();
 
     @OneToMany(mappedBy = "service")

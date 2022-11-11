@@ -24,6 +24,5 @@ public class ServiceDto {
 
     private Integer duration;
 
-    private List<Benefit> benefits;
     private Role role;
 }

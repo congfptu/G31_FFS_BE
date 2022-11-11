@@ -9,35 +9,39 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface RecruiterRepository extends JpaRepository<Recruiter,String> {
- /*   @Query(value = "select a.* from `recruiter` a" +
-            " inner join `user` b on b.user_id=a.recruiter_id" +
-            " inner join `account` c on a.recruiter_id=c.id" +
-            " where a.recruiter_id like CONCAT('%',:name,'%') or" +
-            " b.fullname like CONCAT('%',:name,'%') or c.email like CONCAT('%',:name,'%') "+
-            "Order by b.fullname asc,c.email asc ", nativeQuery = true)*/
- @Query(value = "SELECT r FROM Recruiter r "+
-         "LEFT JOIN FETCH r.user u " +
-         "LEFT JOIN FETCH u.account a " +
-         "LEFT JOIN FETCH a.role ro " +
-         "where u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')",
-         countQuery = "SELECT count(r) FROM Recruiter r "+
-                 "LEFT JOIN  r.user u " +
-                 "LEFT JOIN u.account a " +
-                 "LEFT JOIN a.role ro " +
-                 "where u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')")
-    Page<Recruiter> getRecruiterByName(String name, Pageable pageable);
-
-        @Query(value = "select r from Recruiter r " +
+public interface RecruiterRepository extends JpaRepository<Recruiter, String> {
+    /*   @Query(value = "select a.* from `recruiter` a" +
+               " inner join `user` b on b.user_id=a.recruiter_id" +
+               " inner join `account` c on a.recruiter_id=c.id" +
+               " where a.recruiter_id like CONCAT('%',:name,'%') or" +
+               " b.fullname like CONCAT('%',:name,'%') or c.email like CONCAT('%',:name,'%') "+
+               "Order by b.fullname asc,c.email asc ", nativeQuery = true)*/
+    @Query(value = "SELECT r FROM Recruiter r " +
             "LEFT JOIN FETCH r.user u " +
             "LEFT JOIN FETCH u.account a " +
-            "where u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%') " +
+            "LEFT JOIN FETCH a.role ro " +
+            "where (u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')) " +
+            "and u.isBanned=:status ",
+            countQuery = "SELECT count(r) FROM Recruiter r " +
+                    "LEFT JOIN  r.user u " +
+                    "LEFT JOIN u.account a " +
+                    "LEFT JOIN a.role ro " +
+                    "where u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')" +
+                    "and u.isBanned=:status ")
+    Page<Recruiter> getRecruiterByName(String name, Boolean status, Pageable pageable);
+
+    @Query(value = "select r from Recruiter r " +
+            "LEFT JOIN FETCH r.user u " +
+            "LEFT JOIN FETCH u.account a " +
+            "where (u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')) " +
+            "and u.isBanned=:status " +
             "order by length(r.id),r.id asc",
-        countQuery ="select count(r) from Recruiter r " +
-                "LEFT JOIN  r.user u " +
-                "LEFT JOIN  u.account a " +
-                "where u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')")
-    Page<Recruiter> getTop5Recruiter(String name,Pageable pageable);
+            countQuery = "select count(r) from Recruiter r " +
+                    "LEFT JOIN  r.user u " +
+                    "LEFT JOIN  u.account a " +
+                    "where (u.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%'))" +
+                    "and u.isBanned=:status ")
+    Page<Recruiter> getTop5Recruiter(String name, Boolean status, Pageable pageable);
 
     @Query(value = "select r from Recruiter r " +
             "LEFT JOIN FETCH r.user u " +
@@ -46,7 +50,6 @@ public interface RecruiterRepository extends JpaRepository<Recruiter,String> {
             "LEFT JOIN FETCH r.career " +
             "where r.id =:id " +
             "order by r.id asc")
-
     Recruiter getDetailRecruiter(String id);
 
     @Query(value = "select r from Recruiter r " +
@@ -58,7 +61,6 @@ public interface RecruiterRepository extends JpaRepository<Recruiter,String> {
             "LEFT JOIN FETCH job.jobRequests rq " +
             "where r.id =:id " +
             "order by r.id asc")
-
     Recruiter getDetailRecruiterByFreelancer(String id);
 
 

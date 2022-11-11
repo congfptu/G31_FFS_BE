@@ -35,17 +35,14 @@ public class PaymentController {
     @Autowired
     StaffRepository staffRepository;
     @GetMapping("/paymentSearch")
-    public ResponseEntity<?> getAllPaymentSearchPaging(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<?> paymentSearch(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                                                @RequestParam(name = "status", defaultValue = "-1") int status,
-                                                @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo,
-                                                @RequestParam(name = "sortValue", defaultValue = "0") String sortValue) {
-        int pageIndex = 0;
+                                                @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex)
+    {
         try {
-            pageIndex = Integer.parseInt(pageNo);
-            return new ResponseEntity<>(paymentService.getAllPaymentSearchPaging(pageIndex,10,keyword,status,status,sortValue), HttpStatus.OK);
+            return new ResponseEntity<>(paymentService.getAllPaymentSearchPaging(pageIndex,10,keyword,null), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Không có dữ liệu trang này "+e, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
     }

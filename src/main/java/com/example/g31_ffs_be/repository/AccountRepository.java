@@ -9,8 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AccountRepository extends JpaRepository<Account,String> {
  @Query(value = " SELECT distinct a FROM Account a " +
-         "LEFT JOIN FETCH a.user u " +
          "LEFT JOIN FETCH a.role r "+
+         "LEFT JOIN FETCH a.staff s "+
+         "LEFT JOIN FETCH a.user u "+
          "where a.email like :email")
  Account findByEmail(String email);
  @Query(value = " SELECT distinct a FROM Account a " +

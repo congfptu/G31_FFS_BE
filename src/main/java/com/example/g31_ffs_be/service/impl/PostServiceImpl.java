@@ -34,34 +34,34 @@ public class PostServiceImpl implements PostService {
     @Autowired
     SubCareerRepository subCareerRepository;
     @Override
-    public PostDTOResponse getAllPostByNameAndStatusPaging(int pageNumber, int pageSize, String keyword, String isApproved, String sortValue) {
+    public APIResponse<PostDTO> getAllPostByAdmin(int pageNumber, int pageSize, String keyword, int status) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Job> paymentPaging=postRepository.getRequestPostByStatusAndDescription(keyword,isApproved,pageable);
+        Page<Job> paymentPaging=postRepository.getAllJobByStatus(keyword,status,pageable);
+        APIResponse<PostDTO> apiResponse=new APIResponse<>();
         List<Job> paymentDTOResponseList=paymentPaging.getContent();
-        List<PostDTO> fas=new ArrayList<>();
+        List<PostDTO> postDTOS=new ArrayList<>();
         for (Job f: paymentDTOResponseList){
-            PostDTO fa=new PostDTO();
-            fa=mapToPostDTO(f);
-            fa.setId(f.getId());
-            fa.setCreatedDate(f.getTime());
-            fa.setCreatedBy(f.getCreateBy().getCompanyName());
-            fa.setJobTitle(f.getJobTitle());
-            fa.setIsApproved(f.getIsApproved());
-             // fa.setApprovedBy(f.getApprovedBy().getFullname());
+            PostDTO postDTO=new PostDTO();
+            postDTO=mapToPostDTO(f);
+            postDTO.setId(f.getId());
+            postDTO.setCreatedDate(f.getTime());
+            postDTO.setCreatedBy(f.getCreateBy().getCompanyName());
+            postDTO.setJobTitle(f.getJobTitle());
+            postDTO.setIsApproved(f.getIsApproved());
             Optional<Staff> staff= Optional.ofNullable(f.getApprovedBy());
             try{
-                fa.setApprovedBy(f.getApprovedBy().getFullName());
+                postDTO.setApprovedBy(f.getApprovedBy().getFullName());
             }
             catch (Exception e){
-                fa.setApprovedBy(null);
+                postDTO.setApprovedBy(null);
             }
-            fas.add(fa);
+            postDTOS.add(postDTO);
         }
-        PostDTOResponse paymentDTOResponse= new PostDTOResponse();
-        paymentDTOResponse.setPosts(fas);
-        paymentDTOResponse.setPageIndex(pageNumber+1);
-        paymentDTOResponse.setTotalPages(paymentPaging.getTotalPages());
-        return paymentDTOResponse;
+        apiResponse.setResults(postDTOS);
+        apiResponse.setPageIndex(pageNumber+1);
+        apiResponse.setTotalResults(paymentPaging.getTotalElements());
+        apiResponse.setTotalPages(paymentPaging.getTotalPages());
+        return apiResponse;
     }
 
     @Override

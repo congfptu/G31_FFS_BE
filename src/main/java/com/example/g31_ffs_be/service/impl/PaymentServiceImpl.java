@@ -34,23 +34,20 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public APIResponse<PaymentDTO> getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword,int status,int defaultStatus, String sortValue) {
+    public APIResponse<PaymentDTO> getAllPaymentSearchPaging(int pageNumber, int pageSize, String keyword, String sortValue) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         APIResponse<PaymentDTO> apiResponse=new APIResponse<>();
-        Boolean statusBoolean=false;
-        if(status==1) statusBoolean=true;
-        Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentSearchPaging(keyword,statusBoolean,defaultStatus,pageable);
+        Page<RequestPayment> paymentPaging=paymentRepository.getRequestPaymentSearchPaging(keyword,pageable);
         List<RequestPayment> paymentDTOResponseList=paymentPaging.getContent();
         List<PaymentDTO> paymentDTOS=new ArrayList<>();
-        for (RequestPayment f: paymentDTOResponseList){
+        for (RequestPayment requestPayment: paymentDTOResponseList){
             PaymentDTO payment=new PaymentDTO();
-            payment=mapToPaymentDTO(f);
-            payment.setUserId(f.getUser().getId());
-            payment.setCode(f.getPaymentCode());
-            payment.setStatus(f.getStatus());
-            payment.setUserId(f.getUser().getId());
-            payment.setMoney(f.getAmount());
-            payment.setDateRequest(f.getDateRequest());
+            payment.setId(requestPayment.getId());
+            payment.setUserId(requestPayment.getUser().getId());
+            payment.setPaymentCode(requestPayment.getPaymentCode());
+            payment.setStatus(requestPayment.getStatus());
+            payment.setMoney(requestPayment.getAmount());
+            payment.setDateRequest(requestPayment.getDateRequest());
             paymentDTOS.add(payment);
         }
         apiResponse.setResults(paymentDTOS);

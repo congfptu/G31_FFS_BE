@@ -35,4 +35,8 @@ public class FeeHistory {
     private Staff updateBy;
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fee_id")
+    private Fee fee;
+
 }

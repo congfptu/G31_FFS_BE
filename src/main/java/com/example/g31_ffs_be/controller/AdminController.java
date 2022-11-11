@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -25,6 +26,8 @@ import java.util.*;
 public class AdminController {
     @Autowired
     StaffService staffService;
+    @Autowired
+    FeeRepository feeRepository;
 
     @Autowired
     ReportService reportService;
@@ -79,10 +82,9 @@ public class AdminController {
     ) {
         int pageIndex = 0;
         try {
-            try{
+            try {
                 pageIndex = Integer.parseInt(pageNo);
-            }
-            catch(Exception e){
+            } catch (Exception e) {
 
             }
             int pageSize = 5;
@@ -143,15 +145,14 @@ public class AdminController {
     ) {
         try {
             int pageIndex = 0;
-            try{
-            pageIndex = Integer.parseInt(pageNo);
-            }
-            catch(Exception e){
+            try {
+                pageIndex = Integer.parseInt(pageNo);
+            } catch (Exception e) {
             }
             int pageSize = 10;
             APIResponse<FreelancerAdminDto> apiResponse = freelancerService.getFreelancerByName(name, pageIndex, pageSize);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>("ko co du lieu trang nay", HttpStatus.OK);
         }
@@ -208,27 +209,23 @@ public class AdminController {
     @GetMapping("/recruiter")
     public ResponseEntity<?> getRecruiterFilter(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "name", defaultValue = "") String name,
-                                                @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
+                                                @RequestParam(name = "status", defaultValue = "") Boolean status,
+                                                @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex
     ) {
-        int pageIndex = 0;
-        int pageSize = 5;
         try {
-            try{
-                pageIndex = Integer.parseInt(pageNo);
-            }
-            catch(Exception e){
-            }
-            return new ResponseEntity<>(recruiterService.getRecruiterByName(name,pageIndex,pageSize), HttpStatus.OK);
+            return new ResponseEntity<>(recruiterService.getAllRecruiterByStatus(name, status, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
-        return new ResponseEntity<>("Không có nội dung trong trang này", HttpStatus.BAD_REQUEST);
-    }
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
     @GetMapping("/top5-recruiter")
     public ResponseEntity<?> getTop5Recruiter(@RequestHeader(name = "Authorization") String token,
-                                              @RequestParam(name = "name", defaultValue = "") String name) {
-        return new ResponseEntity<>(recruiterService.getTop5RecruiterByName(name), HttpStatus.OK);
+                                              @RequestParam(name = "name", defaultValue = "") String name,
+                                              @RequestParam(name = "status", defaultValue = "false") Boolean status
+    ) {
+        return new ResponseEntity<>(recruiterService.getTop5RecruiterByName(name,status), HttpStatus.OK);
     }
 
     @GetMapping("/detail-recruiter")
@@ -242,16 +239,14 @@ public class AdminController {
     @GetMapping("/service")
     public ResponseEntity<?> getServiceByName(@RequestHeader(name = "Authorization") String token,
                                               @RequestParam(name = "name", defaultValue = "") String name,
-                                              @RequestParam(name = "roleId", defaultValue = "3") int roleId,
-                                              @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo) {
-        int pageIndex = 0;
+                                              @RequestParam(name = "roleId", defaultValue = "-1") int roleId,
+                                              @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
         try {
-            pageIndex = Integer.parseInt(pageNo);
+            return new ResponseEntity<>(serviceService.getAllService(name, roleId, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
-
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
-        int pageSize = 10;
-        return new ResponseEntity<>(serviceService.getServiceByName(name, roleId, pageIndex, pageSize), HttpStatus.OK);
+
     }
 
     @PostMapping("/add-service")
@@ -274,13 +269,13 @@ public class AdminController {
             serviceRepository.deleteById(serviceId);
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/benefits-service")
     public ResponseEntity<?> benefitService(@RequestHeader(name = "Authorization") String token,
-                                        @RequestParam(name = "id", defaultValue = "") String id) {
+                                            @RequestParam(name = "id", defaultValue = "") String id) {
         try {
             int serviceId = Integer.parseInt(id);
             return new ResponseEntity<>(serviceService.getBenefitsOfServiceByID(serviceId), HttpStatus.CREATED);
@@ -304,6 +299,21 @@ public class AdminController {
     @GetMapping("/role")
     public ResponseEntity<?> getAllRoles(@RequestHeader(name = "Authorization") String token) {
         return new ResponseEntity<>(roleRepository.findAll(), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/editFee")
+    public ResponseEntity<?> editFee(@RequestHeader(name = "Authorization") String token,
+                                     @RequestParam(name = "feeId", defaultValue = "") int feeId,
+                                     @RequestParam(name = "price", defaultValue = "0") double price
+    ) {
+        try {
+            Fee fee = feeRepository.getReferenceById(feeId);
+            fee.setPrice(price);
+            feeRepository.save(fee);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/benefit")
