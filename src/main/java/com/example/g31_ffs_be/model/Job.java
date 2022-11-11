@@ -100,4 +100,7 @@ public class Job {
     @OneToMany(mappedBy = "job")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
+    public Job(Integer id) {
+        this.id = id;
+    }
 }

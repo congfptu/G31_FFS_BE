@@ -1,14 +1,8 @@
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.dto.*;
-import com.example.g31_ffs_be.model.Job;
-import com.example.g31_ffs_be.model.Recruiter;
-import com.example.g31_ffs_be.model.Subcareer;
-import com.example.g31_ffs_be.model.User;
-import com.example.g31_ffs_be.repository.JobRequestRepository;
-import com.example.g31_ffs_be.repository.PostRepository;
-import com.example.g31_ffs_be.repository.RecruiterRepository;
-import com.example.g31_ffs_be.repository.UserRepository;
+import com.example.g31_ffs_be.model.*;
+import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.service.FreelancerService;
 import com.example.g31_ffs_be.service.PostService;
 import com.example.g31_ffs_be.service.RecruiterService;
@@ -39,6 +33,8 @@ public class RecruiterController {
     UserRepository userRepository;
     @Autowired
     RecruiterRepository recruiterRepository;
+    @Autowired
+    NotificationRepository notificationRepository;
     @Autowired
     JobRequestRepository jobRequestRepository;
 
@@ -282,6 +278,15 @@ public class RecruiterController {
     ) {
         try {
             jobRequestRepository.responseJobApply(jobId,freelancerId,status, LocalDateTime.now());
+            Notification notification=new Notification();
+            Job job=postRepository.getReferenceById(jobId);
+            notification.setFrom(new User(job.getCreateBy().getId()));
+            notification.setTo(new User(freelancerId));
+            notification.setNotificationType(status);
+            notification.setDate(LocalDateTime.now());
+            notification.setJob(new Job(jobId));
+            notification.setStatus(false);
+            notificationRepository.save(notification);
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);

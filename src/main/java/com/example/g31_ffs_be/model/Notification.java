@@ -4,12 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notification")
@@ -17,25 +15,33 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamicUpdate
-@DynamicInsert
 public class Notification {
     @Id
-    @Size(max = 45)
-    @Column(name = "id", nullable = false, length = 45)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_id")
+    private User from;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id")
+    private Job job;
 
-    @Size(max = 255)
-    @Column(name = "link")
-    private String link;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_id")
+    private User to;
 
     @Column(name = "date")
-    private Instant date;
+    private LocalDateTime date;
 
     @Column(name = "status")
     private Boolean status;
+
+    @Column(name = "notification_type")
+    private Integer notificationType;
+
 
 
 }

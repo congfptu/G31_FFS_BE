@@ -103,6 +103,15 @@ public class User {
     @JsonIgnore
     private Set<UserService> userServices = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    private Set<Ban> bans = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "from")
+    private Set<Notification> notificationFroms = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "to")
+    private Set<Notification> notificationTos = new LinkedHashSet<>();
+
     public User(String id) {
         this.id = id;
     }

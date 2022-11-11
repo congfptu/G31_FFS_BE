@@ -9,6 +9,8 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "type_ban")
@@ -35,5 +37,8 @@ public class TypeBan {
     @Column(name = "description")
     private String description;
 
+
+    @OneToMany(mappedBy = "typeBan")
+    private Set<Ban> bans = new LinkedHashSet<>();
 
 }

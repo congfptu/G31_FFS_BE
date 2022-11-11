@@ -208,5 +208,17 @@ public class UserController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+    @GetMapping("/notifications")
+    public ResponseEntity<?> getNotifications(@RequestHeader(name = "Authorization") String token,
+                                                  @RequestParam(name = "userId", defaultValue = "") String userId
+    ) {
+        try {
+
+            return new ResponseEntity<>(userService.getTop10Notifications(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
 }
 

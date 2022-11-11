@@ -1,9 +1,13 @@
 package com.example.g31_ffs_be.service.impl;
 
 import com.example.g31_ffs_be.dto.APIResponse;
+import com.example.g31_ffs_be.dto.NotificationDTO;
 import com.example.g31_ffs_be.dto.RequestPaymentDto;
+import com.example.g31_ffs_be.model.Job;
+import com.example.g31_ffs_be.model.Notification;
 import com.example.g31_ffs_be.model.RequestPayment;
 import com.example.g31_ffs_be.model.User;
+import com.example.g31_ffs_be.repository.NotificationRepository;
 import com.example.g31_ffs_be.repository.PaymentRepository;
 import com.example.g31_ffs_be.repository.UserRepository;
 import com.example.g31_ffs_be.service.UserService;
@@ -15,6 +19,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,6 +29,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
+    NotificationRepository notificationRepository;
 
     @Override
     public void addUser(User u) {
@@ -93,5 +102,40 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             return true;
         }
+    }
+
+    @Override
+    public List<NotificationDTO> getTop10Notifications(String userId) {
+ Pageable pageable=PageRequest.of(0,10);
+        List<NotificationDTO> notificationDTOS=new ArrayList<>();
+        Page<Notification> page = notificationRepository.getNotificationByUserId(userId,pageable);
+        for(Notification notification:page.getContent()){
+            NotificationDTO notificationDTO=new NotificationDTO();
+            notificationDTO.setType(notification.getNotificationType());
+            User from=notification.getFrom();
+            notificationDTO.setUserId(from.getId());
+            notificationDTO.setUserName(from.getFullName());
+            notificationDTO.setAvatar(from.getAvatar());
+            Job job=notification.getJob();
+            notificationDTO.setPostId(job.getId());
+            notificationDTO.setPostTitle(job.getJobTitle());
+            String message="";
+            LocalDateTime time=notification.getDate();
+            long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+            long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+            long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+            long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+            if (minutes < 60)
+                message += minutes + " phút trước";
+            else if (hours<24)
+                message += hours+ " giờ trước";
+            else if (days<7)
+                message += days +" ngày trước";
+            else if (weeks < 5)
+                message += weeks + " tuần trước";
+            notificationDTO.setTime(message);
+            notificationDTOS.add(notificationDTO);
+        }
+        return notificationDTOS;
     }
 }

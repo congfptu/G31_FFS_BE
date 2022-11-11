@@ -29,6 +29,8 @@ public class FreelancerController {
     @Autowired
     FreelancerRepository freelancerRepository;
     @Autowired AccountRepository accountRepository;
+    @Autowired NotificationRepository notificationRepository;
+
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -45,6 +47,7 @@ public class FreelancerController {
     JobRequestRepository jobRequestRepository;
     @Autowired
     EducationRepository educationRepository;
+    @Autowired FeeRepository feeRepository;
 
     @GetMapping("/getProfileFreelancer")
     public ResponseEntity<?> getProfileFreelancer(@RequestHeader(name = "Authorization") String token,
@@ -139,9 +142,19 @@ public class FreelancerController {
             if(user.getIsMemberShip())
             jobRequestRepository.insert(job_id,freelancer_id,2, LocalDateTime.now(),0);
             else {
-                jobRequestRepository.insert(job_id, freelancer_id, 2, LocalDateTime.now(), 0.5);
+                jobRequestRepository.insert(job_id, freelancer_id, 2, LocalDateTime.now(), feeRepository.findByName("applyJob").getPrice());
+
                 user.setAccountBalance(user.getAccountBalance()-0.5);
             }
+            Notification notification=new Notification();
+            Job job=postRepository.getReferenceById(job_id);
+            notification.setTo(new User(job.getCreateBy().getId()));
+            notification.setFrom(new User(freelancer_id));
+            notification.setNotificationType(2);
+            notification.setDate(LocalDateTime.now());
+            notification.setJob(new Job(job_id));
+            notification.setStatus(false);
+            notificationRepository.save(notification);
             return new ResponseEntity<>("Thêm mới jobRequest thành công", HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);
