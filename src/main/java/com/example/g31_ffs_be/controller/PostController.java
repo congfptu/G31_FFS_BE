@@ -39,26 +39,23 @@ public class  PostController {
             return new ResponseEntity<>("không có dữ liệu trang này! " + e, HttpStatus.NO_CONTENT);
         }
     }
-    @PutMapping("/post/update")
+    @PutMapping("/update")
     public ResponseEntity<?> updateStatus(@RequestHeader(name = "Authorization") String token,
-                                          @NotEmpty @RequestParam(name = "id", defaultValue = "") int id,
-                                          @NotEmpty @RequestParam(name = "status", defaultValue = "") Integer status,
-                                          @NotEmpty @RequestParam(name = "approveBy", defaultValue = "") String approveBy
+                                          @NotEmpty @RequestParam(name = "jobId", defaultValue = "") int jobId,
+                                          @NotEmpty @RequestParam(name = "status", defaultValue = "") int status,
+                                          @NotEmpty @RequestParam(name = "staffId", defaultValue = "") String staffId
 
 
     ) {
         try {
-            if (postRepository.findById(id).isPresent()) {
-                Job job = postRepository.findById(id).get();
-                Staff staff = staffRepository.getReferenceById(approveBy);
-                job.setApprovedBy(staff);
-                job.setIsApproved(status);
-                postRepository.save(job);
-            }
-            return new ResponseEntity<>("Cập nhật post thành công", HttpStatus.OK);
+           Job job=postRepository.getReferenceById(jobId);
+           job.setIsApproved(status);
+           job.setApprovedBy(new Staff(staffId));
+           postRepository.save(job);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
-            return new ResponseEntity<>("Cập nhật post thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_id")
+    @JsonIgnore
     private User from;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,12 +33,13 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_id")
+    @JsonIgnore
     private User to;
 
     @Column(name = "date")
     private LocalDateTime date;
 
-    @Column(name = "status")
+    @Column(name = "status",columnDefinition = "bit default 0")
     private Boolean status;
 
     @Column(name = "notification_type")

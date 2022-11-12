@@ -17,6 +17,7 @@ import javax.validation.constraints.Size;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class User {
     @JoinColumn(name = "user_id", nullable = false)
     private Account account;
 
-    @Column(name = "account_balance")
+    @Column(name = "account_balance",columnDefinition = "double default 0")
     private Double accountBalance;
 
     @Column(name = "phone", length = 45)
@@ -73,8 +74,9 @@ public class User {
     @JsonIgnore
     private Set<Report> reports = new LinkedHashSet<>();
 
-    @Column(name = "is_banned")
+    @Column(name = "is_banned",columnDefinition = "bit default 1")
     private Boolean isBanned;
+
 
     @OneToMany(mappedBy = "to")
     @Fetch(FetchMode.SUBSELECT)
@@ -92,7 +94,7 @@ public class User {
     @Column(name = "reset_password_time")
     private Instant resetPasswordTime;
 
-    @Column(name = "is_member_ship")
+    @Column(name = "is_member_ship",columnDefinition = "bit default 0")
     private Boolean isMemberShip;
 
     @OneToMany(mappedBy = "user")
@@ -104,17 +106,21 @@ public class User {
     private Set<UserService> userServices = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Ban> bans = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "from")
+    @JsonIgnore
     private Set<Notification> notificationFroms = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "to")
+    @JsonIgnore
     private Set<Notification> notificationTos = new LinkedHashSet<>();
 
     public User(String id) {
         this.id = id;
     }
+
 
     @Transient
     private double star;

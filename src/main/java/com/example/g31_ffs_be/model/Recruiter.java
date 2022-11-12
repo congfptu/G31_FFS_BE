@@ -12,6 +12,7 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -42,7 +43,8 @@ public class Recruiter {
     @Column(name = "tax_number")
     private String taxNumber;
 
-
+    @Column(name = "last_top_time")
+    private LocalDateTime lastTopTime;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "career_id")
     private Career career;
@@ -54,7 +56,7 @@ public class Recruiter {
     @OneToMany(mappedBy = "createBy")
     private Set<Job> jobs = new LinkedHashSet<>();
 
-    @Column(name = "is_active")
+    @Column(name = "is_active",columnDefinition = "bit default 0")
     private Boolean isActive;
 
 }

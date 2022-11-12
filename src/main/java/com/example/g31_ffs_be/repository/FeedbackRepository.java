@@ -26,4 +26,14 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
             , nativeQuery = true)
     Integer insert(String fromId,int jobId, String toId, Integer star, String content, LocalDateTime createdDate);
 
+    @Query(value = "select count(*) from feedback where from_id=:fromId and job_id=:jobId and to_id=:toId " , nativeQuery = true)
+    Integer count(String fromId,int jobId, String toId);
+    @Modifying
+    @Transactional
+    @Query(value = " update feedback set star=:star,content=:content,created_date=:createdDate" +
+            " where  (from_id=:fromId and job_id=:jobId and to_id=:toId)"
+            , nativeQuery = true)
+    Integer update(String fromId,int jobId, String toId, Integer star, String content, LocalDateTime createdDate);
+
+
 }

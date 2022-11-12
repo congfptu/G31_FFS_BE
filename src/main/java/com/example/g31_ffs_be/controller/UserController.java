@@ -127,6 +127,9 @@ public class UserController {
                                             @RequestBody FeedbackDTO feedback
     ) {
         try {
+            if (feedbackRepository.count(feedback.getFromUserId(), feedback.getJobId(), feedback.getToUserId()) > 0)
+                feedbackRepository.update(feedback.getFromUserId(), feedback.getJobId(), feedback.getToUserId(), feedback.getStar(), feedback.getContent(), LocalDateTime.now());
+            else
             feedbackRepository.insert(feedback.getFromUserId(), feedback.getJobId(), feedback.getToUserId(), feedback.getStar(), feedback.getContent(), LocalDateTime.now());
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -208,13 +211,26 @@ public class UserController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @GetMapping("/notifications")
     public ResponseEntity<?> getNotifications(@RequestHeader(name = "Authorization") String token,
-                                                  @RequestParam(name = "userId", defaultValue = "") String userId
+                                              @RequestParam(name = "userId", defaultValue = "") String userId
     ) {
         try {
 
             return new ResponseEntity<>(userService.getTop10Notifications(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @GetMapping("/test")
+    public ResponseEntity<?> test(@RequestHeader(name = "Authorization") String token,
+                                              @RequestParam(name = "userId", defaultValue = "") String userId
+    ) {
+        try {
+
+            return new ResponseEntity<>(userRepository.getAllUserExpiredMembership(), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);

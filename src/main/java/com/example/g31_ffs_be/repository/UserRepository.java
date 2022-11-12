@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public interface UserRepository extends JpaRepository<User,String> {
@@ -20,6 +21,20 @@ public interface UserRepository extends JpaRepository<User,String> {
             "where u.id like :id")
     User findByUserId(String id);
 
+ /*   select a.user_id, SUM( c.duration-TIMESTAMPDIFF(Day,  a.date_buy,now())) as day_remain from user_service a
+    left join user b on a.user_id=b.user_id
+    left join service c on a.service_id=c.id
+    where (b.is_member_ship=true)
+    group by a.user_id*/
 
+    @Query(value = "select  b.*  from `user_service` a " +
+            "left join `user` b on a.user_id=b.user_id " +
+            "left join `service` c on a.service_id=c.id " +
+            "where (b.is_member_ship=true) " +
+            "group by a.user_id " +
+            "having SUM( c.duration-TIMESTAMPDIFF(Day,  a.date_buy,now()))>0 ",nativeQuery = true
+
+    )
+    List<User> getAllUserExpiredMembership();
 
 }

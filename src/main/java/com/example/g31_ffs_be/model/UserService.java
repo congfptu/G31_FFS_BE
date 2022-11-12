@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_service")
@@ -29,7 +30,7 @@ public class UserService {
     private User user;
 
     @Column(name = "date_buy")
-    private LocalDate dateBuy;
+    private LocalDateTime dateBuy;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

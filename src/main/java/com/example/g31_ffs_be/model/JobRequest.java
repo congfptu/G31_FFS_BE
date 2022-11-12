@@ -31,7 +31,7 @@ public class JobRequest {
     @JsonIgnore
     private Job job;
 
-    @Column(name = "status")
+    @Column(name = "status",columnDefinition = "int default 2")
     private Integer status;
 
     @Column(name = "apply_date")

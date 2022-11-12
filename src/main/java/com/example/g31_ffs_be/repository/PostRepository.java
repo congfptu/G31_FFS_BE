@@ -158,6 +158,7 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
 
     @Query(value = " SELECT DISTINCT j FROM Job j " +
             " LEFT JOIN  j.skills s "+
+            " LEFT JOIN  j.createBy r "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " LEFT JOIN  j.jobRequests rq "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
@@ -169,11 +170,12 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
-            " and ((j.budget <400000.0 and j.paymentType=1) or (j.budget <20000000.0 and j.paymentType=2))"
-            + "Order by j.topTime desc,j.budget desc"
+            " and ((j.budget <400000.0 and j.paymentType=1) or (j.budget <20000000.0 and j.paymentType=2))"+
+            "Order by j.isTop desc,r.lastTopTime desc,j.budget"
 
             , countQuery = " SELECT count( distinct j.id) FROM Job j " +
             " LEFT JOIN  j.skills s "+
+            " LEFT JOIN  j.createBy r "+
             " LEFT JOIN  j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.id not in" +
@@ -184,12 +186,12 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
-            " and ((j.budget <400000.0 and j.paymentType=1) or (j.budget <20000000.0 and j.paymentType=2))"+
-             "Order by j.topTime desc,j.budget desc"
+            " and ((j.budget <400000.0 and j.paymentType=1) or (j.budget <20000000.0 and j.paymentType=2))"
     )
     Page<Job> getAllJobNormalSearchAll(String freelancerId,String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
     @Query(value = " SELECT DISTINCT j FROM Job j " +
             " LEFT JOIN  j.skills s "+
+            " LEFT JOIN  j.createBy r "+
             " LEFT JOIN FETCH j.subCareer sub "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and j.id not in" +
@@ -200,11 +202,12 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
-            "Order by j.topTime desc,j.budget desc"
+            "Order by j.isTop desc,r.lastTopTime desc,j.budget"
 
             , countQuery = " SELECT count( distinct j.id) FROM Job j " +
             " LEFT JOIN  j.skills s "+
             " LEFT JOIN  j.subCareer sub "+
+            " LEFT JOIN  j.createBy r "+
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and j.id not in" +
                         " (select distinct job.id from JobRequest request " +
@@ -213,8 +216,7 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
                         " fre where fre.id=:freelancerId)"+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
-            " and (sub.id=:subCareerId or :subCareerId=-1)"+
-            " Order by j.topTime desc,j.budget desc"
+            " and (sub.id=:subCareerId or :subCareerId=-1)"
     )
     Page<Job> getAllJobMemberShipSearchAll(String freelancerId,String area,String keyword,int paymentType,int subCareerId,Pageable pageable);
     @Query(value = " SELECT DISTINCT j FROM Recruiter r " +

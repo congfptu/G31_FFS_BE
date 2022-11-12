@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,7 @@ public class RecruiterController {
     NotificationRepository notificationRepository;
     @Autowired
     JobRequestRepository jobRequestRepository;
+
 
     @GetMapping("/findFreelancer")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
@@ -292,6 +294,43 @@ public class RecruiterController {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
+    }
+    @PutMapping("/pushTop")
+    public ResponseEntity<?> pushTopJobRecruiter(@RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "recruiterId") String recruiterId,
+                                                @RequestParam(name = "jobId") int jobId
+    ) {
+        try {
+            LocalDateTime topTime=null;
+            long hours=0;
+            Recruiter recruiter=recruiterRepository.getReferenceById(recruiterId);
+            Job job=postRepository.getReferenceById(jobId);
+            if(recruiter.getLastTopTime()!=null) {
+                topTime = recruiter.getLastTopTime();
+                hours = ChronoUnit.HOURS.between(topTime, LocalDateTime.now());
+                if(hours>2)
+                {
+                    recruiter.setLastTopTime(LocalDateTime.now());
+                    job.setIsTop(true);
+                    recruiterRepository.save(recruiter);
+                    postRepository.save(job);
+                    return new ResponseEntity<>(true, HttpStatus.OK);
+                }
+                else{
+                    return new ResponseEntity<>(false, HttpStatus.OK);
+                }
+            }
+            else{
+                recruiter.setLastTopTime(LocalDateTime.now());
+                job.setIsTop(true);
+                recruiterRepository.save(recruiter);
+                postRepository.save(job);
+                return new ResponseEntity<>(true, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
     }
     @GetMapping("/getProfileFreelancer")
     public ResponseEntity<?> getProfileFreelancer(@RequestHeader(name = "Authorization") String token,

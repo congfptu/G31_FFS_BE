@@ -41,5 +41,7 @@ public class Staff {
     @Column(name = "isActive")
     private Boolean isActive;
 
-
+    public Staff(String id) {
+        this.id = id;
+    }
 }

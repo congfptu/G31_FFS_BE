@@ -64,14 +64,16 @@ public class Job {
     @Column(name = "area")
     private String area;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active",columnDefinition = "bit default 0")
     private Boolean isActive;
 
-    @Column(name = "is_approved")
+    @Column(name = "is_approved",columnDefinition = "int default 2")
     private Integer isApproved;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by",updatable = false,insertable = false)
     private Staff approvedBy;
+    @Column(name = "is_top",columnDefinition = "bit default 0")
+    private Boolean isTop;
 
     @ManyToMany
     @JsonIgnore

@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
             fa.setJobTitle(f.getJobTitle());
             fa.setIsApproved(f.getIsApproved());
             if(f.getApprovedBy()!=null)
-            fa.setApprovedBy(f.getApprovedBy().getFullName());
+                fa.setApprovedBy(f.getApprovedBy().getFullName());
             fas.add(fa);
         }
         PostDTOResponse paymentDTOResponse= new PostDTOResponse();
@@ -278,9 +278,9 @@ public class PostServiceImpl implements PostService {
                 post.setArea(j.getArea());
                 post.setIsActive(j.getIsActive());
                 post.setListSkills(j.getSkills());
+                post.setIsTop(j.getIsTop());
                 listJobs.add(post);
             }
-
             apiResponse.setResults(listJobs);
             apiResponse.setPageIndex(pageNumber + 1);
             apiResponse.setTotalPages(jobs.getTotalPages());
