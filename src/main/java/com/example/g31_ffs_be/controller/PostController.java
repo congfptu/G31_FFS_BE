@@ -71,4 +71,15 @@ public class  PostController {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("/postDetailAdmin")
+    public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
+                                           @RequestParam(name = "jobId", defaultValue = "") int jobId) {
+
+        try {
+            return new ResponseEntity<>(postService.getPostDetailAdmin(jobId), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

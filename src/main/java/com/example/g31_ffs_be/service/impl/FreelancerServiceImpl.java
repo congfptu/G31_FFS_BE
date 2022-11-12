@@ -302,7 +302,9 @@ public class FreelancerServiceImpl implements FreelancerService {
     @Override
     public void updateProfile(RegisterDto registerDto) {
         try {
+
             String id = registerDto.getId();
+
             User user = userRepository.getReferenceById(id);
             user.setFullName(registerDto.getFullName());
             user.setAddress(registerDto.getAddress());

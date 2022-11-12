@@ -14,12 +14,10 @@ public class ScheduleTask {
     UserRepository userRepository;
     @Scheduled(fixedRate = 1055500)
     public void updateExpiredMemberShip() {
-      /*  List<User> users=userRepository.getAllUserExpiredMembership();
+       /* List<User> users=userRepository.getAllUserExpiredMembership();
         for(User user:users) {
-           User user1=userRepository.getReferenceById(user.getId());
-            user1.setIsMemberShip(false);
-           userRepository.save(user1);
-
+            System.out.println(user.getId());
+            userRepository.save(user);
         }*/
         }
     }

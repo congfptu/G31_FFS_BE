@@ -56,6 +56,7 @@ public class UserController {
     @Autowired
     UserServiceRepository userServiceRepository;
     @Autowired
+    FeeRepository feeRepository;
     ReportRepository reportRepository;
     @Autowired
     RecruiterRepository recruiterRepository;
@@ -99,6 +100,9 @@ public class UserController {
             jwtAuthResponse.setRole(account.getRole().getRoleName());
             jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
             jwtAuthResponse.setAvatar(account.getUser().getAvatar());
+            jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
+            jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
+            jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
             jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
             jwtAuthResponse.setEmail(account.getEmail());
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
