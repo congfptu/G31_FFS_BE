@@ -3,7 +3,6 @@ package com.example.g31_ffs_be.controller;
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
-import com.example.g31_ffs_be.security.CustomUserDetailService;
 import com.example.g31_ffs_be.service.*;
 import com.example.g31_ffs_be.service.UserService;
 import net.bytebuddy.utility.RandomString;
@@ -63,8 +62,7 @@ public class AdminController {
     ServiceRepository serviceRepository;
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    CustomUserDetailService customUserDetailService;
+
 
     //staffController
     @GetMapping("/staff111")

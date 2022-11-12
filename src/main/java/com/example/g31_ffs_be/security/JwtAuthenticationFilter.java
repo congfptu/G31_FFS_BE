@@ -1,13 +1,11 @@
 package com.example.g31_ffs_be.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -22,16 +20,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtTokenProvider tokenProvider;
 
     @Autowired
-    private CustomUserDetailService customUserDetailService;
+    private MyUserDetailService myUserDetailService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
             String token = getJwtFromToken(request);
             if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
                 String username = tokenProvider.getUsernameFromJWT((token));
-
-                UserDetails userDetails = customUserDetailService.loadUserByUsername(username);
-
+                UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );

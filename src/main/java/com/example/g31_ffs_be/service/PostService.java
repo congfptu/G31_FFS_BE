@@ -6,6 +6,7 @@ public interface PostService {
     APIResponse<PostDTO> getAllPostByAdmin(int pageNumber, int pageSize, String keyword, int status);
     PostDTOResponse getAllPostSearchNamePaging(int pageNumber, int pageSize, String keyword, String sortValue);
     PostDetailDTO getPostDetail(String freelancerId,int id);
+    PostDetailDTO getPostDetailAdmin(int id);
 
     APIResponse<PostFindingDTO> getJobSearch(int pageNumber, int pageSize, String area, String keyword, int paymentType, int sub_career_id,String userId);
     int createPost(PostCreateDto postCreateDto);

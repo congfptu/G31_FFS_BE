@@ -17,4 +17,5 @@ public class PostCreateDto {
     private String area;
     private int paymentType;
     private double budget;
+    private double fee;
 }

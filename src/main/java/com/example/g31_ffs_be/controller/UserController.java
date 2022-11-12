@@ -9,7 +9,6 @@ import com.example.g31_ffs_be.service.impl.FeedbackServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +55,7 @@ public class UserController {
     @Autowired
     UserServiceRepository userServiceRepository;
     @Autowired
+    FeeRepository feeRepository;
     ReportRepository reportRepository;
     @Autowired
     RecruiterRepository recruiterRepository;
@@ -99,6 +99,9 @@ public class UserController {
             jwtAuthResponse.setRole(account.getRole().getRoleName());
             jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
             jwtAuthResponse.setAvatar(account.getUser().getAvatar());
+            jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
+            jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
+            jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
             jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
             jwtAuthResponse.setEmail(account.getEmail());
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
@@ -224,17 +227,6 @@ public class UserController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
-    @GetMapping("/test")
-    public ResponseEntity<?> test(@RequestHeader(name = "Authorization") String token,
-                                              @RequestParam(name = "userId", defaultValue = "") String userId
-    ) {
-        try {
 
-            return new ResponseEntity<>(userRepository.getAllUserExpiredMembership(), HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ResponseEntity<>(false, HttpStatus.OK);
-        }
-    }
 }
 

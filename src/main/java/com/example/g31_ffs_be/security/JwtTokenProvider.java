@@ -15,7 +15,7 @@ public class JwtTokenProvider {
     @Value("congbvhe")
     private String jwtSecret;
 
-    @Value("604800000")
+    @Value("7604800000")
     private int jwtExpirationInMs;
 
     public String generateToken(Authentication authentication) {

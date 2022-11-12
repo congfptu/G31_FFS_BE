@@ -23,6 +23,8 @@ public class FreelancerDetailDto {
     Set<Education> educations;
     Set<WorkExperience> workExperiences;
     Set<Feedback> feedbackTos;
+    String cv;
+    String avatar;
     double star;
     LocalDate birthdate;
     String subCareer;

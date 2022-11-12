@@ -104,8 +104,9 @@ public class GuestController {
             String role=account.getRole().getRoleName();
 
             if(role.equals("admin")||(role.equals("staff") &&account.getStaff().getIsActive())||
-                    (account.getUser()!=null&&!account.getUser().getIsBanned()&&role.equals("freelancer"))||
-                    !(role.equals("recruiter")&&account.getUser().getRecruiter().getIsActive())
+                    (account.getUser()!=null&&!account.getUser().getIsBanned()
+                            &&(role.equals("freelancer"))||  (role.equals("recruiter")&&account.getUser().getRecruiter().getIsActive())
+                 )
             ){
 
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

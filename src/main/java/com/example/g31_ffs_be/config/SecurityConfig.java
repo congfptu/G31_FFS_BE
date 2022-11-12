@@ -1,7 +1,7 @@
 package com.example.g31_ffs_be.config;
 
 
-import com.example.g31_ffs_be.security.CustomUserDetailService;
+import com.example.g31_ffs_be.security.MyUserDetailService;
 import com.example.g31_ffs_be.security.JwtAuthenticationEntryPoint;
 import com.example.g31_ffs_be.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
                             jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private CustomUserDetailService userDetailService;
+    private MyUserDetailService userDetailService;
 
     @Autowired
     private JwtAuthenticationEntryPoint authenticationEntryPoint;

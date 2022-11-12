@@ -91,14 +91,15 @@ public class FreelancerServiceImpl implements FreelancerService {
             Freelancer f = freelancerRepository.getDetailFreelancer(id);
             FreelancerDetailDto fd = mapToFreelancerDetailDTO(f);
             User u = f.getUser();
-            Set<Feedback> feedbacks = u.getFeedbackTos();
-            fd.setFeedbackTos(feedbacks);
             fd.setStar(u.getStar());
             fd.setSubCareer(f.getSubCareer().getName());
             fd.setFullName(u.getFullName());
             fd.setAddress(u.getAddress());
             fd.setPhone(u.getPhone());
             fd.setIsBanned(u.getIsBanned());
+            fd.setCv(f.getCv());
+            fd.setAvatar(u.getAvatar());
+
             return fd;
         } catch (Exception e) {
             return null;
@@ -302,7 +303,9 @@ public class FreelancerServiceImpl implements FreelancerService {
     @Override
     public void updateProfile(RegisterDto registerDto) {
         try {
+
             String id = registerDto.getId();
+
             User user = userRepository.getReferenceById(id);
             user.setFullName(registerDto.getFullName());
             user.setAddress(registerDto.getAddress());

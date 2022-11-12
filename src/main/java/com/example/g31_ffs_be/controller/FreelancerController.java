@@ -142,9 +142,9 @@ public class FreelancerController {
             if(user.getIsMemberShip())
             jobRequestRepository.insert(job_id,freelancer_id,2, LocalDateTime.now(),0);
             else {
-                jobRequestRepository.insert(job_id, freelancer_id, 2, LocalDateTime.now(), feeRepository.findByName("applyJob").getPrice());
-
-                user.setAccountBalance(user.getAccountBalance()-0.5);
+                double feeApply=feeRepository.getReferenceById(2).getPrice();
+                jobRequestRepository.insert(job_id, freelancer_id, 2, LocalDateTime.now(),feeApply);
+                user.setAccountBalance(user.getAccountBalance()-feeApply);
             }
             Notification notification=new Notification();
             Job job=postRepository.getReferenceById(job_id);
