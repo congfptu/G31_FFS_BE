@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -96,8 +97,6 @@ public class GuestController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             Account account = accountRepository.findByEmail(loginDTO.getEmail());
-
-            /*   orElseThrow(() -> new UsernameNotFoundException("Không tìm được người dùng có số điện thoại là: " + loginDTO.getPhone()));*/
             if(account==null){
                 return new ResponseEntity<>("Email không đúng!", HttpStatus.BAD_REQUEST);
             }
@@ -127,6 +126,7 @@ public class GuestController {
                         jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
                         jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
                         jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+                        jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
                     }
                     jwtAuthResponse.setEmail(account.getEmail());
                 }
@@ -149,6 +149,17 @@ public class GuestController {
         else {
             return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
         }
+    }
+    @GetMapping("/test")
+    public ResponseEntity<?> testss() {
+        List<String> a=new ArrayList<>();
+        a.add("cong");
+        a.add("cong");
+        a.add("cong");
+        a.add("cong");
+        a.add("cong");
+
+        return new ResponseEntity<>(a, HttpStatus.OK);
     }
 
 }

@@ -77,7 +77,8 @@ public class User {
     @Column(name = "is_banned",columnDefinition = "bit default 1")
     private Boolean isBanned;
 
-
+    @Column(name = "unread",columnDefinition = "int default 0")
+    private Integer unRead;
     @OneToMany(mappedBy = "to")
     @Fetch(FetchMode.SUBSELECT)
     @JsonIgnore

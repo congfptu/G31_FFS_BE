@@ -281,6 +281,9 @@ public class RecruiterController {
         try {
             jobRequestRepository.responseJobApply(jobId,freelancerId,status, LocalDateTime.now());
             Notification notification=new Notification();
+            User freelancerUser=userRepository.getReferenceById(freelancerId);
+            freelancerUser.setUnRead(freelancerUser.getUnRead()+1);
+            userRepository.save(freelancerUser);
             Job job=postRepository.getReferenceById(jobId);
             notification.setFrom(new User(job.getCreateBy().getId()));
             notification.setTo(new User(freelancerId));

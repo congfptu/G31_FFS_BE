@@ -15,6 +15,7 @@ public class JWTAuthResponse {
     private double feeApplyJob;
     private double feePostJob;
     private double feeViewProfile;
+    private int unReadNotification;
     private String email;
 
 }

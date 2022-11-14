@@ -22,7 +22,8 @@ public interface RecruiterRepository extends JpaRepository<Recruiter, String> {
             "LEFT JOIN FETCH a.role ro " +
             "where r.isActive=true " +
             "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "+
-            "and (u.isBanned=:isBanned or :defaultBan=-1)"
+            "and (u.isBanned=:isBanned or :defaultBan=-1)"+
+            " order by a.createdDate desc"
             ,
             countQuery = "SELECT count(r.id) FROM Recruiter r " +
                     "LEFT JOIN  r.user u " +
@@ -30,21 +31,25 @@ public interface RecruiterRepository extends JpaRepository<Recruiter, String> {
                     "LEFT JOIN  a.role ro " +
                     "where r.isActive=true " +
                     "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "+
-                    "and (u.isBanned=:isBanned or :defaultBan=-1)")
+                    "and (u.isBanned=:isBanned or :defaultBan=-1)"+
+                    " order by a.createdDate desc"
+    )
     Page<Recruiter> getRecruiterActive(String keyword,Boolean isBanned,int defaultBan,Pageable pageable);
     @Query(value = "SELECT r FROM Recruiter r " +
             "LEFT JOIN FETCH r.user u " +
             "LEFT JOIN FETCH u.account a " +
             "LEFT JOIN FETCH a.role ro " +
             "where r.isActive=false " +
-            "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "
+            "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "+
+            " order by a.createdDate desc"
             ,
             countQuery = "SELECT count(r.id) FROM Recruiter r " +
                     "LEFT JOIN  r.user u " +
                     "LEFT JOIN  u.account a " +
                     "LEFT JOIN  a.role ro " +
                     "where r.isActive=false " +
-                    "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "
+                    "and (u.fullName like CONCAT('%',:keyword,'%') or a.email like CONCAT('%',:keyword,'%')) "+
+                    " order by a.createdDate desc "
                   )
     Page<Recruiter> getRecruiterIsNotActive(String keyword,Pageable pageable);
     @Query(value = "select r from Recruiter r " +

@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<NotificationDTO> getTop10Notifications(String userId) {
+
  Pageable pageable=PageRequest.of(0,10);
         List<NotificationDTO> notificationDTOS=new ArrayList<>();
         Page<Notification> page = notificationRepository.getNotificationByUserId(userId,pageable);
@@ -136,6 +137,9 @@ public class UserServiceImpl implements UserService {
             notificationDTO.setTime(message);
             notificationDTOS.add(notificationDTO);
         }
+        User userTo=userRepository.getReferenceById(userId);
+        userTo.setUnRead(0);
+        userRepository.save(userTo);
         return notificationDTOS;
     }
 }

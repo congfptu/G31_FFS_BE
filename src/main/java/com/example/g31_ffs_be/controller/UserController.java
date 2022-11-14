@@ -9,6 +9,7 @@ import com.example.g31_ffs_be.service.impl.FeedbackServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/user")
 @CrossOrigin("*")
-//@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') ")
+//@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') or hasAuthority('staff') ")
 public class UserController {
     @Autowired
     AccountService accountService;
@@ -103,6 +104,7 @@ public class UserController {
             jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
             jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
             jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+            jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
             jwtAuthResponse.setEmail(account.getEmail());
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
         } catch (AuthenticationException e) {

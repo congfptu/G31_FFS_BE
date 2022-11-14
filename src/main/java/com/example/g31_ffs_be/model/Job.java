@@ -70,7 +70,7 @@ public class Job {
     @Column(name = "is_approved",columnDefinition = "int default 2")
     private Integer isApproved;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "approved_by",updatable = false,insertable = false)
+    @JoinColumn(name = "approved_by")
     private Staff approvedBy;
     @Column(name = "is_top",columnDefinition = "bit default 0")
     private Boolean isTop;

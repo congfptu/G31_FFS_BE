@@ -15,7 +15,7 @@ public class JwtTokenProvider {
     @Value("congbvhe")
     private String jwtSecret;
 
-    @Value("7604800000")
+    @Value("604800000")
     private int jwtExpirationInMs;
 
     public String generateToken(Authentication authentication) {
@@ -31,17 +31,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-/*    public String generateToken(String username) {
-        Date currentDate = new Date();
-        Date expireDate = new Date(currentDate.getTime() + jwtExpirationInMs);
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(expireDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
-    }*/
 
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();

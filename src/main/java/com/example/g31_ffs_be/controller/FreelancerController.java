@@ -154,7 +154,10 @@ public class FreelancerController {
             notification.setDate(LocalDateTime.now());
             notification.setJob(new Job(job_id));
             notification.setStatus(false);
+            User toNotification=  job.getCreateBy().getUser();
+            toNotification.setUnRead(toNotification.getUnRead()+1);
             notificationRepository.save(notification);
+            userRepository.save(toNotification);
             return new ResponseEntity<>("Thêm mới jobRequest thành công", HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);
