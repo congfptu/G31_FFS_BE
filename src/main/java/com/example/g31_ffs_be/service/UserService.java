@@ -16,7 +16,7 @@ public interface UserService {
     Boolean rechargeMoney(RequestPaymentDto requestPaymentDto);
     Boolean verify(String verificationCode);
 
-    List<NotificationDTO> getTop10Notifications(String userId);
+    APIResponse<NotificationDTO> getTop10Notifications(String userId,int pageNo, int pageSize);
 
 
 }

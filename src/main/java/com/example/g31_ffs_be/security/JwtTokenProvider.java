@@ -1,6 +1,6 @@
 package com.example.g31_ffs_be.security;
 
-import com.example.g31_ffs_be.exception.APIException;
+import com.example.g31_ffs_be.exception.JwtException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -42,15 +42,15 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Invalid JWT signature");
+            throw new JwtException(HttpStatus.BAD_REQUEST, "JWT signature không hợp lệ");
         } catch (MalformedJwtException ex) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Invalid JWT token");
+            throw new JwtException(HttpStatus.BAD_REQUEST, "Jwt token không hợp kệ");
         } catch (ExpiredJwtException ex) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Expire JWT signature");
+            throw new JwtException(HttpStatus.BAD_REQUEST, "Jwt token quá hạn");
         } catch (UnsupportedJwtException ex) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Unsupported JWT signature");
+            throw new JwtException(HttpStatus.BAD_REQUEST, "Unsupported JWT signature");
         } catch (IllegalArgumentException ex) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "JWT claims string is empty");
+            throw new JwtException(HttpStatus.BAD_REQUEST, "JWT claims string is empty");
         }
     }
 

@@ -23,7 +23,6 @@ public class MyUserDetailService implements UserDetailsService {
 
     }
     @Override
-
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
             Account acc = accountRepository.findByEmail(email);
            /* if ( !acc.getRole().getRoleName().equals("admin")&&!acc.getRole().getRoleName().equals("staff")&&acc.getUser().getIsBanned()) {

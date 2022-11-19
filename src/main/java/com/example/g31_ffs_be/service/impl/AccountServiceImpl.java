@@ -92,7 +92,7 @@ public class AccountServiceImpl implements AccountService {
                 user.setFreelancer(f);
                 acc.setUser(user);
                 accountRepository.save(acc);
-                sendVerificationEmail(acc, "http://localhost:3000/");
+                sendVerificationEmail(acc, "https://g31-ffs-fe-git-main-trangrangsu.vercel.app/");
             }
             else{
                 Recruiter recruiter=new Recruiter();
@@ -204,7 +204,7 @@ public class AccountServiceImpl implements AccountService {
             account.getUser().setResetPasswordToken(resetPasswordToken);
             account.getUser().setResetPasswordTime(Instant.now());
             accountRepository.save(account);
-            sendResetPasswordEmail(account, "http://localhost:3000");
+            sendResetPasswordEmail(account, "https://g31-ffs-fe-git-main-trangrangsu.vercel.app");
             return true;
         } catch (Exception e) {
             return false;

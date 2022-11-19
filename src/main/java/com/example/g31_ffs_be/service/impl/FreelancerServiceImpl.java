@@ -171,6 +171,7 @@ public class FreelancerServiceImpl implements FreelancerService {
             freelancerProfileDTO.setBirthDate(freelancer.getBirthdate());
             freelancerProfileDTO.setSubCareer(freelancer.getSubCareer().getName());
             freelancerProfileDTO.setStar(freelancer.getUser().getStar());
+            freelancerProfileDTO.setSubCareerId(freelancer.getSubCareer().getId());
             return freelancerProfileDTO;
         } catch (Exception e) {
             System.out.println(e);
@@ -329,58 +330,64 @@ public class FreelancerServiceImpl implements FreelancerService {
     public APIResponse<PostFindingDTO> getJobSaved(String freelancerId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Job> jobs = jobSavedRepository.getAllJobSaved(freelancerId, pageable);
-        List<Job> paymentDTOResponseList = jobs.getContent();
-        List<PostFindingDTO> listJobs = new ArrayList<>();
-        for (Job j : paymentDTOResponseList) {
-            PostFindingDTO post = new PostFindingDTO();
-            post.setPostID(j.getId());
-            post.setJobTitle(j.getJobTitle());
-            post.setSubCareer(j.getSubCareer().getName());
-            String des = j.getDescription();
-            if (des.length() >= 100)
-                des = des.substring(0, 99);
-            post.setDescription(des);
-            post.setAttach(j.getAttach());
-            post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
-            String message = "Đã đăng cách đây ";
-            LocalDateTime time=j.getTime();
-            long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
-            long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
-            long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
-            long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
-            long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
-            long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
-            if (minutes < 60)
-                message += minutes + " phút";
-            else if (hours<24)
-                message += hours+ " giờ";
-            else if (days<7)
-                message += days +" ngày";
-            else if (weeks < 5)
-                message += weeks + " tuần";
-            else if (months < 12) {
-                message += months+ " tháng";
-            }
-            else{
-                message += year+ "năm";
-            }
-
-
-            post.setTimeCount(message);
-            Locale localeVN = new Locale("vi", "VN");
-            NumberFormat vnFormat = NumberFormat.getInstance(localeVN);
-            post.setBudget(vnFormat.format(j.getBudget()) + " VNĐ");
-            post.setCreatedDate(j.getTime());
-            post.setArea(j.getArea());
-            post.setIsActive(j.getIsActive());
-            post.setListSkills(j.getSkills());
-            listJobs.add(post);
-        }
         APIResponse<PostFindingDTO> postFindingDTOAPIResponse = new APIResponse<>();
-        postFindingDTOAPIResponse.setResults(listJobs);
-        postFindingDTOAPIResponse.setPageIndex(pageNo + 1);
-        postFindingDTOAPIResponse.setTotalPages(jobs.getTotalPages());
-        postFindingDTOAPIResponse.setTotalResults(jobs.getTotalElements());
+        postFindingDTOAPIResponse.setResults(null);
+        if(jobs!=null) {
+            List<Job> paymentDTOResponseList = jobs.getContent();
+            List<PostFindingDTO> listJobs = new ArrayList<>();
+
+            for (Job j : paymentDTOResponseList) {
+                PostFindingDTO post = new PostFindingDTO();
+                post.setPostID(j.getId());
+                post.setJobTitle(j.getJobTitle());
+                post.setSubCareer(j.getSubCareer().getName());
+                String des = j.getDescription();
+                if (des.length() >= 100)
+                    des = des.substring(0, 99);
+                post.setDescription(des);
+                post.setAttach(j.getAttach());
+                post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
+                String message = "Đã đăng cách đây ";
+                LocalDateTime time = j.getTime();
+                long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+                long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+                long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+                long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+                long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
+                long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
+                if (minutes < 60)
+                    message += minutes + " phút";
+                else if (hours < 24)
+                    message += hours + " giờ";
+                else if (days < 7)
+                    message += days + " ngày";
+                else if (weeks < 5)
+                    message += weeks + " tuần";
+                else if (months < 12) {
+                    message += months + " tháng";
+                } else {
+                    message += year + "năm";
+                }
+
+
+                post.setTimeCount(message);
+                Locale localeVN = new Locale("vi", "VN");
+                NumberFormat vnFormat = NumberFormat.getInstance(localeVN);
+                post.setBudget(vnFormat.format(j.getBudget()) + " VNĐ");
+                post.setCreatedDate(j.getTime());
+                post.setArea(j.getArea());
+                post.setIsActive(j.getIsActive());
+                post.setListSkills(j.getSkills());
+                listJobs.add(post);
+
+            }
+            postFindingDTOAPIResponse.setResults(listJobs);
+            postFindingDTOAPIResponse.setTotalPages(jobs.getTotalPages());
+            postFindingDTOAPIResponse.setTotalResults(jobs.getTotalElements());
+            postFindingDTOAPIResponse.setPageIndex(pageNo + 1);
+        }
+
+
         return postFindingDTOAPIResponse;
     }
 

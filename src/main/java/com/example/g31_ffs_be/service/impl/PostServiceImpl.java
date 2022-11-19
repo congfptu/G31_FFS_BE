@@ -247,10 +247,8 @@ public class PostServiceImpl implements PostService {
         Recruiter createdBy=job.getCreateBy();
 
         double star = 0;
-        int totalApplied=0;
-        for(Job j:createdBy.getJobs())
-            totalApplied+=j.getJobRequests().size();
-        postDetailDTO.setTotalApplied(totalApplied);
+
+        postDetailDTO.setTotalApplied(job.getJobRequests().size());
         postDetailDTO.setJobTitle(job.getJobTitle());
         postDetailDTO.setSubCareer(job.getSubCareer().getName());
         postDetailDTO.setDescription(job.getDescription());
@@ -312,8 +310,8 @@ public class PostServiceImpl implements PostService {
                 post.setJobTitle(j.getJobTitle());
                 post.setSubCareer(j.getSubCareer().getName());
                 String des = j.getDescription();
-                if (des.length() >= 100)
-                    des = des.substring(0, 99);
+                if (des.length() >= 200)
+                    des = des.substring(0, 199);
                 post.setDescription(des);
                 post.setAttach(j.getAttach());
                 post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
@@ -374,7 +372,7 @@ public class PostServiceImpl implements PostService {
         job.setSkills(skills);
         job.setCreateBy(recruiter);
         job.setSubCareer(subcareer);
-        job.setIsActive(false);
+        job.setIsActive(true);
         job.setTime(LocalDateTime.now());
         job.setFee(recruiter.getUser().getIsMemberShip()?0: postCreateDto.getFee());
         recruiter.getUser().setAccountBalance(recruiter.getUser().getAccountBalance()-postCreateDto.getFee());

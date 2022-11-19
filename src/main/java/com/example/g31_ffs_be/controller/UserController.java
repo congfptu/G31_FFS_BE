@@ -95,17 +95,22 @@ public class UserController {
                                    @RequestParam(name = "userId", defaultValue = "") String userId) {
         try {
             Account account = accountRepository.findByUserId(userId);
-            JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+            String role=account.getRole().getRoleName();
+            JWTAuthResponse jwtAuthResponse=new JWTAuthResponse();
             jwtAuthResponse.setUserId(account.getId());
-            jwtAuthResponse.setRole(account.getRole().getRoleName());
-            jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
-            jwtAuthResponse.setAvatar(account.getUser().getAvatar());
-            jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
-            jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
-            jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
-            jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
-            jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
+            jwtAuthResponse.setRole(role);
+            jwtAuthResponse.setAccessToken(token);
+            jwtAuthResponse.setTokenType("Bearer");
             jwtAuthResponse.setEmail(account.getEmail());
+            if(!role.equals("admin")&&!role.equals("staff")) {
+                    jwtAuthResponse.setAvatar(account.getUser().getAvatar());
+                    jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
+                    jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
+                    jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
+                    jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
+                    jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+                    jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
+            }
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
@@ -219,11 +224,12 @@ public class UserController {
 
     @GetMapping("/notifications")
     public ResponseEntity<?> getNotifications(@RequestHeader(name = "Authorization") String token,
-                                              @RequestParam(name = "userId", defaultValue = "") String userId
+                                              @RequestParam(name = "userId", defaultValue = "") String userId,
+                                              @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex
     ) {
         try {
 
-            return new ResponseEntity<>(userService.getTop10Notifications(userId), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getTop10Notifications(userId,pageIndex,10), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);

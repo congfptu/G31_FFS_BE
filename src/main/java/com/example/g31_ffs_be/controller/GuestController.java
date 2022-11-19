@@ -98,7 +98,7 @@ public class GuestController {
         try {
             Account account = accountRepository.findByEmail(loginDTO.getEmail());
             if(account==null){
-                return new ResponseEntity<>("Email không đúng!", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Email hoặc mật khẩu không đúng!", HttpStatus.BAD_REQUEST);
             }
             String role=account.getRole().getRoleName();
 
@@ -118,6 +118,7 @@ public class GuestController {
                 jwtAuthResponse.setRole(role);
                 jwtAuthResponse.setAccessToken(token);
                 jwtAuthResponse.setTokenType("Bearer");
+                jwtAuthResponse.setEmail(account.getEmail());
                 if(!role.equals("admin")) {
                     if(!role.equals("staff")) {
                         jwtAuthResponse.setAvatar(account.getUser().getAvatar());
@@ -128,13 +129,12 @@ public class GuestController {
                         jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
                         jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
                     }
-                    jwtAuthResponse.setEmail(account.getEmail());
                 }
 
                 return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
             }else{
 
-                return new ResponseEntity<>(" Người dùng đã bị chặn !", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(" Người dùng đã bị chặn bao nhieu ngay !", HttpStatus.BAD_REQUEST);
             }
         }catch (AuthenticationException e){
             return new ResponseEntity<>("Email hoặc mật khẩu không đúng!", HttpStatus.BAD_REQUEST);

@@ -100,6 +100,7 @@ public class AdminController {
 
     @PostMapping("/add-staff")
     public ResponseEntity<?> addStaff(@RequestHeader(name = "Authorization") String token, @Valid @RequestBody StaffDto staffDto) {
+
         if (accountService.checkEmailExist(staffDto.getEmail())) {
             return new ResponseEntity<>("Email đã tồn tại trên hệ thống, vui lòng thử email khác", HttpStatus.OK);
         } else {

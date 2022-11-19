@@ -64,7 +64,7 @@ public class Job {
     @Column(name = "area")
     private String area;
 
-    @Column(name = "is_active",columnDefinition = "bit default 0")
+    @Column(name = "is_active",columnDefinition = "bit default 1")
     private Boolean isActive;
 
     @Column(name = "is_approved",columnDefinition = "int default 2")

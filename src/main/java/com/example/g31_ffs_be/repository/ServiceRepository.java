@@ -12,7 +12,9 @@ import java.util.List;
 public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "select distinct s from Service s " +
             "LEFT JOIN FETCH s.role r "+
-            "where r.id = :roleId ")
+            "where r.id = :roleId "+
+            "Order by s.price asc"
+    )
     List<Service> getServiceByName(int roleId);
     @Query(value = "select s from Service s "+
             "where s.serviceName =:name " )

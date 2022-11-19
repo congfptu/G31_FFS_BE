@@ -14,15 +14,15 @@ import javax.transaction.Transactional;
 public interface PostRepository extends JpaRepository<Job, Integer> {
     @Query(value = " SELECT j From Job j" +
             " left join fetch j.approvedBy "+
-            " left join fetch j.createBy "+
-            " WHERE ((j.description LIKE CONCAT('%',:keyword,'%') " +
+            " left join fetch j.createBy cre "+
+            " WHERE ((cre.companyName LIKE CONCAT('%',:keyword,'%') " +
             "or j.jobTitle LIKE CONCAT('%',:keyword,'%')))"+
             " and (j.isApproved =:status or :status=-1)"+
             " order by  j.time desc",
             countQuery = " SELECT  count(j.id) From Job j" +
                     " left join  j.approvedBy "+
-                    " left join  j.createBy "+
-                    " WHERE ((j.description LIKE CONCAT('%',:keyword,'%') " +
+                    " left join  j.createBy cre"+
+                    " WHERE ((cre.companyName LIKE CONCAT('%',:keyword,'%') " +
                     "or j.jobTitle LIKE CONCAT('%',:keyword,'%')))"+
                     " and (j.isApproved =:status or :status=-1)"
            )

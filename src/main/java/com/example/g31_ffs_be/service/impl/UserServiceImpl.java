@@ -105,41 +105,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<NotificationDTO> getTop10Notifications(String userId) {
-
- Pageable pageable=PageRequest.of(0,10);
+    public APIResponse<NotificationDTO> getTop10Notifications(String userId,int pageNo, int pageSize) {
+        APIResponse<NotificationDTO> apiResponse=new APIResponse<>();
+ Pageable pageable=PageRequest.of(pageNo,pageSize);
         List<NotificationDTO> notificationDTOS=new ArrayList<>();
+
         Page<Notification> page = notificationRepository.getNotificationByUserId(userId,pageable);
-        for(Notification notification:page.getContent()){
-            NotificationDTO notificationDTO=new NotificationDTO();
-            notificationDTO.setType(notification.getNotificationType());
-            User from=notification.getFrom();
-            notificationDTO.setUserId(from.getId());
-            notificationDTO.setUserName(from.getFullName());
-            notificationDTO.setAvatar(from.getAvatar());
-            Job job=notification.getJob();
-            notificationDTO.setPostId(job.getId());
-            notificationDTO.setPostTitle(job.getJobTitle());
-            String message="";
-            LocalDateTime time=notification.getDate();
-            long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
-            long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
-            long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
-            long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
-            if (minutes < 60)
-                message += minutes + " phút trước";
-            else if (hours<24)
-                message += hours+ " giờ trước";
-            else if (days<7)
-                message += days +" ngày trước";
-            else if (weeks < 5)
-                message += weeks + " tuần trước";
-            notificationDTO.setTime(message);
-            notificationDTOS.add(notificationDTO);
+        if(page!=null) {
+            for (Notification notification : page.getContent()) {
+                NotificationDTO notificationDTO = new NotificationDTO();
+                notificationDTO.setType(notification.getNotificationType());
+                User from = notification.getFrom();
+                notificationDTO.setUserId(from.getId());
+                notificationDTO.setUserName(from.getFullName());
+                notificationDTO.setAvatar(from.getAvatar());
+                Job job = notification.getJob();
+                notificationDTO.setPostId(job.getId());
+                notificationDTO.setPostTitle(job.getJobTitle());
+                String message = "";
+                LocalDateTime time = notification.getDate();
+                long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+                long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+                long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+                long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+                if (minutes < 60)
+                    message += minutes + " phút trước";
+                else if (hours < 24)
+                    message += hours + " giờ trước";
+                else if (days < 7)
+                    message += days + " ngày trước";
+                else if (weeks < 5)
+                    message += weeks + " tuần trước";
+                notificationDTO.setTime(message);
+                notificationDTOS.add(notificationDTO);
+            }
+            User userTo = userRepository.getReferenceById(userId);
+            userTo.setUnRead(0);
+            userRepository.save(userTo);
+            apiResponse.setResults(notificationDTOS);
+            apiResponse.setTotalPages(page.getTotalPages());
+            apiResponse.setTotalResults(page.getTotalElements());
+            apiResponse.setPageIndex(pageNo+1);
         }
-        User userTo=userRepository.getReferenceById(userId);
-        userTo.setUnRead(0);
-        userRepository.save(userTo);
-        return notificationDTOS;
+        return apiResponse;
     }
 }
