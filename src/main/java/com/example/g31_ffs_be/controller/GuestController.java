@@ -108,21 +108,21 @@ public class GuestController {
             if (account == null) {
                 return new ResponseEntity<>("Email hoặc mật khẩu không đúng!", HttpStatus.BAD_REQUEST);
             }
-            int minuteBanRemain=0;
             String role = account.getRole().getRoleName();
-            if(account.getUser().getIsBanned())
+            if (role.equals("recruiter") && !account.getUser().getRecruiter().getIsActive())
+                return new ResponseEntity<>("Tài khoản của bạn  đang được kiểm duyệt!", HttpStatus.BAD_REQUEST);
+            if (role.equals("staff") && !account.getStaff().getIsActive())
+                return new ResponseEntity<>("Bạn không còn quyền truy cập vào tài khoản công ty!", HttpStatus.BAD_REQUEST);
+            int minuteBanRemain=0;
+
+            if(!role.equals("admin")&&!role.equals("staff")&&account.getUser().getIsBanned())
                 try {
                     minuteBanRemain = userRepository.countTimeBanRemain(account.getId());
                 }
             catch (Exception e) {
                 minuteBanRemain = 0;
             }
-            if (role.equals("admin") ||
-                    (role.equals("staff") && account.getStaff().getIsActive()) ||
-                    (account.getUser() != null && !account.getUser().getIsBanned() &&
-                            ((role.equals("freelancer")) || (role.equals("recruiter") && account.getUser().getRecruiter().getIsActive()))) ||
-                    minuteBanRemain <= 0
-            ) {
+            if (role.equals("admin") || role.equals("staff") || account.getUser().getIsBanned()||minuteBanRemain <= 0) {
 
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(), loginDTO.getPassword()
@@ -143,11 +143,12 @@ public class GuestController {
                     jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
                     jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
                     jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
+                    if (minuteBanRemain < 0 && account.getUser().getIsBanned()) {
+                        account.getUser().setIsBanned(false);
+                        accountRepository.save(account);
+                    }
                 }
-                if (minuteBanRemain < 0 && account.getUser().getIsBanned()) {
-                    account.getUser().setIsBanned(false);
-                    accountRepository.save(account);
-                }
+
                 return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
             } else {
 
