@@ -89,6 +89,7 @@ public class FreelancerServiceImpl implements FreelancerService {
     public FreelancerDetailDto getFreelancerInfo(String id) {
         try {
             Freelancer f = freelancerRepository.getDetailFreelancer(id);
+            if (f==null) return null;
             FreelancerDetailDto fd = mapToFreelancerDetailDTO(f);
             User u = f.getUser();
             fd.setStar(u.getStar());
@@ -182,7 +183,7 @@ public class FreelancerServiceImpl implements FreelancerService {
     public FreelancerProfileDTO getDetailFreelancerByRecruiter(String recruiterId,String id) {
         try {
             Freelancer freelancer = freelancerRepository.getFreelancerDetailByRecruiter(id);
-
+            if (freelancer==null) return null;
             FreelancerProfileDTO freelancerProfileDTO = new FreelancerProfileDTO();
             freelancerProfileDTO.setId(id);
             freelancerProfileDTO.setGender(freelancer.getGender());
@@ -247,8 +248,8 @@ public class FreelancerServiceImpl implements FreelancerService {
             return freelancerProfileDTO;
         } catch (Exception e) {
             System.out.println(e);
+            return null;
         }
-        return null;
     }
 
     @Override

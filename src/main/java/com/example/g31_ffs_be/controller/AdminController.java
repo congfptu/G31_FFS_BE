@@ -159,16 +159,13 @@ public class AdminController {
     @GetMapping("/detail-freelancer")
     public ResponseEntity<?> getDetailFreelancer(@RequestHeader(name = "Authorization") String token,
                                                  @RequestParam(name = "id", defaultValue = "") String id) {
-
         FreelancerDetailDto freelancerDetailDto = freelancerService.getFreelancerInfo(id);
-        return new ResponseEntity<>(freelancerDetailDto != null ? freelancerDetailDto : "Không có thông tin người dùng này", HttpStatus.OK);
+        return new ResponseEntity<>( freelancerDetailDto, HttpStatus.OK);
     }
 
 
     @GetMapping("/type-ban")
-    public ResponseEntity<?> getAllTypeBan(@RequestHeader(name = "Authorization") String token,
-                                           @RequestParam(name = "id", defaultValue = "") String id) {
-        System.out.println(id);
+    public ResponseEntity<?> getAllTypeBan(@RequestHeader(name = "Authorization") String token) {
         return new ResponseEntity<>(typeBanRepository.findAll(), HttpStatus.OK);
     }
 
@@ -247,7 +244,7 @@ public class AdminController {
     public ResponseEntity<?> getDetailRecruiter(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "id", defaultValue = "") String id) {
         RecruiterDetailDTO recruiterDetailDTO = recruiterService.getDetailRecruiter(id);
-        return new ResponseEntity<>(recruiterDetailDTO != null ? recruiterDetailDTO : "Không có thông tin nhà tuyển dụng này", HttpStatus.OK);
+        return new ResponseEntity<>(recruiterDetailDTO, HttpStatus.OK);
     }
 
     //Service

@@ -163,8 +163,10 @@ public class RecruiterServiceImpl implements RecruiterService {
     @Override
     public RecruiterDetailDTO getProfileRecruiterByFreelancer(String id, String freelancerId) {
         try {
+
             Freelancer freelancer=freelancerRepository.getReferenceById(freelancerId);
             Recruiter r  = recruiterRepository.getDetailRecruiterByFreelancer(id);
+            if(r==null) return null;
             RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
             double star = 0;
             User u = r.getUser();

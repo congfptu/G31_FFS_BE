@@ -83,7 +83,7 @@ public class ServiceServiceImpl implements ServiceService {
     public ServiceResponse getAllServiceByRole(String roleName) {
          ServiceResponse serviceResponse =new ServiceResponse();
          Role role=roleRepository.findByRoleName(roleName);
-        Set<Service> services =role.getServices();
+        List<Service> services =serviceRepository.getServiceByRoleName(roleName);
         List<ServiceDto> serviceDTOs=new ArrayList<>();
         for(Service service:services){
             serviceDTOs.add(mapToServiceDto(service));

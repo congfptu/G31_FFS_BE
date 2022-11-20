@@ -16,6 +16,13 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
             "Order by s.price asc"
     )
     List<Service> getServiceByName(int roleId);
+
+    @Query(value = "select distinct s from Service s " +
+            "LEFT JOIN FETCH s.role r "+
+            "where r.roleName like :roleName "+
+            "Order by s.price asc"
+    )
+    List<Service> getServiceByRoleName(String roleName);
     @Query(value = "select s from Service s "+
             "where s.serviceName =:name " )
     Service getService(String name);

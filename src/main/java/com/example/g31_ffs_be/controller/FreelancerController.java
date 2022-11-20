@@ -330,11 +330,7 @@ public class FreelancerController {
                                                   @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId) {
         RecruiterDetailDTO recruiterDetailDTO=recruiterService.getProfileRecruiterByFreelancer(id,freelancerId);
         try{
-            if (recruiterDetailDTO != null) {
                 return new ResponseEntity<>(recruiterDetailDTO, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
-            }
         }catch (Exception e){
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

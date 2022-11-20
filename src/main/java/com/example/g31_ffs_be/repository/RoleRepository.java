@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RoleRepository extends JpaRepository<Role,Integer> {
   @Query(value = "select r from Role r "+
-          " left join fetch r.services"+
+          " left join fetch r.services se"+
           " left join fetch r.benefits "+
           "where r.roleName like :roleName " )
   Role findByRoleName(String roleName);

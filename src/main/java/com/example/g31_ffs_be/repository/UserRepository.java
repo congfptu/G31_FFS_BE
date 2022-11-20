@@ -63,5 +63,14 @@ public interface UserRepository extends JpaRepository<User, String> {
     )
     Integer updateBanUserExpired();
 
+    @Query(value = "select  b.num_day*60*24-TIMESTAMPDIFF(minute,a.date,now()) from ban a " +
+            "left join type_ban b on a.type_ban=b.id " +
+            "where user_id=:userId and a.date= (select max(date) from ban where user_id=:userId)", nativeQuery = true
+
+    )
+    Integer countTimeBanRemain(String userId);
+
+
+
 
 }

@@ -344,11 +344,11 @@ public class RecruiterController {
             if (f != null) {
                 return new ResponseEntity<>(f, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
             }
         }catch (Exception e){
             System.out.println(e);
-            return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
 

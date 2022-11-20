@@ -92,6 +92,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDetailDTO getPostDetail(String freelancerId,int id) {
         Job job= postRepository.getJobDetail(id);
+        if (job==null) return null;
         PostDetailDTO postDetailDTO=new PostDetailDTO();
         postDetailDTO.setPostID(job.getId());
         Recruiter createdBy=job.getCreateBy();
