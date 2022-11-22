@@ -48,7 +48,7 @@ public class RecruiterController {
                                            @RequestParam(name = "subCareer", defaultValue = "-1") int subCareer,
                                            @RequestParam(name = "keyword", defaultValue = "") String keyword,
                                            @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex,
-                                           @RequestParam(name = "isMemberShip", defaultValue = "false") Boolean isMemberShip) {
+                                           @RequestParam(name = "isMemberShip", defaultValue = "true") Boolean isMemberShip) {
         try {
             return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(isMemberShip,city, costOption, subCareer, skill, keyword, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {

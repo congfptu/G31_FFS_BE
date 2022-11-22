@@ -17,5 +17,8 @@ public class JWTAuthResponse {
     private double feeViewProfile;
     private int unReadNotification;
     private String email;
+    private int currentServiceId;
+    private String currentServiceName;
+
 
 }

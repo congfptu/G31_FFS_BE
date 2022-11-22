@@ -92,7 +92,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDetailDTO getPostDetail(String freelancerId,int id) {
         Job job= postRepository.getJobDetail(id);
-        if (job==null) return null;
+        if (job==null||!job.getIsActive()) return null;
         PostDetailDTO postDetailDTO=new PostDetailDTO();
         postDetailDTO.setPostID(job.getId());
         Recruiter createdBy=job.getCreateBy();
@@ -129,8 +129,10 @@ public class PostServiceImpl implements PostService {
         }
         boolean isSaved=false;
         for(Freelancer freelancer: job.getFreelancers()){
-            if(freelancer.getId().equals(freelancerId))
-                isSaved=true;
+            if (freelancer.getId().equals(freelancerId)) {
+                isSaved = true;
+                break;
+            }
         }
         postDetailDTO.setIsApply(isApply);
         postDetailDTO.setIsSave(isSaved);

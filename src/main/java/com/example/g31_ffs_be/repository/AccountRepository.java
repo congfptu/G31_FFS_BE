@@ -13,11 +13,19 @@ public interface AccountRepository extends JpaRepository<Account,String> {
          "LEFT JOIN FETCH a.staff s "+
          "LEFT JOIN FETCH a.user u "+
          "LEFT JOIN FETCH u.recruiter re "+
+         "LEFT JOIN FETCH u.userServices us "+
+         "LEFT JOIN FETCH us.service "+
          "where a.email like :email")
  Account findByEmail(String email);
+
+ @Query(value = " SELECT count(*) FROM account a " +
+         "where a.email like :email",nativeQuery = true)
+ Integer checkEmailExist(String email);
  @Query(value = " SELECT distinct a FROM Account a " +
          "LEFT JOIN FETCH a.user u " +
          "LEFT JOIN FETCH a.role r "+
+         "LEFT JOIN FETCH u.userServices us "+
+         "LEFT JOIN FETCH us.service "+
          "where a.id like :id")
  Account findByUserId(String id);
 

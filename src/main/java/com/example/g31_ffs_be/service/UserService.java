@@ -3,10 +3,12 @@ package com.example.g31_ffs_be.service;
 import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.NotificationDTO;
 import com.example.g31_ffs_be.dto.RequestPaymentDto;
+import com.example.g31_ffs_be.dto.ServiceDto;
 import com.example.g31_ffs_be.model.RequestPayment;
+
 import com.example.g31_ffs_be.model.User;
 
-import java.util.List;
+
 
 public interface UserService {
    
@@ -17,6 +19,6 @@ public interface UserService {
     Boolean verify(String verificationCode);
 
     APIResponse<NotificationDTO> getTop10Notifications(String userId,int pageNo, int pageSize);
-
+    ServiceDto getCurrentServiceByUserId(String userId);
 
 }

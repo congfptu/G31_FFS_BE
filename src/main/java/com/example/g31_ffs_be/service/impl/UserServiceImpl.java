@@ -3,19 +3,18 @@ package com.example.g31_ffs_be.service.impl;
 import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.NotificationDTO;
 import com.example.g31_ffs_be.dto.RequestPaymentDto;
-import com.example.g31_ffs_be.model.Job;
-import com.example.g31_ffs_be.model.Notification;
-import com.example.g31_ffs_be.model.RequestPayment;
-import com.example.g31_ffs_be.model.User;
+import com.example.g31_ffs_be.dto.ServiceDto;
+import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.NotificationRepository;
 import com.example.g31_ffs_be.repository.PaymentRepository;
+import com.example.g31_ffs_be.repository.ServiceRepository;
 import com.example.g31_ffs_be.repository.UserRepository;
 import com.example.g31_ffs_be.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@org.springframework.stereotype.Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
@@ -31,6 +30,9 @@ public class UserServiceImpl implements UserService {
     PaymentRepository paymentRepository;
     @Autowired
     NotificationRepository notificationRepository;
+
+    @Autowired
+    ServiceRepository serviceRepository;
 
     @Override
     public void addUser(User u) {
@@ -148,5 +150,21 @@ public class UserServiceImpl implements UserService {
             apiResponse.setPageIndex(pageNo+1);
         }
         return apiResponse;
+    }
+
+    @Override
+    public ServiceDto getCurrentServiceByUserId(String userId) {
+         Pageable pageable=PageRequest.of(0,1);
+         ServiceDto serviceDto=new ServiceDto();
+         try{
+             Page<Service> servicePage=serviceRepository.getCurrentService(userId,pageable);
+             Service service= servicePage.getContent().get(0);
+             serviceDto.setId(service.getId());
+             serviceDto.setServiceName(service.getServiceName());
+             return serviceDto;
+         }
+         catch (Exception e){
+             return null;
+         }
     }
 }

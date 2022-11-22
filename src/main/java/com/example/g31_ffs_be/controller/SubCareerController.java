@@ -37,7 +37,7 @@ public class SubCareerController {
             pageIndex = Integer.parseInt(pageNo);
         } catch (Exception e) {
         }
-        int pageSize = 5;
+        int pageSize = 10;
         return new ResponseEntity<>( subCareerService.getAllSubCareerFilter(pageIndex, pageSize, name, careerID,null), HttpStatus.OK);
            // return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }

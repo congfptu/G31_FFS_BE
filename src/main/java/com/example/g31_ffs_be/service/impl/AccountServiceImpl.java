@@ -100,6 +100,9 @@ public class AccountServiceImpl implements AccountService {
                 recruiter.setTaxNumber("");
                 recruiter.setCompanyName("");
                 recruiter.setWebsite("");
+                recruiter.setIsActive(false);
+                user.setIsBanned(false);
+
                 user.setRecruiter(recruiter);
                 acc.setUser(user);
                 accountRepository.save(acc);
@@ -123,7 +126,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Boolean checkEmailExist(String email) {
-        return repo.findByEmail(email) != null ? true : false;
+        return repo.checkEmailExist(email) != 0;
     }
 
     @Override

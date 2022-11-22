@@ -3,15 +3,15 @@ package com.example.g31_ffs_be.controller;
 import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.Account;
 import com.example.g31_ffs_be.model.User;
-import com.example.g31_ffs_be.repository.AccountRepository;
-import com.example.g31_ffs_be.repository.CareerRepository;
-import com.example.g31_ffs_be.repository.FeeRepository;
-import com.example.g31_ffs_be.repository.UserRepository;
+import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.security.JwtTokenProvider;
 import com.example.g31_ffs_be.service.CareerService;
+import com.example.g31_ffs_be.service.DashboadService;
 import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
 import com.example.g31_ffs_be.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -40,7 +43,8 @@ public class GuestController {
     FeeRepository feeRepository;
     @Autowired
     UserServiceImpl userService;
-
+    @Autowired
+    DashboadService dashboadService;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -59,8 +63,9 @@ public class GuestController {
             return new ResponseEntity<>("Email đã tồn tại trong hệ thống!", HttpStatus.BAD_REQUEST);
         }
         accountService.createAccount(registerDto);
+        if(registerDto.getRole().equals("recruiter"))
+            return new ResponseEntity<>("Đăng kí thành Công!Vui lòng chờ chúng tôi kiểm duyệt!", HttpStatus.OK);
         return new ResponseEntity<>("Đăng kí thành Công! Chúng tôi đã gửi email xác thực tới email của bạn.Vui lòng xác thực tài khoản của bạn!", HttpStatus.OK);
-
     }
 
     @GetMapping("/forgot-password")
@@ -115,14 +120,14 @@ public class GuestController {
                 return new ResponseEntity<>("Bạn không còn quyền truy cập vào tài khoản công ty!", HttpStatus.BAD_REQUEST);
             int minuteBanRemain=0;
 
-            if(!role.equals("admin")&&!role.equals("staff")&&account.getUser().getIsBanned())
+            if(!role.equals("admin")&&!role.equals("staff")&&account.getUser().getIsBanned()) {
                 try {
                     minuteBanRemain = userRepository.countTimeBanRemain(account.getId());
+                } catch (Exception e) {
+                    return new ResponseEntity<>("Vui lòng xác thực tài khoản hoặc chờ kiểm duyệt trước khi đăng nhập!", HttpStatus.BAD_REQUEST);
                 }
-            catch (Exception e) {
-                minuteBanRemain = 0;
             }
-            if (role.equals("admin") || role.equals("staff") || account.getUser().getIsBanned()||minuteBanRemain <= 0) {
+            if (role.equals("admin") || role.equals("staff") || !account.getUser().getIsBanned()||minuteBanRemain <= 0) {
 
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(), loginDTO.getPassword()
@@ -143,6 +148,10 @@ public class GuestController {
                     jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
                     jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
                     jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
+                    if (account.getUser().getServiceDto() != null) {
+                        jwtAuthResponse.setCurrentServiceId(account.getUser().getServiceDto().getId());
+                        jwtAuthResponse.setCurrentServiceName(account.getUser().getServiceDto().getServiceName());
+                    }
                     if (minuteBanRemain < 0 && account.getUser().getIsBanned()) {
                         account.getUser().setIsBanned(false);
                         accountRepository.save(account);
@@ -169,17 +178,25 @@ public class GuestController {
             return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
         }
     }
-
+@Autowired
+    ServiceRepository serviceRepository;
     @GetMapping("/test")
     public ResponseEntity<?> testss() {
-        List<String> a = new ArrayList<>();
-        a.add("cong");
-        a.add("cong");
-        a.add("cong");
-        a.add("cong");
-        a.add("cong");
-
-        return new ResponseEntity<>(a, HttpStatus.OK);
+        /*List<String> label = new ArrayList<>();
+        YearMonth thisMonth  = YearMonth.now();
+        DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
+        label.add(thisMonth.format(monthYearFormatter));
+        label.add(thisMonth.minusMonths(1).format(monthYearFormatter));
+        label.add(thisMonth.minusMonths(2).format(monthYearFormatter));
+        label.add(thisMonth.minusMonths(3).format(monthYearFormatter));
+        label.add(thisMonth.minusMonths(4).format(monthYearFormatter));
+        label.add(thisMonth.minusMonths(5).format(monthYearFormatter));
+        label.add(thisMonth.minusMonths(6).format(monthYearFormatter));
+     List<Object[]> obj=userRepository.countFreelancer();
+    for(Object[] o:obj)
+        return new ResponseEntity<>(o[1], HttpStatus.OK);*/
+        List<Integer> arrayIntegers = new ArrayList<>(Arrays.asList(0,0,0,0,0,0,0));
+        return new ResponseEntity<>(dashboadService.getDashboardServices(), HttpStatus.OK);
     }
 
 }

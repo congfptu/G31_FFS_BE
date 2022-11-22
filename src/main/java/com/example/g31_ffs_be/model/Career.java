@@ -35,4 +35,7 @@ public class Career {
     @OneToMany(mappedBy = "career")
     private Set<Subcareer> subcareers = new LinkedHashSet<>();
 
+    public Career(Integer id) {
+        this.id = id;
+    }
 }

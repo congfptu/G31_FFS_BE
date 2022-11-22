@@ -10,4 +10,5 @@ public class RecruiterAdminDto {
     double accountBalance;
     Boolean isBanned;
     String phone;
+    String currentService;
 }

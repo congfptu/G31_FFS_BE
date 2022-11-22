@@ -49,6 +49,8 @@ public class RecruiterServiceImpl implements RecruiterService {
             ra.setIsBanned(u.getIsBanned());
             ra.setAccountBalance(u.getAccountBalance());
             ra.setPhone(u.getPhone());
+            if(u.getServiceDto()!=null)
+            ra.setCurrentService(u.getServiceDto().getServiceName());
             ras.add(ra);
         }
         return ras;

@@ -1,5 +1,6 @@
 package com.example.g31_ffs_be.model;
 
+import com.example.g31_ffs_be.dto.ServiceDto;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -103,6 +104,7 @@ public class User {
     private Set<RequestPayment> requestPayments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @Fetch(FetchMode.SUBSELECT)
     @JsonIgnore
     private Set<UserService> userServices = new LinkedHashSet<>();
 
@@ -125,6 +127,35 @@ public class User {
 
     @Transient
     private double star;
+    @Transient
+    private ServiceDto serviceDto;
+
+    public ServiceDto getServiceDto() {
+        ServiceDto serviceDto1=new ServiceDto();
+        UserService currentService=new UserService();
+        if(!isMemberShip||userServices.size()==0) return null;
+        else{
+            for(UserService us:userServices)
+            {
+                currentService=us;
+                break;
+            }
+            for(UserService us:userServices)
+            {
+              if(us.getDateBuy().compareTo(currentService.getDateBuy())>0){
+                  currentService=us;
+              }
+            }
+            serviceDto1.setId(currentService.getService().getId());
+            serviceDto1.setServiceName(currentService.getService().getServiceName());
+        }
+
+        return serviceDto1;
+    }
+
+    public void setServiceDto(ServiceDto serviceDto) {
+        this.serviceDto = serviceDto;
+    }
 
     public double getStar() {
         double result = 0;

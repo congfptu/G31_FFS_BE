@@ -28,4 +28,19 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     Service getService(String name);
 
 
+    @Query(value = "select  s from UserService us "+
+            "left join us.user u "+
+            "left join us.service s "+
+            "where u.id=:userId "+
+            "order by us.dateBuy desc",
+            countQuery =  "select count(s.id) from UserService us "+
+                    "left join us.user u "+
+                    "left join us.service s "+
+                    "where u.id=:userId "+
+                    "order by us.dateBuy desc"
+    )
+    Page<Service> getCurrentService(String userId,Pageable pageable);
+
+
+
 }

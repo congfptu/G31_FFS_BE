@@ -62,14 +62,18 @@ public class AdminController {
     ServiceRepository serviceRepository;
     @Autowired
     UserRepository userRepository;
-
-
-    //staffController
-    @GetMapping("/staff111")
-    public List<StaffAdminDto> getAllStaff() {
-        return staffService.getAllStaffs();
+    @Autowired DashboadService dashboadService;
+    @GetMapping("/dashboard")
+    public ResponseEntity<?> getDashBoard() {
+        try{
+            return new ResponseEntity<>(dashboadService.getDashboardServices(), HttpStatus.OK);
+        }
+       catch (Exception e){
+           return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+       }
     }
 
+    //staffController
 
     @GetMapping("/staff")
     public ResponseEntity<?> getStaffByFilter(@RequestHeader(name = "Authorization") String token,

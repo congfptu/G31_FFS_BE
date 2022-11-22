@@ -43,8 +43,8 @@ public class Job {
     @JoinColumn(name = "sub_career_id")
     private Subcareer subCareer;
 
-    @Size(max = 2000)
-    @Column(name = "description",length = 2000)
+    @Size(max = 5000)
+    @Column(name = "description",length = 5000)
     private String description;
 
     @Size(max = 255)

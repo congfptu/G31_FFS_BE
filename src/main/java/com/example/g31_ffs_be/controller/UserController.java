@@ -95,21 +95,25 @@ public class UserController {
                                    @RequestParam(name = "userId", defaultValue = "") String userId) {
         try {
             Account account = accountRepository.findByUserId(userId);
-            String role=account.getRole().getRoleName();
-            JWTAuthResponse jwtAuthResponse=new JWTAuthResponse();
+            String role = account.getRole().getRoleName();
+            JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
             jwtAuthResponse.setUserId(account.getId());
             jwtAuthResponse.setRole(role);
             jwtAuthResponse.setAccessToken(token);
             jwtAuthResponse.setTokenType("Bearer");
             jwtAuthResponse.setEmail(account.getEmail());
-            if(!role.equals("admin")&&!role.equals("staff")) {
-                    jwtAuthResponse.setAvatar(account.getUser().getAvatar());
-                    jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
-                    jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
-                    jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
-                    jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
-                    jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
-                    jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
+            if (!role.equals("admin") && !role.equals("staff")) {
+                jwtAuthResponse.setAvatar(account.getUser().getAvatar());
+                jwtAuthResponse.setAccountBalance(account.getUser().getAccountBalance());
+                jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
+                jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
+                jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
+                jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
+                jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
+                if (account.getUser().getServiceDto() != null) {
+                    jwtAuthResponse.setCurrentServiceId(account.getUser().getServiceDto().getId());
+                    jwtAuthResponse.setCurrentServiceName(account.getUser().getServiceDto().getServiceName());
+                }
             }
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
         } catch (AuthenticationException e) {
@@ -140,7 +144,7 @@ public class UserController {
             if (feedbackRepository.count(feedback.getFromUserId(), feedback.getJobId(), feedback.getToUserId()) > 0)
                 feedbackRepository.update(feedback.getFromUserId(), feedback.getJobId(), feedback.getToUserId(), feedback.getStar(), feedback.getContent(), LocalDateTime.now());
             else
-            feedbackRepository.insert(feedback.getFromUserId(), feedback.getJobId(), feedback.getToUserId(), feedback.getStar(), feedback.getContent(), LocalDateTime.now());
+                feedbackRepository.insert(feedback.getFromUserId(), feedback.getJobId(), feedback.getToUserId(), feedback.getStar(), feedback.getContent(), LocalDateTime.now());
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);
@@ -214,6 +218,7 @@ public class UserController {
             ViewProfileHistory profileHistory = new ViewProfileHistory();
             profileHistory.setUser(user);
             profileHistory.setFee(fee);
+
             viewProfileHistory.save(profileHistory);
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
@@ -229,7 +234,7 @@ public class UserController {
     ) {
         try {
 
-            return new ResponseEntity<>(userService.getTop10Notifications(userId,pageIndex,10), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getTop10Notifications(userId, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);

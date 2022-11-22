@@ -111,7 +111,7 @@ public class FreelancerController {
                                           @RequestParam(name = "freelancerId") String freelancer_id,
                                             @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex
     ) {
-        System.out.println("fsdd");
+
         try {
                 return new ResponseEntity<>(freelancerService.getJobSaved(freelancer_id,pageIndex,10), HttpStatus.OK);
         } catch (Exception e) {

@@ -16,7 +16,7 @@ public interface RecruiterRepository extends JpaRepository<Recruiter, String> {
                " where a.recruiter_id like CONCAT('%',:name,'%') or" +
                " b.fullname like CONCAT('%',:name,'%') or c.email like CONCAT('%',:name,'%') "+
                "Order by b.fullname asc,c.email asc ", nativeQuery = true)*/
-    @Query(value = "SELECT r FROM Recruiter r " +
+    @Query(value = "SELECT distinct  r FROM Recruiter r " +
             "LEFT JOIN FETCH r.user u " +
             "LEFT JOIN FETCH u.account a " +
             "LEFT JOIN FETCH a.role ro " +
@@ -25,7 +25,7 @@ public interface RecruiterRepository extends JpaRepository<Recruiter, String> {
             "and (u.isBanned=:isBanned or :defaultBan=-1)"+
             " order by a.createdDate desc"
             ,
-            countQuery = "SELECT count(r.id) FROM Recruiter r " +
+            countQuery = "SELECT count(distinct r.id) FROM Recruiter r " +
                     "LEFT JOIN  r.user u " +
                     "LEFT JOIN  u.account a " +
                     "LEFT JOIN  a.role ro " +
