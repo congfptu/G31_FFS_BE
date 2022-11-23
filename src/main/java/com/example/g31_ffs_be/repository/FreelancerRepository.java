@@ -115,7 +115,9 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
           "and (b.id =:subCareer or :subCareer=-1)"+
           "and (a.costPerHour>=:costFrom and (a.costPerHour<=:costTo or :costTo=-1)) "+
           "and ( f.fullName like CONCAT('%',:keyword,'%') or c.name  like CONCAT('%',:keyword,'%') ) "+
-          "order by  avg(fe.star) desc"
+          "group by a "+
+          "order by (avg(fe.star)) desc"
+
           ,
           countQuery = "select count(distinct a.id) from Freelancer a"+
                   " LEFT JOIN  a.subCareer b" +

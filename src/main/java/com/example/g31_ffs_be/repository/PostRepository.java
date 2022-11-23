@@ -263,6 +263,12 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             , nativeQuery = true)
     Integer deleteJobSkill(int jobId, int skillId);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update jobs  set is_top=false \n" +
+            "where (TIMESTAMPDIFF(Hour, top_time,now())>2 and is_top=true)"
+            , nativeQuery = true)
+    Integer updateIsTopExpired();
 
 
 

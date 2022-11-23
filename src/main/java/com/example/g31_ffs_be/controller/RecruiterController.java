@@ -315,6 +315,7 @@ public class RecruiterController {
                 {
                     recruiter.setLastTopTime(LocalDateTime.now());
                     job.setIsTop(true);
+                    job.setTopTime(LocalDateTime.now());
                     recruiterRepository.save(recruiter);
                     postRepository.save(job);
                     return new ResponseEntity<>(true, HttpStatus.OK);

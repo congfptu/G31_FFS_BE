@@ -55,6 +55,15 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Modifying
     @Transactional
+    @Query(value = "SET SQL_SAFE_UPDATES = 0", nativeQuery = true)
+    Integer updateNotSafe();
+    @Modifying
+    @Transactional
+    @Query(value = "SET SQL_SAFE_UPDATES = 1", nativeQuery = true)
+    Integer updateSafe();
+
+    @Modifying
+    @Transactional
     @Query(value = "update `user` set is_banned=false " +
             "where user_id in " +
             "(" +
