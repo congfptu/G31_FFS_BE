@@ -9,6 +9,7 @@ import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -142,6 +143,7 @@ public class AdminController {
     @GetMapping("/freelancer")
     public ResponseEntity<?> getFreelancerFiler(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "name", defaultValue = "") String name,
+                                                @RequestParam(name = "status", defaultValue = "-1") int status,
                                                 @RequestParam(name = "pageIndex", defaultValue = "0") String pageNo
     ) {
         try {
@@ -150,8 +152,10 @@ public class AdminController {
                 pageIndex = Integer.parseInt(pageNo);
             } catch (Exception e) {
             }
+            Boolean statusBoolean=false;
+            if(status==1) statusBoolean=true;
             int pageSize = 10;
-            APIResponse<FreelancerAdminDto> apiResponse = freelancerService.getFreelancerByName(name, pageIndex, pageSize);
+            APIResponse<FreelancerAdminDto> apiResponse = freelancerService.getFreelancerByName(name,statusBoolean,status,pageIndex, pageSize);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);

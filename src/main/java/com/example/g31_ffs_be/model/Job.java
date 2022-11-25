@@ -91,7 +91,7 @@ public class Job {
     @Column(name = "fee")
     private Double fee;
 
-    @Column(name = "top_time",updatable = false,insertable = false)
+    @Column(name = "top_time")
     private LocalDateTime topTime;
 
 

@@ -19,7 +19,6 @@ import java.util.Optional;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/staff")
-//@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') or hasAuthority('staff') ")
 public class SubCareerController {
     @Autowired
     SubCareerService subCareerService;
@@ -41,6 +40,7 @@ public class SubCareerController {
         return new ResponseEntity<>( subCareerService.getAllSubCareerFilter(pageIndex, pageSize, name, careerID,null), HttpStatus.OK);
            // return new ResponseEntity<>("không có dữ liệu trang này!", HttpStatus.NO_CONTENT);
         }
+    @PreAuthorize("hasAuthority('admin')")
         @PostMapping("/subCareer/add")
         public ResponseEntity<?> createSubCareer(@RequestHeader(name = "Authorization") String token,
                                                  @RequestParam(name = "career_id") Integer career_id
@@ -59,6 +59,7 @@ public class SubCareerController {
                 return new ResponseEntity<>("Thêm mới subcareer thất bại", HttpStatus.BAD_REQUEST);
             }
         }
+    @PreAuthorize("hasAuthority('admin')")
     @PutMapping("/subCareer/update")
     public ResponseEntity<?> updateSubCareer(@RequestHeader(name = "Authorization") String token,
                                           @NotEmpty @RequestParam(name = "career_id") Integer career_id,
@@ -74,6 +75,7 @@ public class SubCareerController {
             return new ResponseEntity<>("Cập nhật subcareer thất bại", HttpStatus.BAD_REQUEST);
         }
     }
+    @PreAuthorize("hasAuthority('admin')")
     @DeleteMapping("/subCareer/delete")
     public ResponseEntity<?> deleteSubCareer(@RequestHeader(name = "Authorization") String token,
 

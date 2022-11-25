@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FreelancerService {
     void addFreelancer(Freelancer f);
-    APIResponse<FreelancerAdminDto> getFreelancerByName(String name,int pageNo,int pageSize);
+    APIResponse<FreelancerAdminDto> getFreelancerByName(String name,Boolean status,int defaultStatus,int pageNo,int pageSize);
     FreelancerDetailDto getFreelancerInfo(String id);
     List<FreelancerAdminDto>getTop5ByName(String name);
 

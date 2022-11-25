@@ -78,11 +78,11 @@ public class FreelancerServiceImpl implements FreelancerService {
     }
 
     @Override
-    public APIResponse<FreelancerAdminDto> getFreelancerByName(String name, int pageNo, int pageSize) {
+    public APIResponse<FreelancerAdminDto> getFreelancerByName(String name, Boolean status,int defaultStatus,int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         APIResponse<FreelancerAdminDto> apiResponse = new APIResponse<>();
         try{
-            Page<Freelancer> page = freelancerRepository.getFreelancerByName(name, pageable);
+            Page<Freelancer> page = freelancerRepository.getFreelancerByName(name,status,defaultStatus, pageable);
             apiResponse.setTotalPages(page.getTotalPages());
             apiResponse.setResults(convertListFreelancerDto(page.getContent()));
             apiResponse.setTotalResults(page.getTotalElements());

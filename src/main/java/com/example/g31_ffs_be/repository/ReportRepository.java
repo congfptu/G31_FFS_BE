@@ -29,7 +29,7 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO `report`(from_id,title,content,date_created) VALUES(:from_id,:title,:content,:dateCreated)"
+    @Query(value = "INSERT INTO report (from_id,title,content,date_created) VALUES(:from_id,:title,:content,:dateCreated)"
             , nativeQuery = true)
     Integer insert(String from_id, String title, String content, LocalDateTime dateCreated);
 }

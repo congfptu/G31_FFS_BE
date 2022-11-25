@@ -30,8 +30,12 @@ public class ScheduleTask {
         userRepository.updateSafe();
     }
     @Scheduled(cron = "0 0/5 * * * *")
+
     public void updateIsTopExpired() {
+        userRepository.updateNotSafe();
         postRepository.updateIsTopExpired();
+        userRepository.updateSafe();
     }
+
 }
 

@@ -57,6 +57,7 @@ public class UserController {
     UserServiceRepository userServiceRepository;
     @Autowired
     FeeRepository feeRepository;
+    @Autowired
     ReportRepository reportRepository;
     @Autowired
     RecruiterRepository recruiterRepository;
@@ -184,8 +185,9 @@ public class UserController {
     public ResponseEntity<?> addReport(@RequestHeader(name = "Authorization") String token,
                                        @RequestBody ReportDTO reportDTO
     ) {
+
         try {
-            reportRepository.insert(reportDTO.getCreatedBy(), reportDTO.getTitle(), reportDTO.getContent(), LocalDateTime.now());
+            reportRepository.insert(reportDTO.getCreatedBy(),reportDTO.getTitle(),reportDTO.getContent(),LocalDateTime.now());
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e);

@@ -15,6 +15,6 @@ void addStaff(Staff s);
 List<StaffAdminDto> getAllStaffs();
     APIResponse<StaffAdminDto> getStaffByName(String name, int pageNo, int pageSize);
     void banStaff(Staff s);
-    public void updateStaff(StaffDto staffDto);
+     void updateStaff(StaffDto staffDto);
 
 }

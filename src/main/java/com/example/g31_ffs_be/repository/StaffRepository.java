@@ -12,9 +12,12 @@ import org.springframework.stereotype.Repository;
 public interface StaffRepository extends JpaRepository<Staff,String> {
    @Query(value = "SELECT s from Staff s "+
            "LEFT JOIN FETCH s.account a " +
-           "where s.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')",
+           "where s.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%') " +
+           "or s.phone like CONCAT('%',:name,'%') or s.address like CONCAT('%',:name,'%')" ,
            countQuery = "SELECT count(s.id) from Staff s "+
                    "LEFT JOIN  s.account a " +
-                   "where s.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')")
+                   "where s.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%') " +
+                   "or s.phone like CONCAT('%',:name,'%') or s.address like CONCAT('%',:name,'%')"
+   )
     Page<Staff> getStaffByName(String name, Pageable pageable);
 }

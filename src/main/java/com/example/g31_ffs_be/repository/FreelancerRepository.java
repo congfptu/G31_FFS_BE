@@ -18,12 +18,15 @@ public interface FreelancerRepository extends JpaRepository<Freelancer,String> {
   @Query(value = "SELECT f FROM Freelancer f "+
           "LEFT JOIN FETCH f.user b " +
           "LEFT JOIN FETCH b.account a " +
-          "where b.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')",
+          "where (b.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')) "+
+          " and (b.isBanned=:status or :defaultStatus=-1) ",
          countQuery = "SELECT count(f.id) FROM Freelancer f "+
                  "LEFT JOIN  f.user b " +
                  "LEFT JOIN b.account a " +
-                 "where b.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%')")
-  Page<Freelancer> getFreelancerByName(String name,Pageable pageable);
+                 "where (b.fullName like CONCAT('%',:name,'%') or a.email like CONCAT('%',:name,'%'))"+
+                " and (b.isBanned=:status or :defaultStatus=-1)"
+                 )
+  Page<Freelancer> getFreelancerByName(String name,Boolean status,int defaultStatus,Pageable pageable);
   @Query(value = "SELECT f FROM Freelancer f "+
           "LEFT JOIN FETCH f.user b " +
           "LEFT JOIN FETCH b.account a " +

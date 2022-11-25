@@ -4,8 +4,10 @@ import com.example.g31_ffs_be.dto.APIResponse;
 import com.example.g31_ffs_be.dto.RecruiterAdminDto;
 import com.example.g31_ffs_be.dto.StaffAdminDto;
 import com.example.g31_ffs_be.dto.StaffDto;
+import com.example.g31_ffs_be.model.Account;
 import com.example.g31_ffs_be.model.Recruiter;
 import com.example.g31_ffs_be.model.Staff;
+import com.example.g31_ffs_be.repository.AccountRepository;
 import com.example.g31_ffs_be.repository.StaffRepository;
 import com.example.g31_ffs_be.service.StaffService;
 import org.modelmapper.ModelMapper;
@@ -21,6 +23,9 @@ import java.util.List;
 @Service
 public class StaffServiceImpl implements StaffService {
     @Autowired StaffRepository staffRepository;
+
+    @Autowired
+    AccountRepository accountRepository;
     @Autowired
     private ModelMapper mapper;
     @Override
@@ -76,8 +81,10 @@ public class StaffServiceImpl implements StaffService {
     }
     @Override
     public void updateStaff(StaffDto staffDto) {
-    Staff s=mapDtoToStaff(staffDto);
-        staffRepository.save(s);
+    Account account=accountRepository.getReferenceById(staffDto.getId());
+    account.setStaff(mapDtoToStaff(staffDto));
+    account.setEmail(staffDto.getEmail());
+        accountRepository.save(account);
     }
 
 

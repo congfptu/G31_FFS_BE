@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/staff")
-//@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') or hasAuthority('staff') ")
+
 public class CareerController {
     @Autowired
     CareerService careerService;
@@ -70,7 +70,7 @@ public class CareerController {
             return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
         }
     }
-
+    @PreAuthorize("hasAuthority('admin')")
     @PostMapping("/career/add")
     public ResponseEntity<?> createCareer(@RequestHeader(name = "Authorization") String token,
                                           @RequestParam(name = "name") String name) {
@@ -83,7 +83,7 @@ public class CareerController {
                 careerRepository.save(career);
                 return new ResponseEntity<>("Thêm mới career thành công", HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("Thêm mới career thất bại, duplicated name", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Thêm mới career thất bại, duplicated name", HttpStatus.OK);
             }
 
         } catch (Exception e) {
@@ -91,24 +91,27 @@ public class CareerController {
             return new ResponseEntity<>("Thêm mới career thất bại", HttpStatus.BAD_REQUEST);
         }
     }
-
+    @PreAuthorize("hasAuthority('admin')")
     @PutMapping("/career/update")
     public ResponseEntity<?> updateCareer(@RequestHeader(name = "Authorization") String token,
                                           @NotNull @NotBlank @RequestParam(name = "id") Integer id,
                                           @NotNull @NotBlank @RequestParam(name = "name") String name) {
-        try {
-            if (careerRepository.findById(id).isPresent() && !name.isEmpty()) {
-                Career career = new Career();
-                career.setId(id);
-                career.setName(name);
-                careerRepository.save(career);
-            }
+        try{
+        Career career1 = careerRepository.getCareerByName(name);
+        if (career1 == null) {
+            Career career = new Career();
+            career.setId(id);
+            career.setName(name);
+            careerRepository.save(career);
             return new ResponseEntity<>("Cập nhật career thành công", HttpStatus.OK);
-        } catch (Exception e) {
+        } else {
+            return new ResponseEntity<>("Cập nhật career thất bại, tên ngành nghề đã tồn tại", HttpStatus.BAD_REQUEST);
+        }}
+        catch (Exception e){
             return new ResponseEntity<>("Cập nhật career thất bại", HttpStatus.BAD_REQUEST);
         }
     }
-
+    @PreAuthorize("hasAuthority('admin')")
     @DeleteMapping("/career/delete")
     public ResponseEntity<?> deleteCareer(@RequestHeader(name = "Authorization") String token,
                                           @NotNull @NotBlank @RequestParam(name = "id") Integer id

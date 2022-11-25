@@ -25,7 +25,7 @@ public class Staff {
     @Column(name = "id", nullable = false, length = 45)
     private String id;
 
-    @OneToOne(fetch = FetchType.LAZY,optional = false)
+    @OneToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL,optional = false)
     @JoinColumn(name = "id", nullable = false)
     @JsonIgnore
     private Account account;

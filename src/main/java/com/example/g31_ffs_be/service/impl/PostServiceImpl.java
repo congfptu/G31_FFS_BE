@@ -244,54 +244,58 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDetailDTO viewDetailPostByRecruiter(String recruiterId,int id) {
-        Job job= postRepository.getDetailPostByRecruiter(recruiterId,id);
-        PostDetailDTO postDetailDTO=new PostDetailDTO();
-        postDetailDTO.setPostID(job.getId());
-        Recruiter createdBy=job.getCreateBy();
+        try {
+            Job job = postRepository.getDetailPostByRecruiter(recruiterId, id);
+            PostDetailDTO postDetailDTO = new PostDetailDTO();
+            postDetailDTO.setPostID(job.getId());
+            Recruiter createdBy = job.getCreateBy();
+            if (!job.getCreateBy().getId().equals(recruiterId)) return null;
+            double star = 0;
 
-        double star = 0;
-
-        postDetailDTO.setTotalApplied(job.getJobRequests().size());
-        postDetailDTO.setJobTitle(job.getJobTitle());
-        postDetailDTO.setSubCareer(job.getSubCareer().getName());
-        postDetailDTO.setDescription(job.getDescription());
-        postDetailDTO.setAttach(job.getAttach());
-        postDetailDTO.setArea(job.getArea());
-        postDetailDTO.setPaymentType(job.getPaymentType()==1?"Trả theo giờ":"Trả theo dự án");
-        String message="Đã đăng cách đây ";
-        LocalDateTime time=job.getTime();
-        long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
-        long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
-        long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
-        long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
-        long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
-        long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
-        if (minutes < 60)
-            message += minutes + " phút";
-        else if (hours<24)
-            message += hours+ " giờ";
-        else if (days<7)
-            message += days +" ngày";
-        else if (weeks < 5)
-            message += weeks + " tuần";
-        else if (months < 12) {
-            message += months+ " tháng";
-        }
-        else{
-            message += year+ "năm";
-        }
-        postDetailDTO.setTimeCount(message);
-        Locale localeVN = new Locale("vi", "VN");
-        NumberFormat vnFormat = NumberFormat.getInstance(localeVN);
-        postDetailDTO.setBudget(vnFormat.format(job.getBudget()) + " VNĐ");
+            postDetailDTO.setTotalApplied(job.getJobRequests().size());
+            postDetailDTO.setJobTitle(job.getJobTitle());
+            postDetailDTO.setSubCareer(job.getSubCareer().getName());
+            postDetailDTO.setDescription(job.getDescription());
+            postDetailDTO.setAttach(job.getAttach());
+            postDetailDTO.setArea(job.getArea());
+            postDetailDTO.setPaymentType(job.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
+            String message = "Đã đăng cách đây ";
+            LocalDateTime time = job.getTime();
+            long minutes = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+            long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+            long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+            long weeks = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+            long months = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
+            long year = ChronoUnit.YEARS.between(time, LocalDateTime.now());
+            if (minutes < 60)
+                message += minutes + " phút";
+            else if (hours < 24)
+                message += hours + " giờ";
+            else if (days < 7)
+                message += days + " ngày";
+            else if (weeks < 5)
+                message += weeks + " tuần";
+            else if (months < 12) {
+                message += months + " tháng";
+            } else {
+                message += year + "năm";
+            }
+            postDetailDTO.setTimeCount(message);
+            Locale localeVN = new Locale("vi", "VN");
+            NumberFormat vnFormat = NumberFormat.getInstance(localeVN);
+            postDetailDTO.setBudget(vnFormat.format(job.getBudget()) + " VNĐ");
 //        String formatDate= time.
-        postDetailDTO.setTime(job.getTime());
-        postDetailDTO.setIsActive(job.getIsActive());
-        postDetailDTO.setIsApproved(job.getIsApproved());
-        if(job.getApprovedBy()!=null)
-            postDetailDTO.setApprovedBy(job.getApprovedBy().getFullName());
-        postDetailDTO.setListSkills(job.getSkills());
-        return postDetailDTO;
+            postDetailDTO.setTime(job.getTime());
+            postDetailDTO.setIsActive(job.getIsActive());
+            postDetailDTO.setIsApproved(job.getIsApproved());
+            if (job.getApprovedBy() != null)
+                postDetailDTO.setApprovedBy(job.getApprovedBy().getFullName());
+            postDetailDTO.setListSkills(job.getSkills());
+            return postDetailDTO;
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 
     @Override
