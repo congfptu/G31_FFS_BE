@@ -1,8 +1,6 @@
 package com.example.g31_ffs_be.controller;
 
-import com.example.g31_ffs_be.dto.FreelancerProfileDTO;
-import com.example.g31_ffs_be.dto.RecruiterDetailDTO;
-import com.example.g31_ffs_be.dto.RegisterDto;
+import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.*;
 import com.example.g31_ffs_be.service.FreelancerService;
@@ -346,6 +344,33 @@ public class FreelancerController {
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+    @GetMapping("/statistic")
+    public ResponseEntity<?> statisticFreelancer(@RequestHeader(name = "Authorization") String token,
+                                                @RequestParam(name = "freelancerId", defaultValue = "") String freelancerId) {
+
+        try{
+            User user=userRepository.getReferenceById(freelancerId);
+            Freelancer freelancer=user.getFreelancer();
+            FreelancerStatistic statistic=new FreelancerStatistic();
+            statistic.setAvgStar(user.getStar());
+            statistic.setTotalFeedbacks(user.getFeedbackTos().size());
+            int totalReject=0;
+            int totalApproved=0;
+            statistic.setTotalApplied(freelancer.getJobRequests().size());
+            for (JobRequest jobRequest:freelancer.getJobRequests() ){
+                if(jobRequest.getStatus()==1) totalApproved+=1;
+                else if(jobRequest.getStatus()==0) totalReject+=1;
+            }
+            statistic.setTotalReject(totalReject);
+            statistic.setTotalApproved(totalApproved);
+
+
+            return new ResponseEntity<>(statistic, HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -352,6 +352,29 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("/statistic")
+    public ResponseEntity<?> statisticRecruiter(@RequestHeader(name = "Authorization") String token,
+                                                  @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId) {
+
+        try{
+            User user=userRepository.getReferenceById(recruiterId);
+            Recruiter recruiter=user.getRecruiter();
+            RecruiterStatistic statistic=new RecruiterStatistic();
+            statistic.setAvgStar(user.getStar());
+            statistic.setTotalFeedbacks(user.getFeedbackTos().size());
+            statistic.setTotalPosted(recruiter.getJobs().size());
+
+            int totalApplied=0;
+            for(Job j:recruiter.getJobs())
+                totalApplied+=j.getJobRequests().size();
+            statistic.setTotalApplied(totalApplied);
+
+            return new ResponseEntity<>(statistic, HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 }
