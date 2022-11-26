@@ -83,7 +83,7 @@ public class CareerController {
                 careerRepository.save(career);
                 return new ResponseEntity<>("Thêm mới career thành công", HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("Thêm mới career thất bại, duplicated name", HttpStatus.OK);
+                return new ResponseEntity<>("Thêm mới career thất bại, duplicated name", HttpStatus.BAD_REQUEST);
             }
 
         } catch (Exception e) {

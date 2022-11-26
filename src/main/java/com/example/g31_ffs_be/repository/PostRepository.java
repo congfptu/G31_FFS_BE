@@ -166,8 +166,12 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " and (j.id not in" +
                         " (select job.id from JobRequest request " +
                         " left join  request.job job " +
-                        " left join  request.freelancer " +
-                        " fre where fre.id=:freelancerId) )"+
+                        " left join  request.freelancer fre" +
+                        " where fre.id=:freelancerId))  " +
+            " and (j.id not in" +
+                        " (select saved.id from Freelancer f " +
+                        " inner join  f.jobSaves saved " +
+                        " where f.id=:freelancerId))  " +
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
@@ -181,9 +185,13 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.id not in" +
                         " (select job.id from JobRequest request " +
-                        " left join  request.job job " +
-                        " left join  request.freelancer " +
+                        " inner join  request.job job " +
+                        " inner join  request.freelancer " +
                         " fre where fre.id=:freelancerId) )"+
+            " and (j.id not in" +
+            " (select saved.id from Freelancer f " +
+            " inner join  f.jobSaves saved " +
+            " where f.id=:freelancerId))  " +
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
@@ -200,6 +208,10 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
                         " left join  request.job job " +
                         " left join request.freelancer " +
                         " fre where fre.id=:freelancerId)"+
+            " and (j.id not in" +
+            " (select saved.id from Freelancer f " +
+            " inner join  f.jobSaves saved " +
+            " where f.id=:freelancerId))  " +
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"+
@@ -215,6 +227,10 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
                         " left join  request.job job " +
                         " left join  request.freelancer " +
                         " fre where fre.id=:freelancerId)"+
+            " and (j.id not in" +
+            " (select saved.id from Freelancer f " +
+            " inner join  f.jobSaves saved " +
+            " where f.id=:freelancerId))  " +
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or s.name LIKE CONCAT('%',:keyword,'%'))"+
             " and (j.paymentType=:paymentType or :paymentType=-1)"+
             " and (sub.id=:subCareerId or :subCareerId=-1)"

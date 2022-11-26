@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
         LocalDate to_date = LocalDate.parse(to, formatter);
         to = to_date.atTime(23, 59).toString();
         page = paymentRepository.getRequestPaymentByFromTo(from, to, userId, pageable);
+
         apiResponse.setResults(page.getContent());
         apiResponse.setPageIndex(pageNo + 1);
         apiResponse.setTotalResults(page.getTotalElements());
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserService {
     public Boolean rechargeMoney(RequestPaymentDto requestPayment) {
         User user = userRepository.getReferenceById(requestPayment.getUserId());
         RequestPayment payment = new RequestPayment();
-        if (paymentRepository.findByPaymentCode(requestPayment.getPaymentCode()).isPresent() == false) {
+        if (!paymentRepository.findByPaymentCode(requestPayment.getPaymentCode()).isPresent()) {
             user.setAccountBalance((requestPayment.getAmount()) + user.getAccountBalance());
             userRepository.save(user);
             User u = new User(requestPayment.getUserId());

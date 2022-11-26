@@ -2,6 +2,7 @@ package com.example.g31_ffs_be.model;
 
 import com.example.g31_ffs_be.model.Staff;
 import com.example.g31_ffs_be.model.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +37,7 @@ public class RequestPayment {
 
     @Column(name = "amount")
     private Double amount;
-
+    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     @Column(name = "date_request")
     private LocalDateTime dateRequest;
 
