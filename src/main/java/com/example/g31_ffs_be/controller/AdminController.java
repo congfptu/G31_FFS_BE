@@ -107,7 +107,7 @@ public class AdminController {
     public ResponseEntity<?> addStaff(@RequestHeader(name = "Authorization") String token, @Valid @RequestBody StaffDto staffDto) {
 
         if (accountService.checkEmailExist(staffDto.getEmail())) {
-            return new ResponseEntity<>("Email đã tồn tại trên hệ thống, vui lòng thử email khác", HttpStatus.OK);
+            return new ResponseEntity<>("Email đã tồn tại trên hệ thống, vui lòng thử email khác", HttpStatus.BAD_REQUEST);
         } else {
             String id = "LS" + RandomString.make(8);
             if (!accountService.checkIdExist(id)) {
@@ -168,6 +168,7 @@ public class AdminController {
     public ResponseEntity<?> getDetailFreelancer(@RequestHeader(name = "Authorization") String token,
                                                  @RequestParam(name = "id", defaultValue = "") String id) {
         FreelancerDetailDto freelancerDetailDto = freelancerService.getFreelancerInfo(id);
+        if (freelancerDetailDto==null) return new ResponseEntity<>( "Không tìm thấy người dùng này", HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>( freelancerDetailDto, HttpStatus.OK);
     }
 
@@ -252,6 +253,7 @@ public class AdminController {
     public ResponseEntity<?> getDetailRecruiter(@RequestHeader(name = "Authorization") String token,
                                                 @RequestParam(name = "id", defaultValue = "") String id) {
         RecruiterDetailDTO recruiterDetailDTO = recruiterService.getDetailRecruiter(id);
+        if (recruiterDetailDTO==null) return new ResponseEntity<>( "Không tìm thấy người dùng này", HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(recruiterDetailDTO, HttpStatus.OK);
     }
 

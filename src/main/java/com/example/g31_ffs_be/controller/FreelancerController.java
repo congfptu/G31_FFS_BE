@@ -367,7 +367,7 @@ public class FreelancerController {
             statistic.setTotalApproved(totalApproved);
 
 
-            return new ResponseEntity<>(statistic, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(statistic, HttpStatus.OK);
         }catch (Exception e){
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

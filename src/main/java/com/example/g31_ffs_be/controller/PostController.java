@@ -2,6 +2,7 @@ package com.example.g31_ffs_be.controller;
 
 
 import com.example.g31_ffs_be.dto.PostDTOResponse;
+import com.example.g31_ffs_be.dto.PostDetailDTO;
 import com.example.g31_ffs_be.model.Job;
 
 import com.example.g31_ffs_be.model.Staff;
@@ -76,7 +77,8 @@ public class  PostController {
                                            @RequestParam(name = "jobId", defaultValue = "") int jobId) {
 
         try {
-            return new ResponseEntity<>(postService.getPostDetailAdmin(jobId), HttpStatus.OK);
+            PostDetailDTO postDetailDTO=postService.getPostDetailAdmin(jobId);
+            return new ResponseEntity<>(postDetailDTO, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

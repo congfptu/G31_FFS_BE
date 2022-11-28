@@ -7,9 +7,9 @@ public class WorkExperienceDTO {
     String id;
     String companyName;
     String position;
-    Integer monthFrom;
-    Integer yearFrom;
-    Integer monthTo;
-    Integer yearTo;
+    String monthFrom;
+    String yearFrom;
+    String monthTo;
+    String yearTo;
     String description;
 }

@@ -228,7 +228,7 @@ public class AccountServiceImpl implements AccountService {
     public Boolean changePasswordUser(AccountDto account) {
         try {
             Account acc = accountRepository.findByEmail(account.getEmail());
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     account.getEmail(), account.getOldPassword()
             ));
                 acc.setPassword(passwordEncoder.encode(account.getPassword()));

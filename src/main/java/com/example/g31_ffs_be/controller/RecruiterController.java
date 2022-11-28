@@ -263,10 +263,7 @@ public class RecruiterController {
                                      @RequestParam(name = "jobId") int jobId
     ) {
         try {
-
                 return new ResponseEntity<>(postService.viewDetailPostByRecruiter(recruiterId,jobId), HttpStatus.OK);
-
-
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);
@@ -369,7 +366,7 @@ public class RecruiterController {
                 totalApplied+=j.getJobRequests().size();
             statistic.setTotalApplied(totalApplied);
 
-            return new ResponseEntity<>(statistic, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(statistic, HttpStatus.OK);
         }catch (Exception e){
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);

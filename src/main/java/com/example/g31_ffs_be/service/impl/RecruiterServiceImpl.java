@@ -97,6 +97,7 @@ public class RecruiterServiceImpl implements RecruiterService {
     public RecruiterDetailDTO getDetailRecruiter(String id) {
         try {
             Recruiter r  = recruiterRepository.getDetailRecruiter(id);
+            if(r==null) return null;
             RecruiterDetailDTO rd = mapToRecruiterDetailDto(r);
             double star = 0;
             User u = r.getUser();

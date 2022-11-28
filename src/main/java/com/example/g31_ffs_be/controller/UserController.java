@@ -198,9 +198,7 @@ public class UserController {
     @PutMapping("/changePassword")
     public ResponseEntity<?> changePassword(@RequestHeader(name = "Authorization") String token,
                                             @Valid @RequestBody AccountDto accountDto) {
-        if (accountService.changePasswordUser(accountDto))
-            return new ResponseEntity<>(true, HttpStatus.OK);
-        else return new ResponseEntity<>(false, HttpStatus.OK);
+            return new ResponseEntity<>(accountService.changePasswordUser(accountDto), HttpStatus.OK);
     }
 
     @GetMapping("/skill")
