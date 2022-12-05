@@ -15,10 +15,12 @@ public class JWTAuthResponse {
     private double feeApplyJob;
     private double feePostJob;
     private double feeViewProfile;
+    private double feePushTop;
     private int unReadNotification;
     private String email;
     private int currentServiceId;
     private String currentServiceName;
+    private Integer durationRemain;
 
 
 }

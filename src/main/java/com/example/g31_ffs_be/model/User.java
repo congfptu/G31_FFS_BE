@@ -19,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -146,6 +147,11 @@ public class User {
                   currentService=us;
               }
             }
+            LocalDateTime time = currentService.getDateBuy();
+            long days = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+            int dayRemain= (int) (currentService.getService().getDuration()-days);
+            if(dayRemain<=0) return null;
+            serviceDto1.setTimeRemain(dayRemain);
             serviceDto1.setId(currentService.getService().getId());
             serviceDto1.setServiceName(currentService.getService().getServiceName());
         }

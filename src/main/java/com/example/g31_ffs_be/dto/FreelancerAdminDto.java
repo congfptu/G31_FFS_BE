@@ -14,4 +14,6 @@ public class FreelancerAdminDto {
     double accountBalance;
     Boolean isBanned;
     String currentService;
+    String avatar;
+    double totalMoneyUsed;
 }

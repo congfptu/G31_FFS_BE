@@ -84,4 +84,15 @@ public class  PostController {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/getAllTopJob")
+    public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token) {
+
+        try {
+            return new ResponseEntity<>(postService.getTopJob(), HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

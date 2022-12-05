@@ -10,20 +10,20 @@ import net.bytebuddy.utility.RandomString;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
-import javax.persistence.ElementCollection;
-import javax.persistence.FetchType;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Base64;
@@ -50,6 +50,8 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    private final static String siteUrl="https://g31-ffs-fe-git-main-trangrangsu.vercel.app";
+
     
     @Override
     public void createAccount(RegisterDto registerDto) {
@@ -72,6 +74,7 @@ public class AccountServiceImpl implements AccountService {
             }
             User user = new User();
             user.setId(id);
+
             user.setFullName(registerDto.getFullName());
             user.setAddress(registerDto.getAddress());
             user.setCity(registerDto.getCity());
@@ -85,6 +88,7 @@ public class AccountServiceImpl implements AccountService {
             if(roleName.equals("freelancer")){
                 Freelancer f=new Freelancer();
                 f.setId(id);
+                f.setBirthdate(registerDto.getBirthdate());
                 Subcareer subcareer=new Subcareer();
                 subcareer.setId(registerDto.getSubCareer());
                 f.setSubCareer(subcareer);
@@ -92,7 +96,7 @@ public class AccountServiceImpl implements AccountService {
                 user.setFreelancer(f);
                 acc.setUser(user);
                 accountRepository.save(acc);
-                sendVerificationEmail(acc, "https://g31-ffs-fe-git-main-trangrangsu.vercel.app/");
+                sendVerificationEmail(acc, siteUrl);
             }
             else{
                 Recruiter recruiter=new Recruiter();
@@ -147,7 +151,7 @@ public class AccountServiceImpl implements AccountService {
             helper.setTo(toAddress);
             helper.setSubject(subject);
             content = content.replace("[[name]]", account.getUser().getFullName());
-            String verifyURL = siteURL + "verify?code=" + account.getUser().getVerificationCode();
+            String verifyURL = siteURL + "/verify?code=" + account.getUser().getVerificationCode();
             content = content.replace("[[URL]]", verifyURL);
             helper.setText(content, true);
             mailSender.send(message);
@@ -189,6 +193,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             Account acc = accountRepository.findByEmail(accountDto.getEmail());
             acc.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+            acc.getUser().setResetPasswordToken(null);
             accountRepository.save(acc);
             return true;
         } catch (Exception e) {
@@ -207,7 +212,7 @@ public class AccountServiceImpl implements AccountService {
             account.getUser().setResetPasswordToken(resetPasswordToken);
             account.getUser().setResetPasswordTime(Instant.now());
             accountRepository.save(account);
-            sendResetPasswordEmail(account, "https://g31-ffs-fe-git-main-trangrangsu.vercel.app");
+            sendResetPasswordEmail(account, siteUrl);
             return true;
         } catch (Exception e) {
             return false;
@@ -228,7 +233,7 @@ public class AccountServiceImpl implements AccountService {
     public Boolean changePasswordUser(AccountDto account) {
         try {
             Account acc = accountRepository.findByEmail(account.getEmail());
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     account.getEmail(), account.getOldPassword()
             ));
                 acc.setPassword(passwordEncoder.encode(account.getPassword()));

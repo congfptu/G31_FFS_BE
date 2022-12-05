@@ -49,7 +49,8 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
 
     @Query(value = " SELECT MAX(j.id) FROM Job j")
     Integer getMaxId();
-/*@Query(value = " SELECT DISTINCT j FROM Job j " +
+/*
+@Query(value = " SELECT DISTINCT j FROM Job j " +
         " LEFT JOIN  j.skills s "+
         " LEFT JOIN FETCH j.subCareer sub "+
         " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
@@ -154,7 +155,9 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " and (j.paymentType=:paymentType)"
             + "Order by j.topTime desc,j.budget desc"
     )
-    Page<Job> getAllJobMemberShipWithPaymentType(String area,String keyword,int paymentType,Pageable pageable);*/
+    Page<Job> getAllJobMemberShipWithPaymentType(String area,String keyword,int paymentType,Pageable pageable);
+
+*/
 
 
     @Query(value = " SELECT DISTINCT j FROM Job j " +
@@ -165,8 +168,8 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and (j.id not in" +
                         " (select job.id from JobRequest request " +
-                        " left join  request.job job " +
-                        " left join  request.freelancer fre" +
+                        " inner join  request.job job " +
+                        " inner join  request.freelancer fre" +
                         " where fre.id=:freelancerId))  " +
             " and (j.id not in" +
                         " (select saved.id from Freelancer f " +
@@ -205,8 +208,8 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and j.id not in" +
                         " (select distinct job.id from JobRequest request " +
-                        " left join  request.job job " +
-                        " left join request.freelancer " +
+                        " inner join  request.job job " +
+                        " inner join request.freelancer " +
                         " fre where fre.id=:freelancerId)"+
             " and (j.id not in" +
             " (select saved.id from Freelancer f " +
@@ -224,8 +227,8 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " where j.isActive=true and j.isApproved=1 and j.area  LIKE CONCAT('%',:area,'%') "+
             " and j.id not in" +
                         " (select distinct job.id from JobRequest request " +
-                        " left join  request.job job " +
-                        " left join  request.freelancer " +
+                        " inner join  request.job job " +
+                        " inner join  request.freelancer " +
                         " fre where fre.id=:freelancerId)"+
             " and (j.id not in" +
             " (select saved.id from Freelancer f " +
@@ -242,7 +245,7 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             " LEFT JOIN fetch j.subCareer sub "+
             " WHERE r.id=:recruiterId and (j.isApproved=:status or :status=-1) "+
             " and (j.jobTitle LIKE CONCAT('%',:keyword,'%') or j.description LIKE CONCAT('%',:keyword,'%')) "+
-             "Order by j.time desc"
+            "Order by j.time desc"
             , countQuery = "SELECT count(DISTINCT j.id) FROM Recruiter r " +
             " LEFT JOIN  r.jobs j "+
             " LEFT JOIN  j.jobRequests "+
@@ -253,12 +256,25 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
     )
     Page<Job> getAllJobPosted(String recruiterId, int status,String keyword, Pageable pageable);
 
-
-   /* @Query(value = " select count(*) from jobs a " +
+    @Query(value = " SELECT DISTINCT j FROM Job j " +
+            " LEFT JOIN fetch j.createBy re "+
+            " LEFT JOIN fetch re.user  u "+
+            " LEFT JOIN fetch j.subCareer sub "+
+            " WHERE j.isTop=true "+
+            "Order by j.topTime desc,j.time desc"
+            , countQuery = "SELECT count(distinct j.id)  FROM Job j " +
+            " LEFT JOIN  j.createBy re "+
+            " LEFT JOIN  re.user  u "+
+            " LEFT JOIN  j.subCareer sub "+
+            " WHERE j.isTop=true "
+    )
+    Page<Job> getAllTopJob(Pageable pageable);
+ @Query(value = " select count(*) from jobs a " +
             "inner join job_request b on a.id=b.job_id " +
             "inner join recruiter c on c.recruiter_id=a.create_by " +
             "where c.recruiter_id=:recruiterId",nativeQuery = true)
-    Integer getTotalAppliedById(String recruiterId);*/
+    Integer getTotalAppliedById(String recruiterId);
+
 
     @Query(value = " SELECT j FROM Job j" +
             " LEFT JOIN FETCH j.createBy cre" +
@@ -281,10 +297,23 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update jobs  set is_top=false \n" +
-            "where (TIMESTAMPDIFF(Hour, top_time,now())>2 and is_top=true)"
+    @Query(value = "update jobs  set is_top=false and top_time=null \n" +
+            "where (TIMESTAMPDIFF(Day, top_time,now())>14 and is_top=true)"
             , nativeQuery = true)
     Integer updateIsTopExpired();
+
+
+    @Query(value = "select count(*) from jobs where is_top=1"
+            , nativeQuery = true)
+    Integer countIsTopJob();
+
+    @Query(value = "select 14-TIMESTAMPDIFF(day,date_push,now()) as dayRemain from push_top_history \n" +
+            "where TIMESTAMPDIFF(day,date_push,now())<=14\n" +
+            "order by date_push asc\n" +
+            "limit 1"
+            , nativeQuery = true)
+    Integer minOfTimeToPushTop();
+
 
 
 

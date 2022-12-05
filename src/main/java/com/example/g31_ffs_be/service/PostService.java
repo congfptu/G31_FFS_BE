@@ -2,6 +2,8 @@ package com.example.g31_ffs_be.service;
 
 import com.example.g31_ffs_be.dto.*;
 
+import java.util.List;
+
 public interface PostService {
     APIResponse<PostDTO> getAllPostByAdmin(int pageNumber, int pageSize, String keyword, int status);
     PostDTOResponse getAllPostSearchNamePaging(int pageNumber, int pageSize, String keyword, String sortValue);
@@ -12,6 +14,7 @@ public interface PostService {
     int createPost(PostCreateDto postCreateDto);
     APIResponse<PostHistoryDto> getAllJobPosted(String recruiterId,int status,String keyword,int pageNumber,int pageSize);
      PostDetailDTO viewDetailPostByRecruiter(String recruiterId,int id);
+     List<HotJobDto> getTopJob();
 
 
 }

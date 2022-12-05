@@ -38,7 +38,10 @@ public class RecruiterController {
     NotificationRepository notificationRepository;
     @Autowired
     JobRequestRepository jobRequestRepository;
+    @Autowired
+    PushTopHistoryRepository pushTopHistoryRepository;
 
+    @Autowired FeeRepository feeRepository;
 
     @GetMapping("/findFreelancer")
     public ResponseEntity<?> getPostDetail(@RequestHeader(name = "Authorization") String token,
@@ -50,7 +53,7 @@ public class RecruiterController {
                                            @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex,
                                            @RequestParam(name = "isMemberShip", defaultValue = "true") Boolean isMemberShip) {
         try {
-            return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(isMemberShip,city, costOption, subCareer, skill, keyword, pageIndex, 10), HttpStatus.OK);
+            return new ResponseEntity<>(freelancerService.getAllFreelancerByFilter(isMemberShip, city, costOption, subCareer, skill, keyword, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
@@ -70,6 +73,7 @@ public class RecruiterController {
         }
 
     }
+
     @PostMapping("/addSkill")
     public ResponseEntity<?> addJobSkill(@RequestHeader(name = "Authorization") String token,
                                          @RequestParam(name = "jobId", defaultValue = "1") int jobId,
@@ -135,7 +139,7 @@ public class RecruiterController {
                                              @RequestParam(name = "keyword", defaultValue = "") String keyword,
                                              @RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex) {
         try {
-            return new ResponseEntity<>(postService.getAllJobPosted(recruiterId, status, keyword,pageIndex, 10), HttpStatus.OK);
+            return new ResponseEntity<>(postService.getAllJobPosted(recruiterId, status, keyword, pageIndex, 10), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
@@ -217,34 +221,36 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @DeleteMapping("/deleteJob")
     public ResponseEntity<?> deleteJob(@RequestHeader(name = "Authorization") String token,
-                                             @RequestParam(name = "recruiterId") String recruiterId,
-                                             @RequestParam(name = "jobId") int jobId) {
+                                       @RequestParam(name = "recruiterId") String recruiterId,
+                                       @RequestParam(name = "jobId") int jobId) {
         try {
-            Job job=postRepository.getReferenceById(jobId);
-        Recruiter r=recruiterRepository.getReferenceById(recruiterId);
-        if(job.getCreateBy().getId().equals(r.getId())) {
+            Job job = postRepository.getReferenceById(jobId);
+            Recruiter r = recruiterRepository.getReferenceById(recruiterId);
+            if (job.getCreateBy().getId().equals(r.getId())) {
 
-            postRepository.deleteById(job.getId());
-            return new ResponseEntity<>(true, HttpStatus.OK);
-        }
+                postRepository.deleteById(job.getId());
+                return new ResponseEntity<>(true, HttpStatus.OK);
+            }
             return new ResponseEntity<>(false, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @PutMapping("/hideJob")
     public ResponseEntity<?> hideJob(@RequestHeader(name = "Authorization") String token,
-                                       @RequestParam(name = "recruiterId") String recruiterId,
-                                       @RequestParam(name = "jobId") int jobId
+                                     @RequestParam(name = "recruiterId") String recruiterId,
+                                     @RequestParam(name = "jobId") int jobId
     ) {
         try {
-            Job job=postRepository.getReferenceById(jobId);
-            Recruiter r=recruiterRepository.getReferenceById(recruiterId);
-            if(job.getCreateBy().getId().equals(r.getId())) {
-                if(job.getIsActive())
+            Job job = postRepository.getReferenceById(jobId);
+            Recruiter r = recruiterRepository.getReferenceById(recruiterId);
+            if (job.getCreateBy().getId().equals(r.getId())) {
+                if (job.getIsActive())
                     job.setIsActive(false);
                 else
                     job.setIsActive(true);
@@ -257,31 +263,33 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @GetMapping("/viewDetailPost")
     public ResponseEntity<?> viewDetailPost(@RequestHeader(name = "Authorization") String token,
-                                     @RequestParam(name = "recruiterId") String recruiterId,
-                                     @RequestParam(name = "jobId") int jobId
+                                            @RequestParam(name = "recruiterId") String recruiterId,
+                                            @RequestParam(name = "jobId") int jobId
     ) {
         try {
-                return new ResponseEntity<>(postService.viewDetailPostByRecruiter(recruiterId,jobId), HttpStatus.OK);
+            return new ResponseEntity<>(postService.viewDetailPostByRecruiter(recruiterId, jobId), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @PutMapping("/responseJobApply")
     public ResponseEntity<?> approvedFreelancer(@RequestHeader(name = "Authorization") String token,
-                                     @RequestParam(name = "freelancerId") String freelancerId,
-                                     @RequestParam(name = "jobId") int jobId,
-                                     @RequestParam(name = "status") int status
+                                                @RequestParam(name = "freelancerId") String freelancerId,
+                                                @RequestParam(name = "jobId") int jobId,
+                                                @RequestParam(name = "status") int status
     ) {
         try {
-            jobRequestRepository.responseJobApply(jobId,freelancerId,status, LocalDateTime.now());
-            Notification notification=new Notification();
-            User freelancerUser=userRepository.getReferenceById(freelancerId);
-            freelancerUser.setUnRead(freelancerUser.getUnRead()+1);
+            jobRequestRepository.responseJobApply(jobId, freelancerId, status, LocalDateTime.now());
+            Notification notification = new Notification();
+            User freelancerUser = userRepository.getReferenceById(freelancerId);
+            freelancerUser.setUnRead(freelancerUser.getUnRead() + 1);
             userRepository.save(freelancerUser);
-            Job job=postRepository.getReferenceById(jobId);
+            Job job = postRepository.getReferenceById(jobId);
             notification.setFrom(new User(job.getCreateBy().getId()));
             notification.setTo(new User(freelancerId));
             notification.setNotificationType(status);
@@ -295,79 +303,78 @@ public class RecruiterController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
+
     @PutMapping("/pushTop")
     public ResponseEntity<?> pushTopJobRecruiter(@RequestHeader(name = "Authorization") String token,
-                                                @RequestParam(name = "recruiterId") String recruiterId,
-                                                @RequestParam(name = "jobId") int jobId
+                                                 @RequestParam(name = "recruiterId") String recruiterId,
+                                                 @RequestParam(name = "jobId") int jobId
     ) {
         try {
-            LocalDateTime topTime=null;
-            long hours=0;
-            Recruiter recruiter=recruiterRepository.getReferenceById(recruiterId);
-            Job job=postRepository.getReferenceById(jobId);
-            if(recruiter.getLastTopTime()!=null) {
-                topTime = recruiter.getLastTopTime();
-                hours = ChronoUnit.HOURS.between(topTime, LocalDateTime.now());
-                if(hours>2)
-                {
-                    recruiter.setLastTopTime(LocalDateTime.now());
-                    job.setIsTop(true);
-                    job.setTopTime(LocalDateTime.now());
-                    recruiterRepository.save(recruiter);
-                    postRepository.save(job);
-                    return new ResponseEntity<>(true, HttpStatus.OK);
-                }
-                else{
-                    return new ResponseEntity<>(false, HttpStatus.OK);
-                }
+            int numberOfTopJob = postRepository.countIsTopJob();
+            Job job = postRepository.getReferenceById(jobId);
+            if (numberOfTopJob > 5) {
+                int minOfTimeToPushTop= postRepository.minOfTimeToPushTop();
+                return new ResponseEntity<>("Hiện tại hệ thống đã hết chỗ đẩy top bài đăng," +
+                        " vui lòng chờ sau ít nhất "+minOfTimeToPushTop+" ngày mới có thể có slot đẩy top!",
+                        HttpStatus.BAD_REQUEST);
             }
-            else{
-                recruiter.setLastTopTime(LocalDateTime.now());
-                job.setIsTop(true);
-                recruiterRepository.save(recruiter);
-                postRepository.save(job);
-                return new ResponseEntity<>(true, HttpStatus.OK);
-            }
+            if(job.getIsTop()) return new ResponseEntity<>("Job của bạn đã là job nổi bật rồi!", HttpStatus.BAD_REQUEST);
+            Recruiter recruiter = recruiterRepository.getReferenceById(recruiterId);
+            job.setIsTop(true);
+            job.setTopTime(LocalDateTime.now());
+            double feePushtop=feeRepository.getReferenceById(4).getPrice();
+            User user=recruiter.getUser();
+            user.setAccountBalance(user.getAccountBalance()-feePushtop);
+            userRepository.save(user);
+            postRepository.save(job);
+            PushTopHistory pushTopHistory=new PushTopHistory();
+            pushTopHistory.setRecruiter(recruiter);
+            pushTopHistory.setFee(feePushtop);
+            pushTopHistory.setDatePush(LocalDateTime.now());
+            pushTopHistoryRepository.save(pushTopHistory);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(false, HttpStatus.OK);
+            return new ResponseEntity<>("Không thể đẩy top", HttpStatus.BAD_REQUEST);
         }
 
     }
+
     @GetMapping("/getProfileFreelancer")
     public ResponseEntity<?> getProfileFreelancer(@RequestHeader(name = "Authorization") String token,
                                                   @RequestParam(name = "id", defaultValue = "") String id,
                                                   @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId) {
-        FreelancerProfileDTO f=freelancerService.getDetailFreelancerByRecruiter(recruiterId,id);
-        try{
+        FreelancerProfileDTO f = freelancerService.getDetailFreelancerByRecruiter(recruiterId, id);
+        try {
             if (f != null) {
                 return new ResponseEntity<>(f, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping("/statistic")
     public ResponseEntity<?> statisticRecruiter(@RequestHeader(name = "Authorization") String token,
-                                                  @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId) {
+                                                @RequestParam(name = "recruiterId", defaultValue = "") String recruiterId) {
 
-        try{
-            User user=userRepository.getReferenceById(recruiterId);
-            Recruiter recruiter=user.getRecruiter();
-            RecruiterStatistic statistic=new RecruiterStatistic();
+        try {
+            User user = userRepository.getReferenceById(recruiterId);
+            Recruiter recruiter = user.getRecruiter();
+            RecruiterStatistic statistic = new RecruiterStatistic();
             statistic.setAvgStar(user.getStar());
             statistic.setTotalFeedbacks(user.getFeedbackTos().size());
             statistic.setTotalPosted(recruiter.getJobs().size());
 
-            int totalApplied=0;
-            for(Job j:recruiter.getJobs())
-                totalApplied+=j.getJobRequests().size();
+            int totalApplied = 0;
+            for (Job j : recruiter.getJobs())
+                totalApplied += j.getJobRequests().size();
             statistic.setTotalApplied(totalApplied);
 
             return new ResponseEntity<>(statistic, HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }

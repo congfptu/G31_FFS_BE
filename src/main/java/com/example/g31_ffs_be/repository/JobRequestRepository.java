@@ -32,7 +32,8 @@ public interface JobRequestRepository extends JpaRepository<Job,String> {
             " LEFT JOIN  f.jobRequests jrq" +
             " LEFT JOIN  jrq.job job" +
             " LEFT JOIN fetch job.subCareer sub" +
-            " WHERE f.id=:freelancer_id and (jrq.status=:status or :status=-1 )",
+            " WHERE f.id=:freelancer_id and (jrq.status=:status or :status=-1 )"+"" +
+            "order by  jrq.applyDate desc",
             countQuery = " SELECT count(job.id)  FROM Freelancer f" +
                     " LEFT JOIN  f.jobRequests jrq" +
                     " LEFT JOIN  jrq.job job " +

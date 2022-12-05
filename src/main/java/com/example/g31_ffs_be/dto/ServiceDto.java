@@ -23,5 +23,6 @@ public class ServiceDto {
     private String description;
 
     private Integer duration;
+    private Integer timeRemain;
 
 }

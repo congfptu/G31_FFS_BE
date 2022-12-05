@@ -11,4 +11,6 @@ public class RecruiterAdminDto {
     Boolean isBanned;
     String phone;
     String currentService;
+    String avatar;
+    double totalMoneyUsed;
 }

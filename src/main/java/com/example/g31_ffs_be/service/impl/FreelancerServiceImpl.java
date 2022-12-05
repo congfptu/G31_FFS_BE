@@ -69,6 +69,7 @@ public class FreelancerServiceImpl implements FreelancerService {
             fa.setEmail(u.getAccount().getEmail());
             fa.setIsBanned(u.getIsBanned());
             fa.setAccountBalance(u.getAccountBalance() != null ? u.getAccountBalance() : 0);
+            fa.setAvatar(u.getAvatar());
             if(u.getServiceDto()!=null){
                 fa.setCurrentService(u.getServiceDto().getServiceName());
             }

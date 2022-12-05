@@ -109,11 +109,14 @@ public class UserController {
                 jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
                 jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
                 jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
+                jwtAuthResponse.setFeePushTop(feeRepository.getReferenceById(4).getPrice());
                 jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
                 jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
-                if (account.getUser().getServiceDto() != null) {
-                    jwtAuthResponse.setCurrentServiceId(account.getUser().getServiceDto().getId());
-                    jwtAuthResponse.setCurrentServiceName(account.getUser().getServiceDto().getServiceName());
+                ServiceDto serviceDto=account.getUser().getServiceDto();
+                if (serviceDto!= null) {
+                    jwtAuthResponse.setCurrentServiceId(serviceDto.getId());
+                    jwtAuthResponse.setCurrentServiceName(serviceDto.getServiceName());
+                    jwtAuthResponse.setDurationRemain(serviceDto.getTimeRemain());
                 }
             }
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
@@ -168,10 +171,14 @@ public class UserController {
                                         @RequestParam(name = "userId", defaultValue = "") String userId,
                                         @RequestParam(name = "serviceId", defaultValue = "") int serviceId) {
         try {
+
             Service service = serviceRepository.getReferenceById(serviceId);
             User user = userRepository.getReferenceById(userId);
+            double balanceRemain=user.getAccountBalance() - service.getPrice();
+            if(balanceRemain<0)
+                return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
             userRepository.insertUserService(userId, serviceId, LocalDateTime.now(), service.getPrice());
-            user.setAccountBalance(user.getAccountBalance() - service.getPrice());
+            user.setAccountBalance(balanceRemain);
             user.setIsMemberShip(true);
             userRepository.save(user);
             return new ResponseEntity<>(true, HttpStatus.CREATED);

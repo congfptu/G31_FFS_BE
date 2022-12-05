@@ -108,14 +108,14 @@ public interface UserRepository extends JpaRepository<User, String> {
     )
     List<Object[]> countPosted();
 
-    @Query(value = "select CONCAT(MONTHNAME(STR_TO_DATE(month(a.time), '%m')),' ',year(a.time)) AS 'month',count(*) as countNumber from jobs a\n" +
-            "where  a.time>=DATE_SUB(NOW(), INTERVAL 7 MONTH) and a.time<=NOW()\n" +
-            "group by month(a.time) ", nativeQuery = true
+    @Query(value = "select CONCAT(MONTHNAME(STR_TO_DATE(month(a.apply_date), '%m')),' ',year(a.apply_date)) AS 'month',count(*) as countNumber from job_request a\n" +
+            "where a.apply_date>=DATE_SUB(NOW(), INTERVAL 7 MONTH) and a.apply_date<=NOW()\n" +
+            "group by month(a.apply_date);", nativeQuery = true
 
     )
     List<Object[]> countApplies();
 
-    @Query(value = "select *from (\n" +
+    @Query(value = "select month,SUM(totalAmount) as total from (\n" +
             "select  CONCAT(MONTHNAME(STR_TO_DATE(month(a.time), '%m')),' ',year(a.time)) AS 'month',IFNULL(SUM(a.fee), 0)  totalAmount from jobs a\n" +
             "where  a.time>=DATE_SUB(NOW(), INTERVAL 7 MONTH) and a.time<=NOW()\n" +
             "group by month(a.time)\n" +
@@ -131,6 +131,10 @@ public interface UserRepository extends JpaRepository<User, String> {
             "select  CONCAT(MONTHNAME(STR_TO_DATE(month(d.date_buy), '%m')),' ',year(d.date_buy)) AS 'month',IFNULL(SUM(d.fee), 0) as totalAmount  from view_profile_history d\n" +
             "where  d.date_buy>=DATE_SUB(NOW(), INTERVAL 7 MONTH) and d.date_buy<=NOW()\n" +
             "group by month(d.date_buy)\n" +
+            "union all\n" +
+            "select  CONCAT(MONTHNAME(STR_TO_DATE(month(e.date_push), '%m')),' ',year(e.date_push)) AS 'month',IFNULL(SUM(e.fee), 0) as totalAmount  from push_top_history e\n" +
+            "where  e.date_push>=DATE_SUB(NOW(), INTERVAL 7 MONTH) and e.date_push<=NOW()\n" +
+            "group by month(e.date_push)\n" +
             ")f\n" +
             "group by f.month;", nativeQuery = true
 
@@ -145,4 +149,49 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "select IFNULL(count(*), 0)from report", nativeQuery = true)
     Integer countReport();
 
+    @Query(value = "select f.freelancer_id,acc.email,u.fullname,IFNULL(sum(totalAmount),0) as TotalMoneyUsed  from(\n" +
+            "select a.freelancer_id, IFNULL(sum(c.fee),0) as totalAmount from freelancer a \n" +
+            "left join job_request c on c.freelancer_id=a.freelancer_id\n" +
+            "group by a.freelancer_id\n" +
+            "union all \n" +
+            "select a.freelancer_id, IFNULL(sum(d.service_price),0) as totalAmount from freelancer a \n" +
+            "left join user_service d on d.user_id=a.freelancer_id\n" +
+            "group by a.freelancer_id\n" +
+            "union all \n" +
+            "select a.freelancer_id, IFNULL(sum(e.fee),0) as totalAmount from freelancer a \n" +
+            "left join view_profile_history e on e.user_id=a.freelancer_id\n" +
+            "group by a.freelancer_id\n" +
+            ")f \n" +
+            "inner join user u on u.user_id=f.freelancer_id\n" +
+            "inner join account acc on f.freelancer_id=acc.id\n" +
+            "group by f.freelancer_id\n" +
+            "order by TotalMoneyUsed desc "+
+            "limit 10; ", nativeQuery = true
+
+    )
+    List<Object[]> topFreelancerHot();
+    @Query(value = "select f.recruiter_id,acc.email,u.fullname,IFNULL(sum(totalAmount),0) as TotalMoneyUsed  from(\n" +
+            "select a.recruiter_id, IFNULL(sum(b.fee),0) as totalAmount from recruiter a \n" +
+            "left join push_top_history b on b.recruiter_id=a.recruiter_id\n" +
+            "group by a.recruiter_id\n" +
+            "union all\n" +
+            "select a.recruiter_id, IFNULL(sum(c.fee),0) as totalAmount from recruiter a \n" +
+            "left join jobs c on c.create_by=a.recruiter_id\n" +
+            "group by a.recruiter_id\n" +
+            "union all \n" +
+            "select a.recruiter_id, IFNULL(sum(d.service_price),0) as totalAmount from recruiter a \n" +
+            "left join user_service d on d.user_id=a.recruiter_id\n" +
+            "group by a.recruiter_id\n" +
+            "union all \n" +
+            "select a.recruiter_id, IFNULL(sum(e.fee),0) as totalAmount from recruiter a \n" +
+            "left join view_profile_history e on e.user_id=a.recruiter_id\n" +
+            "group by a.recruiter_id\n" +
+            ")f \n" +
+            "inner join user u on u.user_id=f.recruiter_id\n" +
+            "inner join account acc on f.recruiter_id=acc.id\n" +
+            "group by f.recruiter_id \n" +
+            "order by TotalMoneyUsed desc "+
+            "limit 10;", nativeQuery = true
+    )
+    List<Object[]> topRecruiterHot();
 }

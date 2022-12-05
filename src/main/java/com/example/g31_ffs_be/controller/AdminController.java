@@ -332,6 +332,17 @@ public class AdminController {
     public ResponseEntity<?> getAllBenefits(@RequestHeader(name = "Authorization") String token) {
         return new ResponseEntity<>(benefitRepository.findAll(), HttpStatus.CREATED);
     }
+
+    @GetMapping("/getUserHot")
+    public ResponseEntity<?> getUserHots(@RequestHeader(name = "Authorization") String token) {
+        try{
+            return new ResponseEntity<>(userService.getUserHotDto(), HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+
+    }
     @PutMapping("/approveRecruiter")
     public ResponseEntity<?> approveRecruiter(@RequestHeader(name = "Authorization") String token,
                                               @RequestParam(name = "userId", defaultValue = "") String userId) {

@@ -10,6 +10,7 @@ import com.example.g31_ffs_be.service.DashboadService;
 import com.example.g31_ffs_be.service.impl.AccountServiceImpl;
 import com.example.g31_ffs_be.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,8 @@ public class GuestController {
     @Autowired
     FeeRepository feeRepository;
     @Autowired
+    ServiceRepository serviceRepository;
+    @Autowired
     UserServiceImpl userService;
     @Autowired
     DashboadService dashboadService;
@@ -55,7 +58,6 @@ public class GuestController {
     CareerRepository careerRepository;
     @Autowired
     UserRepository userRepository;
-
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> singUpUser(@Valid @RequestBody RegisterDto registerDto) {
@@ -146,11 +148,14 @@ public class GuestController {
                     jwtAuthResponse.setFeePostJob(feeRepository.getReferenceById(1).getPrice());
                     jwtAuthResponse.setFeeApplyJob(feeRepository.getReferenceById(2).getPrice());
                     jwtAuthResponse.setFeeViewProfile(feeRepository.getReferenceById(3).getPrice());
+                    jwtAuthResponse.setFeePushTop(feeRepository.getReferenceById(4).getPrice());
                     jwtAuthResponse.setIsMemberShip(account.getUser().getIsMemberShip());
                     jwtAuthResponse.setUnReadNotification(account.getUser().getUnRead());
-                    if (account.getUser().getServiceDto() != null) {
-                        jwtAuthResponse.setCurrentServiceId(account.getUser().getServiceDto().getId());
-                        jwtAuthResponse.setCurrentServiceName(account.getUser().getServiceDto().getServiceName());
+                    ServiceDto serviceDto=account.getUser().getServiceDto();
+                    if (serviceDto!= null) {
+                        jwtAuthResponse.setCurrentServiceId(serviceDto.getId());
+                        jwtAuthResponse.setCurrentServiceName(serviceDto.getServiceName());
+                        jwtAuthResponse.setDurationRemain(serviceDto.getTimeRemain());
                     }
                     if (minuteBanRemain < 0 && account.getUser().getIsBanned()) {
                         account.getUser().setIsBanned(false);
@@ -178,8 +183,7 @@ public class GuestController {
             return new ResponseEntity<>("không có dữ liệu. có thể server chết!", HttpStatus.NO_CONTENT);
         }
     }
-@Autowired
-    ServiceRepository serviceRepository;
+
     @GetMapping("/test")
     public ResponseEntity<?> testss() {
         /*List<String> label = new ArrayList<>();
@@ -195,8 +199,9 @@ public class GuestController {
      List<Object[]> obj=userRepository.countFreelancer();
     for(Object[] o:obj)
         return new ResponseEntity<>(o[1], HttpStatus.OK);*/
-        List<Integer> arrayIntegers = new ArrayList<>(Arrays.asList(0,0,0,0,0,0,0));
-        return new ResponseEntity<>(dashboadService.getDashboardServices(), HttpStatus.OK);
+       /* List<Integer> arrayIntegers = new ArrayList<>(Arrays.asList(0,0,0,0,0,0,0));
+        return new ResponseEntity<>(dashboadService.getDashboardServices(), HttpStatus.OK);*/
+        return new ResponseEntity<>(userService.getUserHotDto(), HttpStatus.OK);
     }
 
 }

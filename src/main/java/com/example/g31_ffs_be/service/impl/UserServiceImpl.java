@@ -1,9 +1,6 @@
 package com.example.g31_ffs_be.service.impl;
 
-import com.example.g31_ffs_be.dto.APIResponse;
-import com.example.g31_ffs_be.dto.NotificationDTO;
-import com.example.g31_ffs_be.dto.RequestPaymentDto;
-import com.example.g31_ffs_be.dto.ServiceDto;
+import com.example.g31_ffs_be.dto.*;
 import com.example.g31_ffs_be.model.*;
 import com.example.g31_ffs_be.repository.NotificationRepository;
 import com.example.g31_ffs_be.repository.PaymentRepository;
@@ -20,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @org.springframework.stereotype.Service
@@ -152,7 +150,39 @@ public class UserServiceImpl implements UserService {
         }
         return apiResponse;
     }
+    public List<FreelancerAdminDto> getFreelancers(List<Object[]> objects){
+        List<FreelancerAdminDto> listFreelancers=new ArrayList<>();
+        if(objects!=null)
+        {
+            for(Object[] ob:objects)
+            {
 
+                FreelancerAdminDto freelancerAdminDto=new FreelancerAdminDto();
+                freelancerAdminDto.setId(ob[0].toString());
+                freelancerAdminDto.setEmail(ob[1].toString());
+                freelancerAdminDto.setFullName((ob[2].toString()));
+                freelancerAdminDto.setTotalMoneyUsed(Double.parseDouble(ob[3].toString()));
+                listFreelancers.add(freelancerAdminDto);
+            }
+        }
+        return listFreelancers;
+    }
+    public List<RecruiterAdminDto> getRecruiters(List<Object[]> objects){
+        List<RecruiterAdminDto> listRecruiters=new ArrayList<>();
+        if(objects!=null)
+        {
+            for(Object[] ob:objects)
+            {
+                RecruiterAdminDto recruiterAdminDto=new RecruiterAdminDto();
+                recruiterAdminDto.setId(ob[0].toString());
+                recruiterAdminDto.setEmail(ob[1].toString());
+                recruiterAdminDto.setFullName((ob[2].toString()));
+                recruiterAdminDto.setTotalMoneyUsed(Double.parseDouble(ob[3].toString()));
+                listRecruiters.add(recruiterAdminDto);
+            }
+        }
+        return listRecruiters;
+    }
     @Override
     public ServiceDto getCurrentServiceByUserId(String userId) {
          Pageable pageable=PageRequest.of(0,1);
@@ -167,5 +197,13 @@ public class UserServiceImpl implements UserService {
          catch (Exception e){
              return null;
          }
+    }
+
+    @Override
+    public TopUserHotDto getUserHotDto() {
+        TopUserHotDto topUserHotDto=new TopUserHotDto();
+        topUserHotDto.setFreelancers(getFreelancers(userRepository.topFreelancerHot()));
+        topUserHotDto.setRecruiters(getRecruiters(userRepository.topRecruiterHot()));
+      return  topUserHotDto;
     }
 }
