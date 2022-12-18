@@ -74,7 +74,7 @@ public class GuestController {
     public ResponseEntity<?> forgotPassword(@RequestParam(name = "email", defaultValue = "") String email) {
         Account acc = accountRepository.findByEmail(email);
         if (acc == null)
-            return new ResponseEntity<>("Email chưa được đăng kí trong hệ thống!", HttpStatus.OK);
+            return new ResponseEntity<>("Email chưa được đăng kí trong hệ thống!", HttpStatus.BAD_REQUEST);
         accountService.forgotPassword(acc);
         return new ResponseEntity<>("Chúng tôi đã gửi link thay đổi mật khẩu của bạn ở email, vui lòng click và đổi mật khẩu!", HttpStatus.OK);
     }

@@ -20,7 +20,7 @@ import java.util.*;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/admin")
-//@PreAuthorize("hasAuthority('admin')")
+@PreAuthorize("hasAuthority('admin') or hasAuthority('staff') ")
 public class AdminController {
     @Autowired
     StaffService staffService;

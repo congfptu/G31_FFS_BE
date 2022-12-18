@@ -348,10 +348,19 @@ public class PostServiceImpl implements PostService {
                 post.setPostID(j.getId());
                 post.setJobTitle(j.getJobTitle());
                 post.setSubCareer(j.getSubCareer().getName());
+
                 String des = j.getDescription();
-                if (des.length() >= 200)
-                    des = des.substring(0, 199);
-                post.setDescription(des);
+                String[] words = des.split("\\s");
+                String results="";
+                if (words.length >= 25) {
+                    for(int i=0;i<25;i++){
+                        results+=words[i]+" ";
+                    }
+                }
+                else{
+                    for (String word:words) results+=word+" ";
+                }
+                post.setDescription(results+"...");
                 post.setAttach(j.getAttach());
                 post.setPaymentType(j.getPaymentType() == 1 ? "Trả theo giờ" : "Trả theo dự án");
                 String message = "Đã đăng cách đây ";

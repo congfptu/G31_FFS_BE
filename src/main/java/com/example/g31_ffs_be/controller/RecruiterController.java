@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/recruiter")
-//@PreAuthorize("hasAuthority('recruiter') or hasAuthority('freelancer') ")
+@PreAuthorize("hasAuthority('recruiter')")
 public class RecruiterController {
     @Autowired
     FreelancerService freelancerService;
@@ -252,9 +252,11 @@ public class RecruiterController {
             if (job.getCreateBy().getId().equals(r.getId())) {
                 if (job.getIsActive())
                     job.setIsActive(false);
-                else
+                else {
+                 /*   job.setTime(LocalDateTime.now());*/
                     job.setIsActive(true);
-                postRepository.save(job);
+                    postRepository.save(job);
+                }
                 return new ResponseEntity<>(true, HttpStatus.OK);
             }
             return new ResponseEntity<>(false, HttpStatus.OK);
@@ -312,13 +314,16 @@ public class RecruiterController {
         try {
             int numberOfTopJob = postRepository.countIsTopJob();
             Job job = postRepository.getReferenceById(jobId);
-            if (numberOfTopJob > 5) {
+            int countPushTopByRecruiterId=postRepository.countPushTopBy(recruiterId);
+            if (countPushTopByRecruiterId>=1)   return new ResponseEntity<>("Bạn chỉ được đẩy top 1 bài đăng trong danh sách công việc nổi bật",
+                    HttpStatus.BAD_REQUEST);
+            if (numberOfTopJob >=5) {
                 int minOfTimeToPushTop= postRepository.minOfTimeToPushTop();
                 return new ResponseEntity<>("Hiện tại hệ thống đã hết chỗ đẩy top bài đăng," +
                         " vui lòng chờ sau ít nhất "+minOfTimeToPushTop+" ngày mới có thể có slot đẩy top!",
                         HttpStatus.BAD_REQUEST);
             }
-            if(job.getIsTop()) return new ResponseEntity<>("Job của bạn đã là job nổi bật rồi!", HttpStatus.BAD_REQUEST);
+            if(job.getIsTop()) return new ResponseEntity<>("Bài đăng của bạn đã lên trang nổi bật!", HttpStatus.BAD_REQUEST);
             Recruiter recruiter = recruiterRepository.getReferenceById(recruiterId);
             job.setIsTop(true);
             job.setTopTime(LocalDateTime.now());

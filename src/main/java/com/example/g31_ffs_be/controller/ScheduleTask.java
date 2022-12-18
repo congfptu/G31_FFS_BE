@@ -1,4 +1,3 @@
-/*
 package com.example.g31_ffs_be.controller;
 
 import com.example.g31_ffs_be.model.User;
@@ -15,7 +14,7 @@ public class ScheduleTask {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    PostRepository postRepository;
+  PostRepository postRepository;
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void updateExpiredMemberShip() {
@@ -30,8 +29,8 @@ public class ScheduleTask {
         userRepository.updateBanUserExpired();
         userRepository.updateSafe();
     }
-    @Scheduled(cron = "0 0/5 * * * *")
 
+    @Scheduled(cron = "0 0 0 * * ?")
     public void updateIsTopExpired() {
         userRepository.updateNotSafe();
         postRepository.updateIsTopExpired();
@@ -40,4 +39,3 @@ public class ScheduleTask {
 
 }
 
-*/

@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    private final static String siteUrl="https://g31-ffs-fe-git-main-trangrangsu.vercel.app";
+    private final static String siteUrl="https://lanceddy.vercel.app";
 
     
     @Override

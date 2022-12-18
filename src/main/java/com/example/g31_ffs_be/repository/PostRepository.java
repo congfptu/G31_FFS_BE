@@ -297,8 +297,8 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update jobs  set is_top=false and top_time=null \n" +
-            "where (TIMESTAMPDIFF(Day, top_time,now())>14 and is_top=true)"
+    @Query(value = "update jobs  set is_top=false,top_time=null\n" +
+            "where TIMESTAMPDIFF(Day, top_time,now())>14 "
             , nativeQuery = true)
     Integer updateIsTopExpired();
 
@@ -313,6 +313,10 @@ public interface PostRepository extends JpaRepository<Job, Integer> {
             "limit 1"
             , nativeQuery = true)
     Integer minOfTimeToPushTop();
+    @Query(value = "select count(*) from  push_top_history \n" +
+            "where TIMESTAMPDIFF(day,date_push,now())<=14 and recruiter_id=:recruiter_id"
+            , nativeQuery = true)
+    Integer countPushTopBy(String recruiter_id);
 
 
 
